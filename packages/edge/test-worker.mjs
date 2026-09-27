@@ -62,6 +62,13 @@ test('D1 session, persisted propensities, SSE resume and owned events round trip
   assert.equal((await resume.json()).revision, 1);
   const stream = await request(`/v1/session/${raw}/stream?once=true`);
   assert.match(await stream.text(), /event: shelf/);
+  const liveStream = await request(`/v1/session/${raw}/stream`);
+  assert.match(liveStream.headers.get('Cache-Control'), /no-transform/);
+  assert.equal(liveStream.headers.get('Content-Encoding'), 'identity');
+  const reader = liveStream.body.getReader();
+  const firstChunk = await Promise.race([reader.read(), new Promise((_, reject) => setTimeout(() => reject(new Error('Initial SSE event did not flush immediately')), 250))]);
+  assert.match(new TextDecoder().decode(firstChunk.value), /event: shelf/);
+  await reader.cancel();
   assert.equal(database.prepare('SELECT COUNT(*) n FROM stacks_impressions').get().n, 10);
   const clicked = shelf.items[0];
   const nextResponse = await request(`/v1/session/${raw}/event`, { impression_id: clicked.impression_id, event: 'click' });

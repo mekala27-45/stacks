@@ -291,8 +291,35 @@ async function route(request: Request, env: Env): Promise<Response> {
     if (action === 'stream' && request.method === 'GET') {
       const initial = Number(request.headers.get('Last-Event-ID') ?? -1); if (!Number.isInteger(initial)) fail(400, 'Last-Event-ID must be a revision');
       const once = url.searchParams.get('once') === 'true'; let revision = initial, cancelled = false;
-      const stream = new ReadableStream<Uint8Array>({ async start(controller) { try { for (let turn = 0; !cancelled && !request.signal.aborted && turn < STREAM_POLLS; turn++) { const latest = await getSession(env, raw); if (latest.revision > revision) { revision = latest.revision; controller.enqueue(encoder.encode(`id: ${revision}\nevent: shelf\ndata: ${JSON.stringify({ session_id: raw, ...JSON.parse(latest.latest_shelf) as Shelf })}\n\n`)); } if (once) break; if (turn % 15 === 0) controller.enqueue(encoder.encode(': keepalive\n\n')); await new Promise(resolve => setTimeout(resolve, 1000)); } if (!cancelled) controller.close(); } catch (error) { if (!cancelled) controller.error(error); } }, cancel() { cancelled = true; } });
-      return new Response(stream, { headers: { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache', 'X-Accel-Buffering': 'no' } });
+      const stream = new ReadableStream<Uint8Array>({
+        start(controller) {
+          const send = (latest: SessionRow): void => {
+            if (latest.revision > revision) {
+              revision = latest.revision;
+              controller.enqueue(encoder.encode(`id: ${revision}\nevent: shelf\ndata: ${JSON.stringify({ session_id: raw, ...JSON.parse(latest.latest_shelf) as Shelf })}\n\n`));
+            }
+          };
+          // start must return immediately: an async start can hold the runtime's
+          // response pipe until the entire polling loop has finished.
+          send(session);
+          if (once) { controller.close(); return; }
+          controller.enqueue(encoder.encode('retry: 1000\n: connected\n\n'));
+          const poll = async (): Promise<void> => {
+            try {
+              for (let turn = 0; !cancelled && !request.signal.aborted && turn < STREAM_POLLS; turn++) {
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                if (cancelled || request.signal.aborted) break;
+                send(await getSession(env, raw));
+                if (turn % 15 === 0) controller.enqueue(encoder.encode(': keepalive\n\n'));
+              }
+              if (!cancelled) controller.close();
+            } catch (error) { if (!cancelled) controller.error(error); }
+          };
+          void poll();
+        },
+        cancel() { cancelled = true; },
+      });
+      return new Response(stream, { headers: { 'Content-Type': 'text/event-stream; charset=utf-8', 'Cache-Control': 'no-cache, no-transform', 'Content-Encoding': 'identity', 'X-Accel-Buffering': 'no' } });
     }
     if ((action === 'event' || action === 'preferences') && request.method === 'POST') {
       await bounds(env, session); const input = await body(request), data = await loadData(env, url.origin); let feedback: FeedbackRow | undefined;
