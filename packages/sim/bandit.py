@@ -1,6 +1,8 @@
 from dataclasses import dataclass
+from typing import Any
 
 import numpy as np
+from numpy.typing import NDArray
 
 from packages.evaluation.metrics import bootstrap, wilson_interval
 from packages.ope import estimate_intervals
@@ -23,7 +25,9 @@ class Simulator:
     def value(self) -> float:
         return float((self.target * self.rewards).sum(axis=1).mean())
 
-    def sample(self, n: int, seed: int, misspecified: bool = False) -> tuple[np.ndarray, ...]:
+    def sample(
+        self, n: int, seed: int, misspecified: bool = False
+    ) -> tuple[NDArray[Any], NDArray[Any], NDArray[Any], NDArray[Any], NDArray[Any]]:
         rng = np.random.default_rng(seed)
         context = rng.integers(0, 12, size=n)
         actions = (rng.random(n)[:, None] > np.cumsum(self.logging[context], axis=1)).sum(axis=1)
@@ -40,13 +44,13 @@ def validate_estimators(seeds: int = 200) -> dict[str, object]:
             samples: dict[str, list[dict[str, float]]] = {name: [] for name in ("IPS", "SNIPS", "DM", "DR")}
             for seed in range(seeds):
                 estimates = estimate_intervals(*simulator.sample(n, seed, misspecified), seed=10000 + seed)
-                for name, values in estimates.items():
-                    samples[name].append(values)
-            for name, estimates in samples.items():
-                values = np.array([row["mean"] for row in estimates])
+                for name, point in estimates.items():
+                    samples[name].append(point)
+            for name, estimate_rows in samples.items():
+                values = np.array([row["mean"] for row in estimate_rows], dtype=np.float64)
                 errors = values - simulator.value
                 covered = np.array(
-                    [row["low"] <= simulator.value <= row["high"] for row in estimates], dtype=float
+                    [row["low"] <= simulator.value <= row["high"] for row in estimate_rows], dtype=np.float64
                 )
                 variance = float(np.var(values, ddof=1))
                 resamples = np.random.default_rng(56).integers(0, seeds, size=(1000, seeds))

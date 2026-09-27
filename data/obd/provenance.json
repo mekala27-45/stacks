@@ -1,24 +1,51 @@
 {
-  "source": "https://github.com/st-tech/zr-obp",
   "source_commit": "8cbd5fa4558b7ad2ba4781546d6604e4cc3e07c4",
-  "license": "Apache-2.0",
+  "source": "https://github.com/st-tech/zr-obp",
+  "sample_repository_license": "Apache-2.0",
+  "dataset_paper_license": "CC BY 4.0",
+  "license_note": "Repository Apache notice retained; dataset paper also specifies CC BY 4.0. Both provenance statements and source attribution are retained.",
   "citation": "Saito, Aihara, Matsutani, and Narita (2020), Open Bandit Dataset and Pipeline",
   "files": [
     {
-      "name": "random.csv",
-      "url": "https://raw.githubusercontent.com/st-tech/zr-obp/8cbd5fa4558b7ad2ba4781546d6604e4cc3e07c4/obd/random/all/all.csv",
-      "sha256": "7168295b6e0a9eabcf3392320a5dd434e542b68e705d5cd9491499af589812f1"
-    },
-    {
-      "name": "bts.csv",
-      "url": "https://raw.githubusercontent.com/st-tech/zr-obp/8cbd5fa4558b7ad2ba4781546d6604e4cc3e07c4/obd/bts/all/all.csv",
-      "sha256": "0ad874e4dbf6902f0845dd478ad8dde5ef6903583d3ffaace78411bdad064106"
+      "name": "prior_bts.yaml",
+      "url": "https://raw.githubusercontent.com/st-tech/zr-obp/8cbd5fa4558b7ad2ba4781546d6604e4cc3e07c4/obp/policy/conf/prior_bts.yaml",
+      "sha256": "81a54fbdc184021ccc62ab97de81ec35461c032e3d7f99ccaa0a9745f732d251"
     },
     {
       "name": "LICENSE",
       "url": "https://raw.githubusercontent.com/st-tech/zr-obp/8cbd5fa4558b7ad2ba4781546d6604e4cc3e07c4/LICENSE",
       "sha256": "6bc32ef299d465f98043edc6e487a6e72a69600f3a2144f4e69be8f1b36be9f7"
+    },
+    {
+      "name": "random-all.csv",
+      "url": "https://raw.githubusercontent.com/st-tech/zr-obp/8cbd5fa4558b7ad2ba4781546d6604e4cc3e07c4/obd/random/all/all.csv",
+      "sha256": "7168295b6e0a9eabcf3392320a5dd434e542b68e705d5cd9491499af589812f1"
+    },
+    {
+      "name": "bts-all.csv",
+      "url": "https://raw.githubusercontent.com/st-tech/zr-obp/8cbd5fa4558b7ad2ba4781546d6604e4cc3e07c4/obd/bts/all/all.csv",
+      "sha256": "0ad874e4dbf6902f0845dd478ad8dde5ef6903583d3ffaace78411bdad064106"
+    },
+    {
+      "name": "random-men.csv",
+      "url": "https://raw.githubusercontent.com/st-tech/zr-obp/8cbd5fa4558b7ad2ba4781546d6604e4cc3e07c4/obd/random/men/men.csv",
+      "sha256": "ede6d08c6877f99cd3770f7d09e26c738e6aa6de4445ccccfb1356ba5d06b1eb"
+    },
+    {
+      "name": "bts-men.csv",
+      "url": "https://raw.githubusercontent.com/st-tech/zr-obp/8cbd5fa4558b7ad2ba4781546d6604e4cc3e07c4/obd/bts/men/men.csv",
+      "sha256": "db6d1f7ed2d591ba521533e45286d4c1fba7fe57a8ad2e80342210335f43c527"
+    },
+    {
+      "name": "random-women.csv",
+      "url": "https://raw.githubusercontent.com/st-tech/zr-obp/8cbd5fa4558b7ad2ba4781546d6604e4cc3e07c4/obd/random/women/women.csv",
+      "sha256": "e65f3bd3beb17664fa69cc129bf7bf852a775f8ffa630506e505fc905315bb34"
+    },
+    {
+      "name": "bts-women.csv",
+      "url": "https://raw.githubusercontent.com/st-tech/zr-obp/8cbd5fa4558b7ad2ba4781546d6604e4cc3e07c4/obd/bts/women/women.csv",
+      "sha256": "e5d1b49a39b608585a2f3014a3f54970430cd37a495c1b73fceb85cdf428a5b8"
     }
   ],
-  "transformation": "Sorted by timestamp, selected timestamp/item_id/position/click/propensity_score; all 10000 rows retained per policy in campaign all."
+  "transformation": "All six campaign/policy files; selected logged-action columns exported. No target probabilities inferred from action frequencies."
 }

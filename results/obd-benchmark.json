@@ -1,0 +1,3143 @@
+{
+  "status": "measured_six_file_bts_benchmark",
+  "source_commit": "8cbd5fa4558b7ad2ba4781546d6604e4cc3e07c4",
+  "campaign": "all / men / women",
+  "campaigns": [
+    {
+      "campaign": "all",
+      "actions": 80,
+      "logging_rows": 10000,
+      "bts_rows": 10000,
+      "training_rows": 5000,
+      "evaluation_rows": 5000,
+      "bts_reference_rows": 4964,
+      "cutoff": "2019-11-27 13:57:03.381609+00:00",
+      "on_policy_bts": {
+        "mean": 0.003424657534246575,
+        "low": 0.0021393476764695408,
+        "high": 0.00547793623533976
+      },
+      "logged_propensity_diagnostic": {
+        "max_distinct_values_within_item_position": 325,
+        "max_range_within_item_position": 0.95114,
+        "interpretation": "Logged BTS propensities vary within item and position. The frozen upstream prior is a reproducible benchmark approximation, not an exact per-impression policy reconstruction."
+      }
+    },
+    {
+      "campaign": "men",
+      "actions": 34,
+      "logging_rows": 10000,
+      "bts_rows": 10000,
+      "training_rows": 5000,
+      "evaluation_rows": 5000,
+      "bts_reference_rows": 4804,
+      "cutoff": "2019-11-27 12:30:04.544419+00:00",
+      "on_policy_bts": {
+        "mean": 0.005412156536219817,
+        "low": 0.003696155288259714,
+        "high": 0.00791850781970212
+      },
+      "logged_propensity_diagnostic": {
+        "max_distinct_values_within_item_position": 541,
+        "max_range_within_item_position": 0.713565,
+        "interpretation": "Logged BTS propensities vary within item and position. The frozen upstream prior is a reproducible benchmark approximation, not an exact per-impression policy reconstruction."
+      }
+    },
+    {
+      "campaign": "women",
+      "actions": 46,
+      "logging_rows": 10000,
+      "bts_rows": 10000,
+      "training_rows": 5000,
+      "evaluation_rows": 5000,
+      "bts_reference_rows": 4955,
+      "cutoff": "2019-11-27 13:12:47.359928+00:00",
+      "on_policy_bts": {
+        "mean": 0.005045408678102927,
+        "low": 0.003419900671184565,
+        "high": 0.007437768255681801
+      },
+      "logged_propensity_diagnostic": {
+        "max_distinct_values_within_item_position": 358,
+        "max_range_within_item_position": 0.96244,
+        "interpretation": "Logged BTS propensities vary within item and position. The frozen upstream prior is a reproducible benchmark approximation, not an exact per-impression policy reconstruction."
+      }
+    }
+  ],
+  "logging_rows": 30000,
+  "training_rows": 15000,
+  "evaluation_rows": 15000,
+  "actions": {
+    "all": 80,
+    "men": 34,
+    "women": 46
+  },
+  "target": "Official production-prior BernoulliTS Monte Carlo approximation and uniform sanity check",
+  "detail": "All six random/BTS samples. Official campaign beta priors define the BTS target through beta draws ranked into three positions. Random logs after a shared cutoff provide OPE; BTS logs after the same cutoff provide an empirical on-policy benchmark with Wilson intervals. Logged BTS propensities vary within item/slot, so the frozen-prior approximation is not proven identical to the deployed per-impression policy. Differences include target mismatch and sampling error, not pure estimator error. Row bootstrap is conditional on the fitted reward model and Monte Carlo target, ignores repeated-reader dependence, and is not joint-slate inference.",
+  "reference_method": "https://raw.githubusercontent.com/st-tech/zr-obp/8cbd5fa4558b7ad2ba4781546d6604e4cc3e07c4/examples/obd/evaluate_off_policy_estimators.py",
+  "policy_source": "https://raw.githubusercontent.com/st-tech/zr-obp/8cbd5fa4558b7ad2ba4781546d6604e4cc3e07c4/obp/policy/contextfree.py",
+  "prior_sha256": "81a54fbdc184021ccc62ab97de81ec35461c032e3d7f99ccaa0a9745f732d251",
+  "monte_carlo": [
+    {
+      "campaign": "all",
+      "simulations": 200000,
+      "seed": 12345,
+      "maximum_probability_se": 0.0009622273483304245,
+      "maximum_independent_seed_difference": 0.0014850000000000002,
+      "probabilities": [
+        [
+          0.01075,
+          0.00913,
+          0.008965
+        ],
+        [
+          0.001665,
+          0.00081,
+          0.00075
+        ],
+        [
+          0.0056,
+          0.006265,
+          0.00636
+        ],
+        [
+          0.00054,
+          0.0012,
+          0.00191
+        ],
+        [
+          0.000325,
+          0.00017,
+          0.000105
+        ],
+        [
+          0.008665,
+          0.00495,
+          0.00384
+        ],
+        [
+          0.00247,
+          0.001215,
+          0.00099
+        ],
+        [
+          0.007755,
+          0.025395,
+          0.05162
+        ],
+        [
+          0.004335,
+          0.00228,
+          0.002025
+        ],
+        [
+          0.00709,
+          0.00416,
+          0.003235
+        ],
+        [
+          0.001015,
+          0.00057,
+          0.000415
+        ],
+        [
+          0.00379,
+          0.005585,
+          0.006865
+        ],
+        [
+          0.003085,
+          0.00315,
+          0.003145
+        ],
+        [
+          0.00491,
+          0.003465,
+          0.003225
+        ],
+        [
+          0.004915,
+          0.00577,
+          0.00666
+        ],
+        [
+          0.00032,
+          0.00048,
+          0.000725
+        ],
+        [
+          0.000205,
+          0.000145,
+          0.000165
+        ],
+        [
+          6e-05,
+          8.5e-05,
+          0.0001
+        ],
+        [
+          0.0091,
+          0.02413,
+          0.041945
+        ],
+        [
+          0.004555,
+          0.003755,
+          0.003225
+        ],
+        [
+          0.00138,
+          0.00065,
+          0.00055
+        ],
+        [
+          0.002165,
+          0.00086,
+          0.0006
+        ],
+        [
+          0.00241,
+          0.00183,
+          0.0018
+        ],
+        [
+          0.02861,
+          0.01039,
+          0.006825
+        ],
+        [
+          0.00654,
+          0.003435,
+          0.002575
+        ],
+        [
+          0.000605,
+          0.000545,
+          0.00036
+        ],
+        [
+          0.019695,
+          0.00862,
+          0.006145
+        ],
+        [
+          0.02788,
+          0.01379,
+          0.010345
+        ],
+        [
+          0.024585,
+          0.028615,
+          0.029905
+        ],
+        [
+          0.00094,
+          0.000595,
+          0.000565
+        ],
+        [
+          0.000495,
+          0.000485,
+          0.000365
+        ],
+        [
+          0.001885,
+          0.00109,
+          0.000875
+        ],
+        [
+          0.006115,
+          0.003585,
+          0.00293
+        ],
+        [
+          0.001995,
+          0.001165,
+          0.00103
+        ],
+        [
+          0.016345,
+          0.025075,
+          0.03195
+        ],
+        [
+          0.009485,
+          0.00932,
+          0.00928
+        ],
+        [
+          0.000715,
+          0.00035,
+          0.000235
+        ],
+        [
+          0.01568,
+          0.00914,
+          0.006905
+        ],
+        [
+          0.00217,
+          0.0023,
+          0.002515
+        ],
+        [
+          0.000355,
+          0.00205,
+          0.007
+        ],
+        [
+          5e-05,
+          3.5e-05,
+          4.5e-05
+        ],
+        [
+          0.027265,
+          0.04951,
+          0.06292
+        ],
+        [
+          0.01048,
+          0.005645,
+          0.004525
+        ],
+        [
+          0.018205,
+          0.012385,
+          0.009975
+        ],
+        [
+          0.00093,
+          0.000615,
+          0.00066
+        ],
+        [
+          0.010825,
+          0.01494,
+          0.01876
+        ],
+        [
+          0.004965,
+          0.00487,
+          0.004595
+        ],
+        [
+          0.01918,
+          0.016405,
+          0.015505
+        ],
+        [
+          0.02928,
+          0.015385,
+          0.012315
+        ],
+        [
+          0.0077,
+          0.00631,
+          0.00599
+        ],
+        [
+          0.00166,
+          0.00095,
+          0.000865
+        ],
+        [
+          0.018755,
+          0.038645,
+          0.056495
+        ],
+        [
+          0.023305,
+          0.01828,
+          0.01652
+        ],
+        [
+          0.004265,
+          0.00184,
+          0.001465
+        ],
+        [
+          0.00052,
+          0.00024,
+          0.00019
+        ],
+        [
+          0.00498,
+          0.00214,
+          0.00161
+        ],
+        [
+          0.000705,
+          0.000325,
+          0.00027
+        ],
+        [
+          0.00235,
+          0.002075,
+          0.002075
+        ],
+        [
+          0.011065,
+          0.00838,
+          0.00786
+        ],
+        [
+          0.090905,
+          0.0796,
+          0.06943
+        ],
+        [
+          0.060805,
+          0.039275,
+          0.031355
+        ],
+        [
+          0.19924,
+          0.245395,
+          0.19848
+        ],
+        [
+          0.00262,
+          0.00289,
+          0.0027
+        ],
+        [
+          0.07358,
+          0.080925,
+          0.0781
+        ],
+        [
+          0.0063,
+          0.002845,
+          0.00228
+        ],
+        [
+          0.00423,
+          0.00407,
+          0.00434
+        ],
+        [
+          0.00803,
+          0.00656,
+          0.006095
+        ],
+        [
+          0.00016,
+          9e-05,
+          5.5e-05
+        ],
+        [
+          0.009165,
+          0.00696,
+          0.00633
+        ],
+        [
+          0.00578,
+          0.00455,
+          0.004385
+        ],
+        [
+          0.001045,
+          0.000575,
+          0.000515
+        ],
+        [
+          0.00852,
+          0.00573,
+          0.00478
+        ],
+        [
+          0.000725,
+          0.000395,
+          0.0003
+        ],
+        [
+          0.009495,
+          0.00655,
+          0.00515
+        ],
+        [
+          0.002025,
+          0.00101,
+          0.00076
+        ],
+        [
+          0.003305,
+          0.003455,
+          0.004315
+        ],
+        [
+          0.000565,
+          0.000275,
+          0.000215
+        ],
+        [
+          0.00091,
+          0.00083,
+          0.000695
+        ],
+        [
+          0.006925,
+          0.007415,
+          0.007715
+        ],
+        [
+          0.057985,
+          0.07503,
+          0.08034
+        ]
+      ]
+    },
+    {
+      "campaign": "men",
+      "simulations": 200000,
+      "seed": 12345,
+      "maximum_probability_se": 0.0010371895785607375,
+      "maximum_independent_seed_difference": 0.001810000000000006,
+      "probabilities": [
+        [
+          0.046655,
+          0.04604,
+          0.052375
+        ],
+        [
+          0.00416,
+          0.00313,
+          0.003175
+        ],
+        [
+          0.032275,
+          0.04057,
+          0.052565
+        ],
+        [
+          0.01348,
+          0.031985,
+          0.058615
+        ],
+        [
+          0.000775,
+          0.000555,
+          0.00043
+        ],
+        [
+          0.00266,
+          0.00181,
+          0.00178
+        ],
+        [
+          0.036145,
+          0.056925,
+          0.077815
+        ],
+        [
+          0.016765,
+          0.021105,
+          0.02899
+        ],
+        [
+          0.01657,
+          0.015595,
+          0.01726
+        ],
+        [
+          0.0331,
+          0.044755,
+          0.058955
+        ],
+        [
+          0.003905,
+          0.00777,
+          0.01344
+        ],
+        [
+          0.00087,
+          0.000845,
+          0.00129
+        ],
+        [
+          0.000415,
+          0.00062,
+          0.00089
+        ],
+        [
+          0.28825,
+          0.313325,
+          0.20963
+        ],
+        [
+          0.017685,
+          0.0176,
+          0.021515
+        ],
+        [
+          0.0034,
+          0.0023,
+          0.00256
+        ],
+        [
+          0.004545,
+          0.002435,
+          0.0024
+        ],
+        [
+          0.00889,
+          0.00904,
+          0.010805
+        ],
+        [
+          0.053375,
+          0.022085,
+          0.019555
+        ],
+        [
+          0.0163,
+          0.01042,
+          0.009655
+        ],
+        [
+          0.001875,
+          0.00196,
+          0.00242
+        ],
+        [
+          0.03975,
+          0.02156,
+          0.01879
+        ],
+        [
+          0.06344,
+          0.0363,
+          0.03388
+        ],
+        [
+          0.155215,
+          0.16196,
+          0.153205
+        ],
+        [
+          0.00275,
+          0.00246,
+          0.0029
+        ],
+        [
+          0.000315,
+          0.00031,
+          0.000265
+        ],
+        [
+          0.032585,
+          0.02876,
+          0.03279
+        ],
+        [
+          0.021275,
+          0.020905,
+          0.024385
+        ],
+        [
+          0.003,
+          0.002355,
+          0.00257
+        ],
+        [
+          0.025145,
+          0.020795,
+          0.022215
+        ],
+        [
+          0.001815,
+          0.001495,
+          0.00159
+        ],
+        [
+          0.02868,
+          0.023135,
+          0.024185
+        ],
+        [
+          0.00437,
+          0.0025,
+          0.0025
+        ],
+        [
+          0.019565,
+          0.026595,
+          0.034605
+        ]
+      ]
+    },
+    {
+      "campaign": "women",
+      "simulations": 200000,
+      "seed": 12345,
+      "maximum_probability_se": 0.000995365342412021,
+      "maximum_independent_seed_difference": 0.004040000000000016,
+      "probabilities": [
+        [
+          0.02886,
+          0.01211,
+          0.008825
+        ],
+        [
+          0.001935,
+          0.00108,
+          0.00075
+        ],
+        [
+          0.008745,
+          0.03479,
+          0.07638
+        ],
+        [
+          0.00444,
+          0.003095,
+          0.002465
+        ],
+        [
+          0.00934,
+          0.005495,
+          0.004415
+        ],
+        [
+          0.00193,
+          0.001495,
+          0.001255
+        ],
+        [
+          0.003135,
+          0.001915,
+          0.0015
+        ],
+        [
+          0.005225,
+          0.00312,
+          0.002745
+        ],
+        [
+          0.0008,
+          0.00044,
+          0.000385
+        ],
+        [
+          0.01154,
+          0.02072,
+          0.028555
+        ],
+        [
+          0.005875,
+          0.0072,
+          0.008595
+        ],
+        [
+          0.00041,
+          0.00019,
+          0.00017
+        ],
+        [
+          0.015325,
+          0.008285,
+          0.006305
+        ],
+        [
+          0.005105,
+          0.005375,
+          0.005865
+        ],
+        [
+          0.001115,
+          0.007805,
+          0.02531
+        ],
+        [
+          0.00018,
+          9.5e-05,
+          0.0001
+        ],
+        [
+          0.02653,
+          0.052465,
+          0.071665
+        ],
+        [
+          0.00182,
+          0.00134,
+          0.00134
+        ],
+        [
+          0.01516,
+          0.01076,
+          0.0093
+        ],
+        [
+          0.000255,
+          0.00021,
+          0.000185
+        ],
+        [
+          0.00969,
+          0.016775,
+          0.02338
+        ],
+        [
+          0.00289,
+          0.003215,
+          0.00358
+        ],
+        [
+          0.02028,
+          0.01761,
+          0.016465
+        ],
+        [
+          0.01199,
+          0.0072,
+          0.005945
+        ],
+        [
+          0.004785,
+          0.005155,
+          0.004985
+        ],
+        [
+          0.00287,
+          0.001775,
+          0.00154
+        ],
+        [
+          0.013605,
+          0.035635,
+          0.0594
+        ],
+        [
+          0.055485,
+          0.036885,
+          0.030755
+        ],
+        [
+          0.001245,
+          0.00062,
+          0.000595
+        ],
+        [
+          0.000405,
+          0.000165,
+          0.00015
+        ],
+        [
+          0.00199,
+          0.000925,
+          0.0008
+        ],
+        [
+          0.001405,
+          0.00079,
+          0.000695
+        ],
+        [
+          0.0073,
+          0.006505,
+          0.006205
+        ],
+        [
+          0.002995,
+          0.00299,
+          0.003155
+        ],
+        [
+          0.20236,
+          0.11813,
+          0.085875
+        ],
+        [
+          0.05421,
+          0.03032,
+          0.02427
+        ],
+        [
+          0.20674,
+          0.272295,
+          0.21691
+        ],
+        [
+          0.00316,
+          0.003515,
+          0.004215
+        ],
+        [
+          0.115555,
+          0.114,
+          0.10418
+        ],
+        [
+          0.00034,
+          0.00028,
+          0.00019
+        ],
+        [
+          0.03024,
+          0.02389,
+          0.02137
+        ],
+        [
+          0.00456,
+          0.004525,
+          0.004735
+        ],
+        [
+          0.00081,
+          0.000575,
+          0.000545
+        ],
+        [
+          0.00222,
+          0.00193,
+          0.001905
+        ],
+        [
+          0.02443,
+          0.02354,
+          0.02427
+        ],
+        [
+          0.070715,
+          0.09277,
+          0.097775
+        ]
+      ]
+    }
+  ],
+  "rows": [
+    {
+      "campaign": "all",
+      "policy": "Uniform sanity check",
+      "position": 1,
+      "population": "OBD all; random held-out slot 1; cutoff 2019-11-27 13:57:03.381609+00:00",
+      "sample_size": 1628,
+      "estimator": "IPS",
+      "estimate": {
+        "mean": 0.0042997542997543,
+        "low": 0.0018427518427518428,
+        "high": 0.007371007371007371
+      },
+      "effective_sample_size": 1628.0,
+      "observed_logging": {
+        "mean": 0.0042997542997543,
+        "low": 0.0020843495447302168,
+        "high": 0.008848979011334208
+      },
+      "bts_reference": {
+        "mean": 0.0005889281507656066,
+        "low": 0.00010396784539651164,
+        "high": 0.003328466351348239
+      },
+      "bts_reference_n": 1698,
+      "difference_from_bts": {
+        "mean": 0.0037108261489886933,
+        "low": 0.0006902180047056372,
+        "high": 0.007396329834492379
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "all",
+      "policy": "Uniform sanity check",
+      "position": 1,
+      "population": "OBD all; random held-out slot 1; cutoff 2019-11-27 13:57:03.381609+00:00",
+      "sample_size": 1628,
+      "estimator": "SNIPS",
+      "estimate": {
+        "mean": 0.0042997542997543,
+        "low": 0.0018427518427518428,
+        "high": 0.007371007371007371
+      },
+      "effective_sample_size": 1628.0,
+      "observed_logging": {
+        "mean": 0.0042997542997543,
+        "low": 0.0020843495447302168,
+        "high": 0.008848979011334208
+      },
+      "bts_reference": {
+        "mean": 0.0005889281507656066,
+        "low": 0.00010396784539651164,
+        "high": 0.003328466351348239
+      },
+      "bts_reference_n": 1698,
+      "difference_from_bts": {
+        "mean": 0.0037108261489886933,
+        "low": 0.0006902180047056372,
+        "high": 0.007396329834492379
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "all",
+      "policy": "Uniform sanity check",
+      "position": 1,
+      "population": "OBD all; random held-out slot 1; cutoff 2019-11-27 13:57:03.381609+00:00",
+      "sample_size": 1628,
+      "estimator": "DM",
+      "estimate": {
+        "mean": 0.003675911665348585,
+        "low": 0.003675911665348585,
+        "high": 0.003675911665348585
+      },
+      "effective_sample_size": 1628.0,
+      "observed_logging": {
+        "mean": 0.0042997542997543,
+        "low": 0.0020843495447302168,
+        "high": 0.008848979011334208
+      },
+      "bts_reference": {
+        "mean": 0.0005889281507656066,
+        "low": 0.00010396784539651164,
+        "high": 0.003328466351348239
+      },
+      "bts_reference_n": 1698,
+      "difference_from_bts": {
+        "mean": 0.0030869835145829784,
+        "low": 0.001909127213051765,
+        "high": 0.003675911665348585
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "all",
+      "policy": "Uniform sanity check",
+      "position": 1,
+      "population": "OBD all; random held-out slot 1; cutoff 2019-11-27 13:57:03.381609+00:00",
+      "sample_size": 1628,
+      "estimator": "DR",
+      "estimate": {
+        "mean": 0.0040613227513480255,
+        "low": 0.001326054745217193,
+        "high": 0.007308437261006461
+      },
+      "effective_sample_size": 1628.0,
+      "observed_logging": {
+        "mean": 0.0042997542997543,
+        "low": 0.0020843495447302168,
+        "high": 0.008848979011334208
+      },
+      "bts_reference": {
+        "mean": 0.0005889281507656066,
+        "low": 0.00010396784539651164,
+        "high": 0.003328466351348239
+      },
+      "bts_reference_n": 1698,
+      "difference_from_bts": {
+        "mean": 0.003472394600582419,
+        "low": 0.0005421070831723939,
+        "high": 0.007275021794511486
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "all",
+      "policy": "Official prior BTS approximation",
+      "position": 1,
+      "population": "OBD all; random held-out slot 1; cutoff 2019-11-27 13:57:03.381609+00:00",
+      "sample_size": 1628,
+      "estimator": "IPS",
+      "estimate": {
+        "mean": 0.0025164619164619166,
+        "low": 0.00043541154791154786,
+        "high": 0.00572254914004914
+      },
+      "effective_sample_size": 340.0209498169067,
+      "observed_logging": {
+        "mean": 0.0042997542997543,
+        "low": 0.0020843495447302168,
+        "high": 0.008848979011334208
+      },
+      "bts_reference": {
+        "mean": 0.0005889281507656066,
+        "low": 0.00010396784539651164,
+        "high": 0.003328466351348239
+      },
+      "bts_reference_n": 1698,
+      "difference_from_bts": {
+        "mean": 0.0019275337656963101,
+        "low": -0.0005906028048607554,
+        "high": 0.00549476696822103
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "all",
+      "policy": "Official prior BTS approximation",
+      "position": 1,
+      "population": "OBD all; random held-out slot 1; cutoff 2019-11-27 13:57:03.381609+00:00",
+      "sample_size": 1628,
+      "estimator": "SNIPS",
+      "estimate": {
+        "mean": 0.0028268890640629043,
+        "low": 0.0004850440407225657,
+        "high": 0.006442187115489133
+      },
+      "effective_sample_size": 340.0209498169067,
+      "observed_logging": {
+        "mean": 0.0042997542997543,
+        "low": 0.0020843495447302168,
+        "high": 0.008848979011334208
+      },
+      "bts_reference": {
+        "mean": 0.0005889281507656066,
+        "low": 0.00010396784539651164,
+        "high": 0.003328466351348239
+      },
+      "bts_reference_n": 1698,
+      "difference_from_bts": {
+        "mean": 0.002237960913297298,
+        "low": -0.0004473225895641678,
+        "high": 0.006264849720330919
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "all",
+      "policy": "Official prior BTS approximation",
+      "position": 1,
+      "population": "OBD all; random held-out slot 1; cutoff 2019-11-27 13:57:03.381609+00:00",
+      "sample_size": 1628,
+      "estimator": "DM",
+      "estimate": {
+        "mean": 0.0024389705227219477,
+        "low": 0.0024389705227219477,
+        "high": 0.0024389705227219477
+      },
+      "effective_sample_size": 340.0209498169067,
+      "observed_logging": {
+        "mean": 0.0042997542997543,
+        "low": 0.0020843495447302168,
+        "high": 0.008848979011334208
+      },
+      "bts_reference": {
+        "mean": 0.0005889281507656066,
+        "low": 0.00010396784539651164,
+        "high": 0.003328466351348239
+      },
+      "bts_reference_n": 1698,
+      "difference_from_bts": {
+        "mean": 0.0018500423719563413,
+        "low": 0.0006721860704251279,
+        "high": 0.0024389705227219477
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "all",
+      "policy": "Official prior BTS approximation",
+      "position": 1,
+      "population": "OBD all; random held-out slot 1; cutoff 2019-11-27 13:57:03.381609+00:00",
+      "sample_size": 1628,
+      "estimator": "DR",
+      "estimate": {
+        "mean": 0.0026438781175045175,
+        "low": 0.0005471063846328128,
+        "high": 0.0057718890432302515
+      },
+      "effective_sample_size": 340.0209498169067,
+      "observed_logging": {
+        "mean": 0.0042997542997543,
+        "low": 0.0020843495447302168,
+        "high": 0.008848979011334208
+      },
+      "bts_reference": {
+        "mean": 0.0005889281507656066,
+        "low": 0.00010396784539651164,
+        "high": 0.003328466351348239
+      },
+      "bts_reference_n": 1698,
+      "difference_from_bts": {
+        "mean": 0.002054949966738911,
+        "low": -0.0004303943445498852,
+        "high": 0.00554417542603332
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "all",
+      "policy": "Uniform sanity check",
+      "position": 2,
+      "population": "OBD all; random held-out slot 2; cutoff 2019-11-27 13:57:03.381609+00:00",
+      "sample_size": 1692,
+      "estimator": "IPS",
+      "estimate": {
+        "mean": 0.004728132387706856,
+        "low": 0.0017730496453900709,
+        "high": 0.008274231678486997
+      },
+      "effective_sample_size": 1692.0,
+      "observed_logging": {
+        "mean": 0.004728132387706856,
+        "low": 0.0023977450051142204,
+        "high": 0.009302322072200945
+      },
+      "bts_reference": {
+        "mean": 0.005385996409335727,
+        "low": 0.002836175517126499,
+        "high": 0.010204735731913963
+      },
+      "bts_reference_n": 1671,
+      "difference_from_bts": {
+        "mean": -0.0006578640216288716,
+        "low": -0.00543056139144607,
+        "high": 0.004114833348188327
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "all",
+      "policy": "Uniform sanity check",
+      "position": 2,
+      "population": "OBD all; random held-out slot 2; cutoff 2019-11-27 13:57:03.381609+00:00",
+      "sample_size": 1692,
+      "estimator": "SNIPS",
+      "estimate": {
+        "mean": 0.004728132387706856,
+        "low": 0.0017730496453900709,
+        "high": 0.008274231678486997
+      },
+      "effective_sample_size": 1692.0,
+      "observed_logging": {
+        "mean": 0.004728132387706856,
+        "low": 0.0023977450051142204,
+        "high": 0.009302322072200945
+      },
+      "bts_reference": {
+        "mean": 0.005385996409335727,
+        "low": 0.002836175517126499,
+        "high": 0.010204735731913963
+      },
+      "bts_reference_n": 1671,
+      "difference_from_bts": {
+        "mean": -0.0006578640216288716,
+        "low": -0.00543056139144607,
+        "high": 0.004114833348188327
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "all",
+      "policy": "Uniform sanity check",
+      "position": 2,
+      "population": "OBD all; random held-out slot 2; cutoff 2019-11-27 13:57:03.381609+00:00",
+      "sample_size": 1692,
+      "estimator": "DM",
+      "estimate": {
+        "mean": 0.0036516364940423823,
+        "low": 0.0036516364940423823,
+        "high": 0.0036516364940423823
+      },
+      "effective_sample_size": 1692.0,
+      "observed_logging": {
+        "mean": 0.004728132387706856,
+        "low": 0.0023977450051142204,
+        "high": 0.009302322072200945
+      },
+      "bts_reference": {
+        "mean": 0.005385996409335727,
+        "low": 0.002836175517126499,
+        "high": 0.010204735731913963
+      },
+      "bts_reference_n": 1671,
+      "difference_from_bts": {
+        "mean": -0.001734359915293345,
+        "low": -0.005339985289320873,
+        "high": 0.0012578603121153925
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "all",
+      "policy": "Uniform sanity check",
+      "position": 2,
+      "population": "OBD all; random held-out slot 2; cutoff 2019-11-27 13:57:03.381609+00:00",
+      "sample_size": 1692,
+      "estimator": "DR",
+      "estimate": {
+        "mean": 0.004745297011723421,
+        "low": 0.0018487184459533693,
+        "high": 0.00818857321121063
+      },
+      "effective_sample_size": 1692.0,
+      "observed_logging": {
+        "mean": 0.004728132387706856,
+        "low": 0.0023977450051142204,
+        "high": 0.009302322072200945
+      },
+      "bts_reference": {
+        "mean": 0.005385996409335727,
+        "low": 0.002836175517126499,
+        "high": 0.010204735731913963
+      },
+      "bts_reference_n": 1671,
+      "difference_from_bts": {
+        "mean": -0.0006406993976123066,
+        "low": -0.0054796205366227264,
+        "high": 0.004177994246497004
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "all",
+      "policy": "Official prior BTS approximation",
+      "position": 2,
+      "population": "OBD all; random held-out slot 2; cutoff 2019-11-27 13:57:03.381609+00:00",
+      "sample_size": 1692,
+      "estimator": "IPS",
+      "estimate": {
+        "mean": 0.01584420803782506,
+        "low": 0.001077068557919622,
+        "high": 0.04178560283687941
+      },
+      "effective_sample_size": 222.10623576856983,
+      "observed_logging": {
+        "mean": 0.004728132387706856,
+        "low": 0.0023977450051142204,
+        "high": 0.009302322072200945
+      },
+      "bts_reference": {
+        "mean": 0.005385996409335727,
+        "low": 0.002836175517126499,
+        "high": 0.010204735731913963
+      },
+      "bts_reference_n": 1671,
+      "difference_from_bts": {
+        "mean": 0.010458211628489334,
+        "low": -0.0053979255213041834,
+        "high": 0.03632218724932197
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "all",
+      "policy": "Official prior BTS approximation",
+      "position": 2,
+      "population": "OBD all; random held-out slot 2; cutoff 2019-11-27 13:57:03.381609+00:00",
+      "sample_size": 1692,
+      "estimator": "SNIPS",
+      "estimate": {
+        "mean": 0.016029536767171466,
+        "low": 0.0010970841371080846,
+        "high": 0.042701104581484836
+      },
+      "effective_sample_size": 222.10623576856983,
+      "observed_logging": {
+        "mean": 0.004728132387706856,
+        "low": 0.0023977450051142204,
+        "high": 0.009302322072200945
+      },
+      "bts_reference": {
+        "mean": 0.005385996409335727,
+        "low": 0.002836175517126499,
+        "high": 0.010204735731913963
+      },
+      "bts_reference_n": 1671,
+      "difference_from_bts": {
+        "mean": 0.010643540357835738,
+        "low": -0.0053239227680411776,
+        "high": 0.03737366906277274
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "all",
+      "policy": "Official prior BTS approximation",
+      "position": 2,
+      "population": "OBD all; random held-out slot 2; cutoff 2019-11-27 13:57:03.381609+00:00",
+      "sample_size": 1692,
+      "estimator": "DM",
+      "estimate": {
+        "mean": 0.0031054529254207065,
+        "low": 0.0031054529254207065,
+        "high": 0.0031054529254207065
+      },
+      "effective_sample_size": 222.10623576856983,
+      "observed_logging": {
+        "mean": 0.004728132387706856,
+        "low": 0.0023977450051142204,
+        "high": 0.009302322072200945
+      },
+      "bts_reference": {
+        "mean": 0.005385996409335727,
+        "low": 0.002836175517126499,
+        "high": 0.010204735731913963
+      },
+      "bts_reference_n": 1671,
+      "difference_from_bts": {
+        "mean": -0.002280543483915021,
+        "low": -0.005886168857942548,
+        "high": 0.0007116767434937167
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "all",
+      "policy": "Official prior BTS approximation",
+      "position": 2,
+      "population": "OBD all; random held-out slot 2; cutoff 2019-11-27 13:57:03.381609+00:00",
+      "sample_size": 1692,
+      "estimator": "DR",
+      "estimate": {
+        "mean": 0.01584272668977885,
+        "low": 0.0010529627586610434,
+        "high": 0.04194077534864909
+      },
+      "effective_sample_size": 222.10623576856983,
+      "observed_logging": {
+        "mean": 0.004728132387706856,
+        "low": 0.0023977450051142204,
+        "high": 0.009302322072200945
+      },
+      "bts_reference": {
+        "mean": 0.005385996409335727,
+        "low": 0.002836175517126499,
+        "high": 0.010204735731913963
+      },
+      "bts_reference_n": 1671,
+      "difference_from_bts": {
+        "mean": 0.010456730280443123,
+        "low": -0.005395141344616384,
+        "high": 0.03635345957357163
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "all",
+      "policy": "Uniform sanity check",
+      "position": 3,
+      "population": "OBD all; random held-out slot 3; cutoff 2019-11-27 13:57:03.381609+00:00",
+      "sample_size": 1680,
+      "estimator": "IPS",
+      "estimate": {
+        "mean": 0.002380952380952381,
+        "low": 0.0,
+        "high": 0.004761904761904762
+      },
+      "effective_sample_size": 1680.0,
+      "observed_logging": {
+        "mean": 0.002380952380952381,
+        "low": 0.0009262834385276326,
+        "high": 0.006106123774552561
+      },
+      "bts_reference": {
+        "mean": 0.00438871473354232,
+        "low": 0.002127505946481483,
+        "high": 0.009031485911194004
+      },
+      "bts_reference_n": 1595,
+      "difference_from_bts": {
+        "mean": -0.0020077623525899388,
+        "low": -0.00575109158083296,
+        "high": 0.0017633228840125308
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "all",
+      "policy": "Uniform sanity check",
+      "position": 3,
+      "population": "OBD all; random held-out slot 3; cutoff 2019-11-27 13:57:03.381609+00:00",
+      "sample_size": 1680,
+      "estimator": "SNIPS",
+      "estimate": {
+        "mean": 0.002380952380952381,
+        "low": 0.0,
+        "high": 0.004761904761904762
+      },
+      "effective_sample_size": 1680.0,
+      "observed_logging": {
+        "mean": 0.002380952380952381,
+        "low": 0.0009262834385276326,
+        "high": 0.006106123774552561
+      },
+      "bts_reference": {
+        "mean": 0.00438871473354232,
+        "low": 0.002127505946481483,
+        "high": 0.009031485911194004
+      },
+      "bts_reference_n": 1595,
+      "difference_from_bts": {
+        "mean": -0.0020077623525899388,
+        "low": -0.00575109158083296,
+        "high": 0.0017633228840125308
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "all",
+      "policy": "Uniform sanity check",
+      "position": 3,
+      "population": "OBD all; random held-out slot 3; cutoff 2019-11-27 13:57:03.381609+00:00",
+      "sample_size": 1680,
+      "estimator": "DM",
+      "estimate": {
+        "mean": 0.003884543530428109,
+        "low": 0.003884543530428109,
+        "high": 0.003884543530428109
+      },
+      "effective_sample_size": 1680.0,
+      "observed_logging": {
+        "mean": 0.002380952380952381,
+        "low": 0.0009262834385276326,
+        "high": 0.006106123774552561
+      },
+      "bts_reference": {
+        "mean": 0.00438871473354232,
+        "low": 0.002127505946481483,
+        "high": 0.009031485911194004
+      },
+      "bts_reference_n": 1595,
+      "difference_from_bts": {
+        "mean": -0.0005041712031142111,
+        "low": -0.003638967441358725,
+        "high": 0.0026306250351303033
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "all",
+      "policy": "Uniform sanity check",
+      "position": 3,
+      "population": "OBD all; random held-out slot 3; cutoff 2019-11-27 13:57:03.381609+00:00",
+      "sample_size": 1680,
+      "estimator": "DR",
+      "estimate": {
+        "mean": 0.0025024339013319723,
+        "low": 0.0003310827356736507,
+        "high": 0.005077991326551961
+      },
+      "effective_sample_size": 1680.0,
+      "observed_logging": {
+        "mean": 0.002380952380952381,
+        "low": 0.0009262834385276326,
+        "high": 0.006106123774552561
+      },
+      "bts_reference": {
+        "mean": 0.00438871473354232,
+        "low": 0.002127505946481483,
+        "high": 0.009031485911194004
+      },
+      "bts_reference_n": 1595,
+      "difference_from_bts": {
+        "mean": -0.0018862808322103477,
+        "low": -0.0058843724432831,
+        "high": 0.0020171298760739073
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "all",
+      "policy": "Official prior BTS approximation",
+      "position": 3,
+      "population": "OBD all; random held-out slot 3; cutoff 2019-11-27 13:57:03.381609+00:00",
+      "sample_size": 1680,
+      "estimator": "IPS",
+      "estimate": {
+        "mean": 0.00043261904761904757,
+        "low": 0.0,
+        "high": 0.0010038095238095238
+      },
+      "effective_sample_size": 281.6874436523815,
+      "observed_logging": {
+        "mean": 0.002380952380952381,
+        "low": 0.0009262834385276326,
+        "high": 0.006106123774552561
+      },
+      "bts_reference": {
+        "mean": 0.00438871473354232,
+        "low": 0.002127505946481483,
+        "high": 0.009031485911194004
+      },
+      "bts_reference_n": 1595,
+      "difference_from_bts": {
+        "mean": -0.003956095685923273,
+        "low": -0.007369314543215405,
+        "high": -0.0008654839714882823
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "all",
+      "policy": "Official prior BTS approximation",
+      "position": 3,
+      "population": "OBD all; random held-out slot 3; cutoff 2019-11-27 13:57:03.381609+00:00",
+      "sample_size": 1680,
+      "estimator": "SNIPS",
+      "estimate": {
+        "mean": 0.0004620470438652256,
+        "low": 0.0,
+        "high": 0.0010342392598765933
+      },
+      "effective_sample_size": 281.6874436523815,
+      "observed_logging": {
+        "mean": 0.002380952380952381,
+        "low": 0.0009262834385276326,
+        "high": 0.006106123774552561
+      },
+      "bts_reference": {
+        "mean": 0.00438871473354232,
+        "low": 0.002127505946481483,
+        "high": 0.009031485911194004
+      },
+      "bts_reference_n": 1595,
+      "difference_from_bts": {
+        "mean": -0.003926667689677094,
+        "low": -0.007357052708060088,
+        "high": -0.0008446400309333778
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "all",
+      "policy": "Official prior BTS approximation",
+      "position": 3,
+      "population": "OBD all; random held-out slot 3; cutoff 2019-11-27 13:57:03.381609+00:00",
+      "sample_size": 1680,
+      "estimator": "DM",
+      "estimate": {
+        "mean": 0.004163040235579612,
+        "low": 0.004163040235579612,
+        "high": 0.004163040235579612
+      },
+      "effective_sample_size": 281.6874436523815,
+      "observed_logging": {
+        "mean": 0.002380952380952381,
+        "low": 0.0009262834385276326,
+        "high": 0.006106123774552561
+      },
+      "bts_reference": {
+        "mean": 0.00438871473354232,
+        "low": 0.002127505946481483,
+        "high": 0.009031485911194004
+      },
+      "bts_reference_n": 1595,
+      "difference_from_bts": {
+        "mean": -0.0002256744979627079,
+        "low": -0.003360470736207222,
+        "high": 0.002909121740281806
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "all",
+      "policy": "Official prior BTS approximation",
+      "position": 3,
+      "population": "OBD all; random held-out slot 3; cutoff 2019-11-27 13:57:03.381609+00:00",
+      "sample_size": 1680,
+      "estimator": "DR",
+      "estimate": {
+        "mean": 0.0011699853161983539,
+        "low": 0.0003793796312609774,
+        "high": 0.0019646294737164175
+      },
+      "effective_sample_size": 281.6874436523815,
+      "observed_logging": {
+        "mean": 0.002380952380952381,
+        "low": 0.0009262834385276326,
+        "high": 0.006106123774552561
+      },
+      "bts_reference": {
+        "mean": 0.00438871473354232,
+        "low": 0.002127505946481483,
+        "high": 0.009031485911194004
+      },
+      "bts_reference_n": 1595,
+      "difference_from_bts": {
+        "mean": -0.003218729417343966,
+        "low": -0.006727351679652236,
+        "high": -0.0002387685421466549
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "men",
+      "policy": "Uniform sanity check",
+      "position": 1,
+      "population": "OBD men; random held-out slot 1; cutoff 2019-11-27 12:30:04.544419+00:00",
+      "sample_size": 1625,
+      "estimator": "IPS",
+      "estimate": {
+        "mean": 0.0036923076923076987,
+        "low": 0.001230769230769233,
+        "high": 0.006769230769230781
+      },
+      "effective_sample_size": 1624.9999999999995,
+      "observed_logging": {
+        "mean": 0.0036923076923076922,
+        "low": 0.0016932829407572663,
+        "high": 0.008032316033229792
+      },
+      "bts_reference": {
+        "mean": 0.004394224733207784,
+        "low": 0.002130178994964924,
+        "high": 0.009042789193041962
+      },
+      "bts_reference_n": 1593,
+      "difference_from_bts": {
+        "mean": -0.0007019170409000852,
+        "low": -0.005059056448886955,
+        "high": 0.0036304988169395067
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "men",
+      "policy": "Uniform sanity check",
+      "position": 1,
+      "population": "OBD men; random held-out slot 1; cutoff 2019-11-27 12:30:04.544419+00:00",
+      "sample_size": 1625,
+      "estimator": "SNIPS",
+      "estimate": {
+        "mean": 0.0036923076923076927,
+        "low": 0.0012307692307692308,
+        "high": 0.00676923076923077
+      },
+      "effective_sample_size": 1624.9999999999995,
+      "observed_logging": {
+        "mean": 0.0036923076923076922,
+        "low": 0.0016932829407572663,
+        "high": 0.008032316033229792
+      },
+      "bts_reference": {
+        "mean": 0.004394224733207784,
+        "low": 0.002130178994964924,
+        "high": 0.009042789193041962
+      },
+      "bts_reference_n": 1593,
+      "difference_from_bts": {
+        "mean": -0.0007019170409000913,
+        "low": -0.005059056448886957,
+        "high": 0.0036304988169394955
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "men",
+      "policy": "Uniform sanity check",
+      "position": 1,
+      "population": "OBD men; random held-out slot 1; cutoff 2019-11-27 12:30:04.544419+00:00",
+      "sample_size": 1625,
+      "estimator": "DM",
+      "estimate": {
+        "mean": 0.0027516580749044196,
+        "low": 0.0027516580749044196,
+        "high": 0.0027516580749044196
+      },
+      "effective_sample_size": 1624.9999999999995,
+      "observed_logging": {
+        "mean": 0.0036923076923076922,
+        "low": 0.0016932829407572663,
+        "high": 0.008032316033229792
+      },
+      "bts_reference": {
+        "mean": 0.004394224733207784,
+        "low": 0.002130178994964924,
+        "high": 0.009042789193041962
+      },
+      "bts_reference_n": 1593,
+      "difference_from_bts": {
+        "mean": -0.0016425666583033643,
+        "low": -0.004781298610594639,
+        "high": 0.0014961652939879098
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "men",
+      "policy": "Uniform sanity check",
+      "position": 1,
+      "population": "OBD men; random held-out slot 1; cutoff 2019-11-27 12:30:04.544419+00:00",
+      "sample_size": 1625,
+      "estimator": "DR",
+      "estimate": {
+        "mean": 0.003687802343790973,
+        "low": 0.001115073066822667,
+        "high": 0.007020617264578914
+      },
+      "effective_sample_size": 1624.9999999999995,
+      "observed_logging": {
+        "mean": 0.0036923076923076922,
+        "low": 0.0016932829407572663,
+        "high": 0.008032316033229792
+      },
+      "bts_reference": {
+        "mean": 0.004394224733207784,
+        "low": 0.002130178994964924,
+        "high": 0.009042789193041962
+      },
+      "bts_reference_n": 1593,
+      "difference_from_bts": {
+        "mean": -0.0007064223894168108,
+        "low": -0.00503920267296581,
+        "high": 0.0035786550285267
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "men",
+      "policy": "Official prior BTS approximation",
+      "position": 1,
+      "population": "OBD men; random held-out slot 1; cutoff 2019-11-27 12:30:04.544419+00:00",
+      "sample_size": 1625,
+      "estimator": "IPS",
+      "estimate": {
+        "mean": 0.0018204123076923109,
+        "low": 0.0003689706153846161,
+        "high": 0.003916517538461544
+      },
+      "effective_sample_size": 362.52481997752096,
+      "observed_logging": {
+        "mean": 0.0036923076923076922,
+        "low": 0.0016932829407572663,
+        "high": 0.008032316033229792
+      },
+      "bts_reference": {
+        "mean": 0.004394224733207784,
+        "low": 0.002130178994964924,
+        "high": 0.009042789193041962
+      },
+      "bts_reference_n": 1593,
+      "difference_from_bts": {
+        "mean": -0.002573812425515473,
+        "low": -0.006295569883722051,
+        "high": 0.0007864452190834935
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "men",
+      "policy": "Official prior BTS approximation",
+      "position": 1,
+      "population": "OBD men; random held-out slot 1; cutoff 2019-11-27 12:30:04.544419+00:00",
+      "sample_size": 1625,
+      "estimator": "SNIPS",
+      "estimate": {
+        "mean": 0.001767939567576673,
+        "low": 0.00035588977865425,
+        "high": 0.0038302532422101656
+      },
+      "effective_sample_size": 362.52481997752096,
+      "observed_logging": {
+        "mean": 0.0036923076923076922,
+        "low": 0.0016932829407572663,
+        "high": 0.008032316033229792
+      },
+      "bts_reference": {
+        "mean": 0.004394224733207784,
+        "low": 0.002130178994964924,
+        "high": 0.009042789193041962
+      },
+      "bts_reference_n": 1593,
+      "difference_from_bts": {
+        "mean": -0.002626285165631111,
+        "low": -0.00633813371113437,
+        "high": 0.0006899030723472082
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "men",
+      "policy": "Official prior BTS approximation",
+      "position": 1,
+      "population": "OBD men; random held-out slot 1; cutoff 2019-11-27 12:30:04.544419+00:00",
+      "sample_size": 1625,
+      "estimator": "DM",
+      "estimate": {
+        "mean": 0.0036891610461147195,
+        "low": 0.0036891610461147195,
+        "high": 0.0036891610461147195
+      },
+      "effective_sample_size": 362.52481997752096,
+      "observed_logging": {
+        "mean": 0.0036923076923076922,
+        "low": 0.0016932829407572663,
+        "high": 0.008032316033229792
+      },
+      "bts_reference": {
+        "mean": 0.004394224733207784,
+        "low": 0.002130178994964924,
+        "high": 0.009042789193041962
+      },
+      "bts_reference_n": 1593,
+      "difference_from_bts": {
+        "mean": -0.0007050636870930644,
+        "low": -0.0038437956393843386,
+        "high": 0.0024336682651982097
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "men",
+      "policy": "Official prior BTS approximation",
+      "position": 1,
+      "population": "OBD men; random held-out slot 1; cutoff 2019-11-27 12:30:04.544419+00:00",
+      "sample_size": 1625,
+      "estimator": "DR",
+      "estimate": {
+        "mean": 0.002290902918619119,
+        "low": 0.0007067133124736587,
+        "high": 0.004515462866715847
+      },
+      "effective_sample_size": 362.52481997752096,
+      "observed_logging": {
+        "mean": 0.0036923076923076922,
+        "low": 0.0016932829407572663,
+        "high": 0.008032316033229792
+      },
+      "bts_reference": {
+        "mean": 0.004394224733207784,
+        "low": 0.002130178994964924,
+        "high": 0.009042789193041962
+      },
+      "bts_reference_n": 1593,
+      "difference_from_bts": {
+        "mean": -0.0021033218145886648,
+        "low": -0.00597570171061723,
+        "high": 0.001265458253719754
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "men",
+      "policy": "Uniform sanity check",
+      "position": 2,
+      "population": "OBD men; random held-out slot 2; cutoff 2019-11-27 12:30:04.544419+00:00",
+      "sample_size": 1735,
+      "estimator": "IPS",
+      "estimate": {
+        "mean": 0.006916426512968312,
+        "low": 0.003458213256484156,
+        "high": 0.010951008645533162
+      },
+      "effective_sample_size": 1735.0000000000002,
+      "observed_logging": {
+        "mean": 0.0069164265129683,
+        "low": 0.003960906824898861,
+        "high": 0.012050592486589018
+      },
+      "bts_reference": {
+        "mean": 0.006993006993006993,
+        "low": 0.003909251231909168,
+        "high": 0.01247886355042331
+      },
+      "bts_reference_n": 1573,
+      "difference_from_bts": {
+        "mean": -7.658048003868125e-05,
+        "low": -0.0055028204700722306,
+        "high": 0.005983903442640687
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "men",
+      "policy": "Uniform sanity check",
+      "position": 2,
+      "population": "OBD men; random held-out slot 2; cutoff 2019-11-27 12:30:04.544419+00:00",
+      "sample_size": 1735,
+      "estimator": "SNIPS",
+      "estimate": {
+        "mean": 0.0069164265129683,
+        "low": 0.00345821325648415,
+        "high": 0.01095100864553314
+      },
+      "effective_sample_size": 1735.0000000000002,
+      "observed_logging": {
+        "mean": 0.0069164265129683,
+        "low": 0.003960906824898861,
+        "high": 0.012050592486589018
+      },
+      "bts_reference": {
+        "mean": 0.006993006993006993,
+        "low": 0.003909251231909168,
+        "high": 0.01247886355042331
+      },
+      "bts_reference_n": 1573,
+      "difference_from_bts": {
+        "mean": -7.65804800386934e-05,
+        "low": -0.005502820470072238,
+        "high": 0.005983903442640669
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "men",
+      "policy": "Uniform sanity check",
+      "position": 2,
+      "population": "OBD men; random held-out slot 2; cutoff 2019-11-27 12:30:04.544419+00:00",
+      "sample_size": 1735,
+      "estimator": "DM",
+      "estimate": {
+        "mean": 0.005391012715207556,
+        "low": 0.005391012715207556,
+        "high": 0.005391012715207556
+      },
+      "effective_sample_size": 1735.0000000000002,
+      "observed_logging": {
+        "mean": 0.0069164265129683,
+        "low": 0.003960906824898861,
+        "high": 0.012050592486589018
+      },
+      "bts_reference": {
+        "mean": 0.006993006993006993,
+        "low": 0.003909251231909168,
+        "high": 0.01247886355042331
+      },
+      "bts_reference_n": 1573,
+      "difference_from_bts": {
+        "mean": -0.001601994277799437,
+        "low": -0.005416361728530525,
+        "high": 0.00221237317293165
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "men",
+      "policy": "Uniform sanity check",
+      "position": 2,
+      "population": "OBD men; random held-out slot 2; cutoff 2019-11-27 12:30:04.544419+00:00",
+      "sample_size": 1735,
+      "estimator": "DR",
+      "estimate": {
+        "mean": 0.006820313273725293,
+        "low": 0.003243602324203594,
+        "high": 0.011086073935746985
+      },
+      "effective_sample_size": 1735.0000000000002,
+      "observed_logging": {
+        "mean": 0.0069164265129683,
+        "low": 0.003960906824898861,
+        "high": 0.012050592486589018
+      },
+      "bts_reference": {
+        "mean": 0.006993006993006993,
+        "low": 0.003909251231909168,
+        "high": 0.01247886355042331
+      },
+      "bts_reference_n": 1573,
+      "difference_from_bts": {
+        "mean": -0.00017269371928169998,
+        "low": -0.005532329345660623,
+        "high": 0.00599563124692521
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "men",
+      "policy": "Official prior BTS approximation",
+      "position": 2,
+      "population": "OBD men; random held-out slot 2; cutoff 2019-11-27 12:30:04.544419+00:00",
+      "sample_size": 1735,
+      "estimator": "IPS",
+      "estimate": {
+        "mean": 0.005799106628242085,
+        "low": 0.002300496829971186,
+        "high": 0.010268509510086475
+      },
+      "effective_sample_size": 366.43796230329593,
+      "observed_logging": {
+        "mean": 0.0069164265129683,
+        "low": 0.003960906824898861,
+        "high": 0.012050592486589018
+      },
+      "bts_reference": {
+        "mean": 0.006993006993006993,
+        "low": 0.003909251231909168,
+        "high": 0.01247886355042331
+      },
+      "bts_reference_n": 1573,
+      "difference_from_bts": {
+        "mean": -0.0011939003647649079,
+        "low": -0.006406268173390657,
+        "high": 0.00482073495340134
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "men",
+      "policy": "Official prior BTS approximation",
+      "position": 2,
+      "population": "OBD men; random held-out slot 2; cutoff 2019-11-27 12:30:04.544419+00:00",
+      "sample_size": 1735,
+      "estimator": "SNIPS",
+      "estimate": {
+        "mean": 0.006027217134507099,
+        "low": 0.002380093510127335,
+        "high": 0.010871896749104859
+      },
+      "effective_sample_size": 366.43796230329593,
+      "observed_logging": {
+        "mean": 0.0069164265129683,
+        "low": 0.003960906824898861,
+        "high": 0.012050592486589018
+      },
+      "bts_reference": {
+        "mean": 0.006993006993006993,
+        "low": 0.003909251231909168,
+        "high": 0.01247886355042331
+      },
+      "bts_reference_n": 1573,
+      "difference_from_bts": {
+        "mean": -0.0009657898584998943,
+        "low": -0.006263625803844291,
+        "high": 0.0051672168634143475
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "men",
+      "policy": "Official prior BTS approximation",
+      "position": 2,
+      "population": "OBD men; random held-out slot 2; cutoff 2019-11-27 12:30:04.544419+00:00",
+      "sample_size": 1735,
+      "estimator": "DM",
+      "estimate": {
+        "mean": 0.0032271591417654417,
+        "low": 0.0032271591417654417,
+        "high": 0.0032271591417654417
+      },
+      "effective_sample_size": 366.43796230329593,
+      "observed_logging": {
+        "mean": 0.0069164265129683,
+        "low": 0.003960906824898861,
+        "high": 0.012050592486589018
+      },
+      "bts_reference": {
+        "mean": 0.006993006993006993,
+        "low": 0.003909251231909168,
+        "high": 0.01247886355042331
+      },
+      "bts_reference_n": 1573,
+      "difference_from_bts": {
+        "mean": -0.0037658478512415513,
+        "low": -0.007580215301972639,
+        "high": 4.851959948953561e-05
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "men",
+      "policy": "Official prior BTS approximation",
+      "position": 2,
+      "population": "OBD men; random held-out slot 2; cutoff 2019-11-27 12:30:04.544419+00:00",
+      "sample_size": 1735,
+      "estimator": "DR",
+      "estimate": {
+        "mean": 0.006020645265824487,
+        "low": 0.0025447772498581236,
+        "high": 0.010468694385952094
+      },
+      "effective_sample_size": 366.43796230329593,
+      "observed_logging": {
+        "mean": 0.0069164265129683,
+        "low": 0.003960906824898861,
+        "high": 0.012050592486589018
+      },
+      "bts_reference": {
+        "mean": 0.006993006993006993,
+        "low": 0.003909251231909168,
+        "high": 0.01247886355042331
+      },
+      "bts_reference_n": 1573,
+      "difference_from_bts": {
+        "mean": -0.0009723617271825058,
+        "low": -0.006211650641809838,
+        "high": 0.005005329463960061
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "men",
+      "policy": "Uniform sanity check",
+      "position": 3,
+      "population": "OBD men; random held-out slot 3; cutoff 2019-11-27 12:30:04.544419+00:00",
+      "sample_size": 1640,
+      "estimator": "IPS",
+      "estimate": {
+        "mean": 0.0048780487804878135,
+        "low": 0.00182926829268293,
+        "high": 0.008536585365853673
+      },
+      "effective_sample_size": 1639.9999999999995,
+      "observed_logging": {
+        "mean": 0.004878048780487805,
+        "low": 0.002473832771382595,
+        "high": 0.00959634511239493
+      },
+      "bts_reference": {
+        "mean": 0.004884004884004884,
+        "low": 0.0024768557788737984,
+        "high": 0.009608025324656072
+      },
+      "bts_reference_n": 1638,
+      "difference_from_bts": {
+        "mean": -5.956103517070453e-06,
+        "low": -0.004278715864081711,
+        "high": 0.004266059144107935
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "men",
+      "policy": "Uniform sanity check",
+      "position": 3,
+      "population": "OBD men; random held-out slot 3; cutoff 2019-11-27 12:30:04.544419+00:00",
+      "sample_size": 1640,
+      "estimator": "SNIPS",
+      "estimate": {
+        "mean": 0.004878048780487806,
+        "low": 0.001829268292682927,
+        "high": 0.00853658536585366
+      },
+      "effective_sample_size": 1639.9999999999995,
+      "observed_logging": {
+        "mean": 0.004878048780487805,
+        "low": 0.002473832771382595,
+        "high": 0.00959634511239493
+      },
+      "bts_reference": {
+        "mean": 0.004884004884004884,
+        "low": 0.0024768557788737984,
+        "high": 0.009608025324656072
+      },
+      "bts_reference_n": 1638,
+      "difference_from_bts": {
+        "mean": -5.9561035170782595e-06,
+        "low": -0.004278715864081718,
+        "high": 0.004266059144107926
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "men",
+      "policy": "Uniform sanity check",
+      "position": 3,
+      "population": "OBD men; random held-out slot 3; cutoff 2019-11-27 12:30:04.544419+00:00",
+      "sample_size": 1640,
+      "estimator": "DM",
+      "estimate": {
+        "mean": 0.0035710174864901473,
+        "low": 0.0035710174864901473,
+        "high": 0.0035710174864901473
+      },
+      "effective_sample_size": 1639.9999999999995,
+      "observed_logging": {
+        "mean": 0.004878048780487805,
+        "low": 0.002473832771382595,
+        "high": 0.00959634511239493
+      },
+      "bts_reference": {
+        "mean": 0.004884004884004884,
+        "low": 0.0024768557788737984,
+        "high": 0.009608025324656072
+      },
+      "bts_reference_n": 1638,
+      "difference_from_bts": {
+        "mean": -0.0013129873975147367,
+        "low": -0.0049759910605184,
+        "high": 0.0017395156549883158
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "men",
+      "policy": "Uniform sanity check",
+      "position": 3,
+      "population": "OBD men; random held-out slot 3; cutoff 2019-11-27 12:30:04.544419+00:00",
+      "sample_size": 1640,
+      "estimator": "DR",
+      "estimate": {
+        "mean": 0.004895606723774996,
+        "low": 0.0017653842562500971,
+        "high": 0.008599691215763126
+      },
+      "effective_sample_size": 1639.9999999999995,
+      "observed_logging": {
+        "mean": 0.004878048780487805,
+        "low": 0.002473832771382595,
+        "high": 0.00959634511239493
+      },
+      "bts_reference": {
+        "mean": 0.004884004884004884,
+        "low": 0.0024768557788737984,
+        "high": 0.009608025324656072
+      },
+      "bts_reference_n": 1638,
+      "difference_from_bts": {
+        "mean": 1.1601839770111928e-05,
+        "low": -0.004355892480668789,
+        "high": 0.004439890952560703
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "men",
+      "policy": "Official prior BTS approximation",
+      "position": 3,
+      "population": "OBD men; random held-out slot 3; cutoff 2019-11-27 12:30:04.544419+00:00",
+      "sample_size": 1640,
+      "estimator": "IPS",
+      "estimate": {
+        "mean": 0.005814829268292693,
+        "low": 0.0004491731707317081,
+        "high": 0.015745407774390274
+      },
+      "effective_sample_size": 525.6804692559699,
+      "observed_logging": {
+        "mean": 0.004878048780487805,
+        "low": 0.002473832771382595,
+        "high": 0.00959634511239493
+      },
+      "bts_reference": {
+        "mean": 0.004884004884004884,
+        "low": 0.0024768557788737984,
+        "high": 0.009608025324656072
+      },
+      "bts_reference_n": 1638,
+      "difference_from_bts": {
+        "mean": 0.0009308243842878093,
+        "low": -0.0059671938968551734,
+        "high": 0.010687597846868601
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "men",
+      "policy": "Official prior BTS approximation",
+      "position": 3,
+      "population": "OBD men; random held-out slot 3; cutoff 2019-11-27 12:30:04.544419+00:00",
+      "sample_size": 1640,
+      "estimator": "SNIPS",
+      "estimate": {
+        "mean": 0.005728476777233472,
+        "low": 0.0004656344439254761,
+        "high": 0.015635058607171633
+      },
+      "effective_sample_size": 525.6804692559699,
+      "observed_logging": {
+        "mean": 0.004878048780487805,
+        "low": 0.002473832771382595,
+        "high": 0.00959634511239493
+      },
+      "bts_reference": {
+        "mean": 0.004884004884004884,
+        "low": 0.0024768557788737984,
+        "high": 0.009608025324656072
+      },
+      "bts_reference_n": 1638,
+      "difference_from_bts": {
+        "mean": 0.0008444718932285877,
+        "low": -0.005921127658332214,
+        "high": 0.010729819703684855
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "men",
+      "policy": "Official prior BTS approximation",
+      "position": 3,
+      "population": "OBD men; random held-out slot 3; cutoff 2019-11-27 12:30:04.544419+00:00",
+      "sample_size": 1640,
+      "estimator": "DM",
+      "estimate": {
+        "mean": 0.005948368432419943,
+        "low": 0.005948368432419943,
+        "high": 0.005948368432419943
+      },
+      "effective_sample_size": 525.6804692559699,
+      "observed_logging": {
+        "mean": 0.004878048780487805,
+        "low": 0.002473832771382595,
+        "high": 0.00959634511239493
+      },
+      "bts_reference": {
+        "mean": 0.004884004884004884,
+        "low": 0.0024768557788737984,
+        "high": 0.009608025324656072
+      },
+      "bts_reference_n": 1638,
+      "difference_from_bts": {
+        "mean": 0.0010643635484150586,
+        "low": -0.0025986401145886052,
+        "high": 0.004116866600918111
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "men",
+      "policy": "Official prior BTS approximation",
+      "position": 3,
+      "population": "OBD men; random held-out slot 3; cutoff 2019-11-27 12:30:04.544419+00:00",
+      "sample_size": 1640,
+      "estimator": "DR",
+      "estimate": {
+        "mean": 0.005739065647145528,
+        "low": 0.00032569082257530237,
+        "high": 0.015706802998193492
+      },
+      "effective_sample_size": 525.6804692559699,
+      "observed_logging": {
+        "mean": 0.004878048780487805,
+        "low": 0.002473832771382595,
+        "high": 0.00959634511239493
+      },
+      "bts_reference": {
+        "mean": 0.004884004884004884,
+        "low": 0.0024768557788737984,
+        "high": 0.009608025324656072
+      },
+      "bts_reference_n": 1638,
+      "difference_from_bts": {
+        "mean": 0.0008550607631406439,
+        "low": -0.006074101091554189,
+        "high": 0.011073843378048481
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "women",
+      "policy": "Uniform sanity check",
+      "position": 1,
+      "population": "OBD women; random held-out slot 1; cutoff 2019-11-27 13:12:47.359928+00:00",
+      "sample_size": 1648,
+      "estimator": "IPS",
+      "estimate": {
+        "mean": 0.0066747572815534,
+        "low": 0.003033980582524273,
+        "high": 0.010922330097087382
+      },
+      "effective_sample_size": 1648.0000000000002,
+      "observed_logging": {
+        "mean": 0.006674757281553398,
+        "low": 0.003731153653971324,
+        "high": 0.011912877244213799
+      },
+      "bts_reference": {
+        "mean": 0.006277463904582548,
+        "low": 0.003413359946062359,
+        "high": 0.01151702571558098
+      },
+      "bts_reference_n": 1593,
+      "difference_from_bts": {
+        "mean": 0.00039729337697085206,
+        "low": -0.00512672249343304,
+        "high": 0.005838555665258812
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "women",
+      "policy": "Uniform sanity check",
+      "position": 1,
+      "population": "OBD women; random held-out slot 1; cutoff 2019-11-27 13:12:47.359928+00:00",
+      "sample_size": 1648,
+      "estimator": "SNIPS",
+      "estimate": {
+        "mean": 0.006674757281553399,
+        "low": 0.0030339805825242727,
+        "high": 0.01092233009708738
+      },
+      "effective_sample_size": 1648.0000000000002,
+      "observed_logging": {
+        "mean": 0.006674757281553398,
+        "low": 0.003731153653971324,
+        "high": 0.011912877244213799
+      },
+      "bts_reference": {
+        "mean": 0.006277463904582548,
+        "low": 0.003413359946062359,
+        "high": 0.01151702571558098
+      },
+      "bts_reference_n": 1593,
+      "difference_from_bts": {
+        "mean": 0.0003972933769708512,
+        "low": -0.005126722493433041,
+        "high": 0.00583855566525881
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "women",
+      "policy": "Uniform sanity check",
+      "position": 1,
+      "population": "OBD women; random held-out slot 1; cutoff 2019-11-27 13:12:47.359928+00:00",
+      "sample_size": 1648,
+      "estimator": "DM",
+      "estimate": {
+        "mean": 0.0026412066846119636,
+        "low": 0.0026412066846119636,
+        "high": 0.0026412066846119636
+      },
+      "effective_sample_size": 1648.0000000000002,
+      "observed_logging": {
+        "mean": 0.006674757281553398,
+        "low": 0.003731153653971324,
+        "high": 0.011912877244213799
+      },
+      "bts_reference": {
+        "mean": 0.006277463904582548,
+        "low": 0.003413359946062359,
+        "high": 0.01151702571558098
+      },
+      "bts_reference_n": 1593,
+      "difference_from_bts": {
+        "mean": -0.0036362572199705847,
+        "low": -0.007402735562720115,
+        "high": 0.00013022112277894394
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "women",
+      "policy": "Uniform sanity check",
+      "position": 1,
+      "population": "OBD women; random held-out slot 1; cutoff 2019-11-27 13:12:47.359928+00:00",
+      "sample_size": 1648,
+      "estimator": "DR",
+      "estimate": {
+        "mean": 0.006507473544176497,
+        "low": 0.0028079728942705566,
+        "high": 0.010863294452615885
+      },
+      "effective_sample_size": 1648.0000000000002,
+      "observed_logging": {
+        "mean": 0.006674757281553398,
+        "low": 0.003731153653971324,
+        "high": 0.011912877244213799
+      },
+      "bts_reference": {
+        "mean": 0.006277463904582548,
+        "low": 0.003413359946062359,
+        "high": 0.01151702571558098
+      },
+      "bts_reference_n": 1593,
+      "difference_from_bts": {
+        "mean": 0.00023000963959394875,
+        "low": -0.00511781804374893,
+        "high": 0.005657206823980901
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "women",
+      "policy": "Official prior BTS approximation",
+      "position": 1,
+      "population": "OBD women; random held-out slot 1; cutoff 2019-11-27 13:12:47.359928+00:00",
+      "sample_size": 1648,
+      "estimator": "IPS",
+      "estimate": {
+        "mean": 0.010796462378640782,
+        "low": 0.002059529277912622,
+        "high": 0.025577339805825244
+      },
+      "effective_sample_size": 316.36149491723876,
+      "observed_logging": {
+        "mean": 0.006674757281553398,
+        "low": 0.003731153653971324,
+        "high": 0.011912877244213799
+      },
+      "bts_reference": {
+        "mean": 0.006277463904582548,
+        "low": 0.003413359946062359,
+        "high": 0.01151702571558098
+      },
+      "bts_reference_n": 1593,
+      "difference_from_bts": {
+        "mean": 0.004518998474058233,
+        "low": -0.005567134507329547,
+        "high": 0.01927901291412978
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "women",
+      "policy": "Official prior BTS approximation",
+      "position": 1,
+      "population": "OBD women; random held-out slot 1; cutoff 2019-11-27 13:12:47.359928+00:00",
+      "sample_size": 1648,
+      "estimator": "SNIPS",
+      "estimate": {
+        "mean": 0.010616872124188268,
+        "low": 0.0020353500434004503,
+        "high": 0.02512784958169292
+      },
+      "effective_sample_size": 316.36149491723876,
+      "observed_logging": {
+        "mean": 0.006674757281553398,
+        "low": 0.003731153653971324,
+        "high": 0.011912877244213799
+      },
+      "bts_reference": {
+        "mean": 0.006277463904582548,
+        "low": 0.003413359946062359,
+        "high": 0.01151702571558098
+      },
+      "bts_reference_n": 1593,
+      "difference_from_bts": {
+        "mean": 0.00433940821960572,
+        "low": -0.00567416277729499,
+        "high": 0.019437652363730407
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "women",
+      "policy": "Official prior BTS approximation",
+      "position": 1,
+      "population": "OBD women; random held-out slot 1; cutoff 2019-11-27 13:12:47.359928+00:00",
+      "sample_size": 1648,
+      "estimator": "DM",
+      "estimate": {
+        "mean": 0.00419378487252975,
+        "low": 0.00419378487252975,
+        "high": 0.00419378487252975
+      },
+      "effective_sample_size": 316.36149491723876,
+      "observed_logging": {
+        "mean": 0.006674757281553398,
+        "low": 0.003731153653971324,
+        "high": 0.011912877244213799
+      },
+      "bts_reference": {
+        "mean": 0.006277463904582548,
+        "low": 0.003413359946062359,
+        "high": 0.01151702571558098
+      },
+      "bts_reference_n": 1593,
+      "difference_from_bts": {
+        "mean": -0.0020836790320527985,
+        "low": -0.005850157374802329,
+        "high": 0.00168279931069673
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "women",
+      "policy": "Official prior BTS approximation",
+      "position": 1,
+      "population": "OBD women; random held-out slot 1; cutoff 2019-11-27 13:12:47.359928+00:00",
+      "sample_size": 1648,
+      "estimator": "DR",
+      "estimate": {
+        "mean": 0.010479888717165398,
+        "low": 0.0016502870362975891,
+        "high": 0.025129347187240816
+      },
+      "effective_sample_size": 316.36149491723876,
+      "observed_logging": {
+        "mean": 0.006674757281553398,
+        "low": 0.003731153653971324,
+        "high": 0.011912877244213799
+      },
+      "bts_reference": {
+        "mean": 0.006277463904582548,
+        "low": 0.003413359946062359,
+        "high": 0.01151702571558098
+      },
+      "bts_reference_n": 1593,
+      "difference_from_bts": {
+        "mean": 0.00420242481258285,
+        "low": -0.006018346405417482,
+        "high": 0.019273543227278526
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "women",
+      "policy": "Uniform sanity check",
+      "position": 2,
+      "population": "OBD women; random held-out slot 2; cutoff 2019-11-27 13:12:47.359928+00:00",
+      "sample_size": 1709,
+      "estimator": "IPS",
+      "estimate": {
+        "mean": 0.00643651258045641,
+        "low": 0.0029256875365710954,
+        "high": 0.010532475131655943
+      },
+      "effective_sample_size": 1709.0000000000002,
+      "observed_logging": {
+        "mean": 0.006436512580456407,
+        "low": 0.003597839953312719,
+        "high": 0.011489054801375312
+      },
+      "bts_reference": {
+        "mean": 0.004744958481613286,
+        "low": 0.0024062846417533027,
+        "high": 0.009335325032411678
+      },
+      "bts_reference_n": 1686,
+      "difference_from_bts": {
+        "mean": 0.0016915540988431234,
+        "low": -0.003651773424761934,
+        "high": 0.006404782926478828
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "women",
+      "policy": "Uniform sanity check",
+      "position": 2,
+      "population": "OBD women; random held-out slot 2; cutoff 2019-11-27 13:12:47.359928+00:00",
+      "sample_size": 1709,
+      "estimator": "SNIPS",
+      "estimate": {
+        "mean": 0.006436512580456409,
+        "low": 0.002925687536571095,
+        "high": 0.010532475131655943
+      },
+      "effective_sample_size": 1709.0000000000002,
+      "observed_logging": {
+        "mean": 0.006436512580456407,
+        "low": 0.003597839953312719,
+        "high": 0.011489054801375312
+      },
+      "bts_reference": {
+        "mean": 0.004744958481613286,
+        "low": 0.0024062846417533027,
+        "high": 0.009335325032411678
+      },
+      "bts_reference_n": 1686,
+      "difference_from_bts": {
+        "mean": 0.0016915540988431225,
+        "low": -0.003651773424761935,
+        "high": 0.006404782926478826
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "women",
+      "policy": "Uniform sanity check",
+      "position": 2,
+      "population": "OBD women; random held-out slot 2; cutoff 2019-11-27 13:12:47.359928+00:00",
+      "sample_size": 1709,
+      "estimator": "DM",
+      "estimate": {
+        "mean": 0.002525292180898627,
+        "low": 0.002525292180898627,
+        "high": 0.002525292180898627
+      },
+      "effective_sample_size": 1709.0000000000002,
+      "observed_logging": {
+        "mean": 0.006436512580456407,
+        "low": 0.003597839953312719,
+        "high": 0.011489054801375312
+      },
+      "bts_reference": {
+        "mean": 0.004744958481613286,
+        "low": 0.0024062846417533027,
+        "high": 0.009335325032411678
+      },
+      "bts_reference_n": 1686,
+      "difference_from_bts": {
+        "mean": -0.0022196663007146593,
+        "low": -0.006371504972126285,
+        "high": 0.0007459327502936449
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "women",
+      "policy": "Uniform sanity check",
+      "position": 2,
+      "population": "OBD women; random held-out slot 2; cutoff 2019-11-27 13:12:47.359928+00:00",
+      "sample_size": 1709,
+      "estimator": "DR",
+      "estimate": {
+        "mean": 0.006561231242791399,
+        "low": 0.00302240605785755,
+        "high": 0.010651541512086775
+      },
+      "effective_sample_size": 1709.0000000000002,
+      "observed_logging": {
+        "mean": 0.006436512580456407,
+        "low": 0.003597839953312719,
+        "high": 0.011489054801375312
+      },
+      "bts_reference": {
+        "mean": 0.004744958481613286,
+        "low": 0.0024062846417533027,
+        "high": 0.009335325032411678
+      },
+      "bts_reference_n": 1686,
+      "difference_from_bts": {
+        "mean": 0.0018162727611781126,
+        "low": -0.0036573487383945546,
+        "high": 0.006598328666592178
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "women",
+      "policy": "Official prior BTS approximation",
+      "position": 2,
+      "population": "OBD women; random held-out slot 2; cutoff 2019-11-27 13:12:47.359928+00:00",
+      "sample_size": 1709,
+      "estimator": "IPS",
+      "estimate": {
+        "mean": 0.008606764189584556,
+        "low": 0.0009970143358689295,
+        "high": 0.019213683879461676
+      },
+      "effective_sample_size": 288.43515556644803,
+      "observed_logging": {
+        "mean": 0.006436512580456407,
+        "low": 0.003597839953312719,
+        "high": 0.011489054801375312
+      },
+      "bts_reference": {
+        "mean": 0.004744958481613286,
+        "low": 0.0024062846417533027,
+        "high": 0.009335325032411678
+      },
+      "bts_reference_n": 1686,
+      "difference_from_bts": {
+        "mean": 0.0038618057079712696,
+        "low": -0.004945868093138898,
+        "high": 0.01481295139471655
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "women",
+      "policy": "Official prior BTS approximation",
+      "position": 2,
+      "population": "OBD women; random held-out slot 2; cutoff 2019-11-27 13:12:47.359928+00:00",
+      "sample_size": 1709,
+      "estimator": "SNIPS",
+      "estimate": {
+        "mean": 0.009366700495094096,
+        "low": 0.0011351546875538925,
+        "high": 0.02120415088124994
+      },
+      "effective_sample_size": 288.43515556644803,
+      "observed_logging": {
+        "mean": 0.006436512580456407,
+        "low": 0.003597839953312719,
+        "high": 0.011489054801375312
+      },
+      "bts_reference": {
+        "mean": 0.004744958481613286,
+        "low": 0.0024062846417533027,
+        "high": 0.009335325032411678
+      },
+      "bts_reference_n": 1686,
+      "difference_from_bts": {
+        "mean": 0.00462174201348081,
+        "low": -0.004774337939121421,
+        "high": 0.01706316207108628
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "women",
+      "policy": "Official prior BTS approximation",
+      "position": 2,
+      "population": "OBD women; random held-out slot 2; cutoff 2019-11-27 13:12:47.359928+00:00",
+      "sample_size": 1709,
+      "estimator": "DM",
+      "estimate": {
+        "mean": 0.001759086922074621,
+        "low": 0.001759086922074621,
+        "high": 0.001759086922074621
+      },
+      "effective_sample_size": 288.43515556644803,
+      "observed_logging": {
+        "mean": 0.006436512580456407,
+        "low": 0.003597839953312719,
+        "high": 0.011489054801375312
+      },
+      "bts_reference": {
+        "mean": 0.004744958481613286,
+        "low": 0.0024062846417533027,
+        "high": 0.009335325032411678
+      },
+      "bts_reference_n": 1686,
+      "difference_from_bts": {
+        "mean": -0.002985871559538665,
+        "low": -0.00713771023095029,
+        "high": -2.027250853036105e-05
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "women",
+      "policy": "Official prior BTS approximation",
+      "position": 2,
+      "population": "OBD women; random held-out slot 2; cutoff 2019-11-27 13:12:47.359928+00:00",
+      "sample_size": 1709,
+      "estimator": "DR",
+      "estimate": {
+        "mean": 0.00877602258203079,
+        "low": 0.0012731045431714305,
+        "high": 0.01939821078824529
+      },
+      "effective_sample_size": 288.43515556644803,
+      "observed_logging": {
+        "mean": 0.006436512580456407,
+        "low": 0.003597839953312719,
+        "high": 0.011489054801375312
+      },
+      "bts_reference": {
+        "mean": 0.004744958481613286,
+        "low": 0.0024062846417533027,
+        "high": 0.009335325032411678
+      },
+      "bts_reference_n": 1686,
+      "difference_from_bts": {
+        "mean": 0.004031064100417503,
+        "low": -0.004791475174880566,
+        "high": 0.015000863621726257
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "women",
+      "policy": "Uniform sanity check",
+      "position": 3,
+      "population": "OBD women; random held-out slot 3; cutoff 2019-11-27 13:12:47.359928+00:00",
+      "sample_size": 1643,
+      "estimator": "IPS",
+      "estimate": {
+        "mean": 0.0054777845404747425,
+        "low": 0.0024345709068776633,
+        "high": 0.009129640900791238
+      },
+      "effective_sample_size": 1643.0000000000002,
+      "observed_logging": {
+        "mean": 0.005477784540474742,
+        "low": 0.0028845530090584664,
+        "high": 0.010378082992548408
+      },
+      "bts_reference": {
+        "mean": 0.004176610978520286,
+        "low": 0.002024612512333574,
+        "high": 0.00859630574576171
+      },
+      "bts_reference_n": 1676,
+      "difference_from_bts": {
+        "mean": 0.0013011735619544561,
+        "low": -0.0035080481742897104,
+        "high": 0.0060987108830839465
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "women",
+      "policy": "Uniform sanity check",
+      "position": 3,
+      "population": "OBD women; random held-out slot 3; cutoff 2019-11-27 13:12:47.359928+00:00",
+      "sample_size": 1643,
+      "estimator": "SNIPS",
+      "estimate": {
+        "mean": 0.005477784540474742,
+        "low": 0.002434570906877663,
+        "high": 0.009129640900791236
+      },
+      "effective_sample_size": 1643.0000000000002,
+      "observed_logging": {
+        "mean": 0.005477784540474742,
+        "low": 0.0028845530090584664,
+        "high": 0.010378082992548408
+      },
+      "bts_reference": {
+        "mean": 0.004176610978520286,
+        "low": 0.002024612512333574,
+        "high": 0.00859630574576171
+      },
+      "bts_reference_n": 1676,
+      "difference_from_bts": {
+        "mean": 0.0013011735619544553,
+        "low": -0.003508048174289711,
+        "high": 0.006098710883083946
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "women",
+      "policy": "Uniform sanity check",
+      "position": 3,
+      "population": "OBD women; random held-out slot 3; cutoff 2019-11-27 13:12:47.359928+00:00",
+      "sample_size": 1643,
+      "estimator": "DM",
+      "estimate": {
+        "mean": 0.003669355820720146,
+        "low": 0.003669355820720146,
+        "high": 0.003669355820720146
+      },
+      "effective_sample_size": 1643.0000000000002,
+      "observed_logging": {
+        "mean": 0.005477784540474742,
+        "low": 0.0028845530090584664,
+        "high": 0.010378082992548408
+      },
+      "bts_reference": {
+        "mean": 0.004176610978520286,
+        "low": 0.002024612512333574,
+        "high": 0.00859630574576171
+      },
+      "bts_reference_n": 1676,
+      "difference_from_bts": {
+        "mean": -0.0005072551578001404,
+        "low": -0.004087207425103243,
+        "high": 0.0024760383982857783
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "women",
+      "policy": "Uniform sanity check",
+      "position": 3,
+      "population": "OBD women; random held-out slot 3; cutoff 2019-11-27 13:12:47.359928+00:00",
+      "sample_size": 1643,
+      "estimator": "DR",
+      "estimate": {
+        "mean": 0.0056536926572418305,
+        "low": 0.002473768726499881,
+        "high": 0.009453235962300433
+      },
+      "effective_sample_size": 1643.0000000000002,
+      "observed_logging": {
+        "mean": 0.005477784540474742,
+        "low": 0.0028845530090584664,
+        "high": 0.010378082992548408
+      },
+      "bts_reference": {
+        "mean": 0.004176610978520286,
+        "low": 0.002024612512333574,
+        "high": 0.00859630574576171
+      },
+      "bts_reference_n": 1676,
+      "difference_from_bts": {
+        "mean": 0.0014770816787215441,
+        "low": -0.003323302167954765,
+        "high": 0.006097782608726321
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "women",
+      "policy": "Official prior BTS approximation",
+      "position": 3,
+      "population": "OBD women; random held-out slot 3; cutoff 2019-11-27 13:12:47.359928+00:00",
+      "sample_size": 1643,
+      "estimator": "IPS",
+      "estimate": {
+        "mean": 0.005262142422398054,
+        "low": 0.0003614065733414487,
+        "high": 0.011432655356055999
+      },
+      "effective_sample_size": 358.8248149977353,
+      "observed_logging": {
+        "mean": 0.005477784540474742,
+        "low": 0.0028845530090584664,
+        "high": 0.010378082992548408
+      },
+      "bts_reference": {
+        "mean": 0.004176610978520286,
+        "low": 0.002024612512333574,
+        "high": 0.00859630574576171
+      },
+      "bts_reference_n": 1676,
+      "difference_from_bts": {
+        "mean": 0.0010855314438777677,
+        "low": -0.004907790086895006,
+        "high": 0.008115377452910086
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "women",
+      "policy": "Official prior BTS approximation",
+      "position": 3,
+      "population": "OBD women; random held-out slot 3; cutoff 2019-11-27 13:12:47.359928+00:00",
+      "sample_size": 1643,
+      "estimator": "SNIPS",
+      "estimate": {
+        "mean": 0.0053607748722698054,
+        "low": 0.0003846362580488776,
+        "high": 0.011585994126347443
+      },
+      "effective_sample_size": 358.8248149977353,
+      "observed_logging": {
+        "mean": 0.005477784540474742,
+        "low": 0.0028845530090584664,
+        "high": 0.010378082992548408
+      },
+      "bts_reference": {
+        "mean": 0.004176610978520286,
+        "low": 0.002024612512333574,
+        "high": 0.00859630574576171
+      },
+      "bts_reference_n": 1676,
+      "difference_from_bts": {
+        "mean": 0.001184163893749519,
+        "low": -0.00491030690480536,
+        "high": 0.008426137661457821
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "women",
+      "policy": "Official prior BTS approximation",
+      "position": 3,
+      "population": "OBD women; random held-out slot 3; cutoff 2019-11-27 13:12:47.359928+00:00",
+      "sample_size": 1643,
+      "estimator": "DM",
+      "estimate": {
+        "mean": 0.0077533355802850475,
+        "low": 0.0077533355802850475,
+        "high": 0.0077533355802850475
+      },
+      "effective_sample_size": 358.8248149977353,
+      "observed_logging": {
+        "mean": 0.005477784540474742,
+        "low": 0.0028845530090584664,
+        "high": 0.010378082992548408
+      },
+      "bts_reference": {
+        "mean": 0.004176610978520286,
+        "low": 0.002024612512333574,
+        "high": 0.00859630574576171
+      },
+      "bts_reference_n": 1676,
+      "difference_from_bts": {
+        "mean": 0.003576724601764761,
+        "low": -3.2276655383411956e-06,
+        "high": 0.0065600181578506795
+      },
+      "comparison_identifies_exact_logged_policy": false
+    },
+    {
+      "campaign": "women",
+      "policy": "Official prior BTS approximation",
+      "position": 3,
+      "population": "OBD women; random held-out slot 3; cutoff 2019-11-27 13:12:47.359928+00:00",
+      "sample_size": 1643,
+      "estimator": "DR",
+      "estimate": {
+        "mean": 0.005471987176717295,
+        "low": 0.00025771801202567753,
+        "high": 0.011818802479325027
+      },
+      "effective_sample_size": 358.8248149977353,
+      "observed_logging": {
+        "mean": 0.005477784540474742,
+        "low": 0.0028845530090584664,
+        "high": 0.010378082992548408
+      },
+      "bts_reference": {
+        "mean": 0.004176610978520286,
+        "low": 0.002024612512333574,
+        "high": 0.00859630574576171
+      },
+      "bts_reference_n": 1676,
+      "difference_from_bts": {
+        "mean": 0.0012953761981970083,
+        "low": -0.004852873835302072,
+        "high": 0.008468714285496044
+      },
+      "comparison_identifies_exact_logged_policy": false
+    }
+  ]
+}
