@@ -1,0 +1,24 @@
+{
+  "source": "https://github.com/st-tech/zr-obp",
+  "source_commit": "8cbd5fa4558b7ad2ba4781546d6604e4cc3e07c4",
+  "license": "Apache-2.0",
+  "citation": "Saito, Aihara, Matsutani, and Narita (2020), Open Bandit Dataset and Pipeline",
+  "files": [
+    {
+      "name": "random.csv",
+      "url": "https://raw.githubusercontent.com/st-tech/zr-obp/8cbd5fa4558b7ad2ba4781546d6604e4cc3e07c4/obd/random/all/all.csv",
+      "sha256": "7168295b6e0a9eabcf3392320a5dd434e542b68e705d5cd9491499af589812f1"
+    },
+    {
+      "name": "bts.csv",
+      "url": "https://raw.githubusercontent.com/st-tech/zr-obp/8cbd5fa4558b7ad2ba4781546d6604e4cc3e07c4/obd/bts/all/all.csv",
+      "sha256": "0ad874e4dbf6902f0845dd478ad8dde5ef6903583d3ffaace78411bdad064106"
+    },
+    {
+      "name": "LICENSE",
+      "url": "https://raw.githubusercontent.com/st-tech/zr-obp/8cbd5fa4558b7ad2ba4781546d6604e4cc3e07c4/LICENSE",
+      "sha256": "6bc32ef299d465f98043edc6e487a6e72a69600f3a2144f4e69be8f1b36be9f7"
+    }
+  ],
+  "transformation": "Sorted by timestamp, selected timestamp/item_id/position/click/propensity_score; all 10000 rows retained per policy in campaign all."
+}

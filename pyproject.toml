@@ -1,0 +1,19 @@
+[project]
+name = "stacks-recommender"
+version = "0.1.0"
+description = "A bookstore recommender with reproducible evaluation and honest uncertainty."
+requires-python = ">=3.12"
+dependencies = [
+  "numpy>=2.0,<3", "scipy>=1.14,<2", "pandas>=2.2,<3", "pyarrow>=19,<22",
+  "fastapi>=0.115,<1", "uvicorn>=0.34,<1", "sqlalchemy>=2.0,<3",
+  "pydantic>=2.10,<3", "httpx>=0.28,<1", "psycopg[binary]>=3.2,<4",
+  "duckdb>=1.2,<2", "jinja2>=3.1,<4"
+]
+[dependency-groups]
+dev = ["pytest>=8,<10", "pytest-cov>=6,<8", "ruff>=0.12,<1", "hypothesis>=6,<7"]
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+[tool.ruff]
+line-length = 110
+target-version = "py312"

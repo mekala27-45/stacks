@@ -1,0 +1,36 @@
+{
+  "dataset": "goodbooks-10k",
+  "author": "Zygmunt Zajac and contributors",
+  "source": "https://github.com/zygmuntz/goodbooks-10k",
+  "commit": "6dd165b555a7b47b2dd36743a425776e641ff50c",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+  "transformations": [
+    "First 300000 source rows",
+    "Book IDs 1 through 1000",
+    "Discard external cover URLs",
+    "Map reader tags to named genre families"
+  ],
+  "files": [
+    {
+      "name": "ratings-first-300000.csv",
+      "sha256": "bcfe9e37f70a20145ae4c9dbeb5d40250059e34e2fd85e518ecf8709e420bb6a"
+    },
+    {
+      "name": "books.csv",
+      "sha256": "4d21d0e0433128657c752e3a3d0405ac0ec11675d6c70c64cb0abf4ab1acb76a"
+    },
+    {
+      "name": "tags.csv",
+      "sha256": "87f316957564fa21c316a4f50afc87f07906f478f990eec027aaca00c536c449"
+    },
+    {
+      "name": "book_tags.csv",
+      "sha256": "8ff2f0659be9ddbe10bf47ba33b5b69024f893f017ac665236f15bc97d862950"
+    },
+    {
+      "name": "LICENSE",
+      "sha256": "1a459ea0f6e7f28d4eba7df0ddace58e0874e53dad4f787e0d206fdbf602147d"
+    }
+  ]
+}

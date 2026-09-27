@@ -1,0 +1,129 @@
+{
+  "status": "passed_source_reference",
+  "detail": "Local IPS, SNIPS, DM and DR point estimates agree with unmodified arithmetic methods extracted from pinned Open Bandit Pipeline source on the same seeded simulator fixtures. This is a source-level crosscheck, not an installed OBP package or confidence-interval crosscheck.",
+  "source": "https://raw.githubusercontent.com/st-tech/zr-obp/8cbd5fa4558b7ad2ba4781546d6604e4cc3e07c4/obp/ope/estimators.py",
+  "source_commit": "8cbd5fa4558b7ad2ba4781546d6604e4cc3e07c4",
+  "source_sha256": "197b9f0d25e7b5766ce71de3703b142efb561170f4c15ac13ab0fcfd860fe55a",
+  "source_license": "Apache-2.0",
+  "license_url": "https://github.com/st-tech/zr-obp/blob/8cbd5fa4558b7ad2ba4781546d6604e4cc3e07c4/LICENSE",
+  "source_copyright": "Yuta Saito, Yusuke Narita, and ZOZO Technologies, Inc.",
+  "scope": "Four exact _estimate_round_rewards method ASTs; NumPy arrays, lambda_=infinity, one position. Upstream validators and bootstrap code are outside this check.",
+  "tolerance": 1e-10,
+  "fixtures": 800,
+  "estimator_comparisons": 3200,
+  "rows": [
+    {
+      "estimator": "IPS",
+      "sample_size": 250,
+      "reward_model": "oracle",
+      "seeds": 200,
+      "max_absolute_error": 0.0
+    },
+    {
+      "estimator": "SNIPS",
+      "sample_size": 250,
+      "reward_model": "oracle",
+      "seeds": 200,
+      "max_absolute_error": 2.220446049250313e-16
+    },
+    {
+      "estimator": "DM",
+      "sample_size": 250,
+      "reward_model": "oracle",
+      "seeds": 200,
+      "max_absolute_error": 2.220446049250313e-16
+    },
+    {
+      "estimator": "DR",
+      "sample_size": 250,
+      "reward_model": "oracle",
+      "seeds": 200,
+      "max_absolute_error": 2.220446049250313e-16
+    },
+    {
+      "estimator": "IPS",
+      "sample_size": 250,
+      "reward_model": "misspecified constant",
+      "seeds": 200,
+      "max_absolute_error": 0.0
+    },
+    {
+      "estimator": "SNIPS",
+      "sample_size": 250,
+      "reward_model": "misspecified constant",
+      "seeds": 200,
+      "max_absolute_error": 2.220446049250313e-16
+    },
+    {
+      "estimator": "DM",
+      "sample_size": 250,
+      "reward_model": "misspecified constant",
+      "seeds": 200,
+      "max_absolute_error": 2.7755575615628914e-17
+    },
+    {
+      "estimator": "DR",
+      "sample_size": 250,
+      "reward_model": "misspecified constant",
+      "seeds": 200,
+      "max_absolute_error": 1.1102230246251565e-16
+    },
+    {
+      "estimator": "IPS",
+      "sample_size": 1000,
+      "reward_model": "oracle",
+      "seeds": 200,
+      "max_absolute_error": 0.0
+    },
+    {
+      "estimator": "SNIPS",
+      "sample_size": 1000,
+      "reward_model": "oracle",
+      "seeds": 200,
+      "max_absolute_error": 2.220446049250313e-16
+    },
+    {
+      "estimator": "DM",
+      "sample_size": 1000,
+      "reward_model": "oracle",
+      "seeds": 200,
+      "max_absolute_error": 2.220446049250313e-16
+    },
+    {
+      "estimator": "DR",
+      "sample_size": 1000,
+      "reward_model": "oracle",
+      "seeds": 200,
+      "max_absolute_error": 2.220446049250313e-16
+    },
+    {
+      "estimator": "IPS",
+      "sample_size": 1000,
+      "reward_model": "misspecified constant",
+      "seeds": 200,
+      "max_absolute_error": 0.0
+    },
+    {
+      "estimator": "SNIPS",
+      "sample_size": 1000,
+      "reward_model": "misspecified constant",
+      "seeds": 200,
+      "max_absolute_error": 2.220446049250313e-16
+    },
+    {
+      "estimator": "DM",
+      "sample_size": 1000,
+      "reward_model": "misspecified constant",
+      "seeds": 200,
+      "max_absolute_error": 5.551115123125783e-17
+    },
+    {
+      "estimator": "DR",
+      "sample_size": 1000,
+      "reward_model": "misspecified constant",
+      "seeds": 200,
+      "max_absolute_error": 1.1102230246251565e-16
+    }
+  ],
+  "generated_at": "2026-09-27T02:23:14.249276+00:00"
+}

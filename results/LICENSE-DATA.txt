@@ -1,0 +1,1 @@
+goodbooks-derived data and metrics: CC BY-SA 4.0, https://creativecommons.org/licenses/by-sa/4.0/. Original source: Zygmunt Zajac and contributors, https://github.com/zygmuntz/goodbooks-10k. Adaptations: stacks. Code and synthetic simulator output use the repository code license.
