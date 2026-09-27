@@ -1553,8 +1553,10 @@ function Research({
         <h3>Data and protocol</h3>
         <p>
           The catalog comes from Goodbooks-10k, shared under CC BY-SA 4.0.
-          Evaluation uses a bounded subset and source-order holdout. The source
-          supplies no timestamps; no verified calendar-time claim can be made.
+          All {Number(dataset.interactions).toLocaleString()} ratings and{" "}
+          {Number(dataset.catalog_size).toLocaleString()} books feed the source-order split;
+          headline results evaluate {Number(dataset.evaluated_users).toLocaleString()} eligible readers. The source supplies
+          no timestamps; no verified calendar-time claim can be made.
           Evaluation removes each reader’s training books from the candidate
           set.
         </p>
@@ -1582,16 +1584,19 @@ function Research({
         </ul>
         <h3>Serving and accountability</h3>
         <p>
-          The public shelf recomputes recommendations in the browser using
-          committed item similarities, recency-weighted history, genre affinity,
-          and popularity. Each recommendation exposes its trace. Impressions and
-          feedback remain in the current browser tab and can be exported. The
-          repository also contains a separate runnable API with durable logging.
+          The live API serves evaluated ALS and blend artifacts, persists
+          impressions and feedback in D1, and records the randomized final
+          slot’s selection probability. Each recommendation exposes its trace.
+          Short SSE connections resume saved revisions because the free host
+          buffers long streams. The browser retains a static fallback when the
+          service is unavailable. Exports identify the active logging mode.
         </p>
         <h3>Reproduce the work</h3>
         <pre>
-          uv sync --frozen{"\n"}uv run python scripts/build_evidence.py{"\n"}uv
-          run python scripts/render_reports.py{"\n"}uv run pytest
+          uv sync --frozen{"\n"}uv run python scripts/build_evidence.py{"\n"}
+          uv run python scripts/build_neural_evidence.py{"\n"}
+          uv run python scripts/render_reports.py{"\n"}
+          uv run python scripts/build_notebooks.py{"\n"}uv run pytest
         </pre>
         <p className="report-statement">{statement}</p>
       </article>
