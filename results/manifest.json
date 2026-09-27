@@ -1,56 +1,58 @@
 {
   "version": "0.1.0",
-  "generated_at": "2026-09-27T02:34:43.912426+00:00",
+  "generated_at": "2026-09-27T03:48:44.051606+00:00",
   "statement": "These are demonstration recommendations on a public dataset; no real reader's identity is present and no recommendation is personalized to a real person.",
   "dataset": {
-    "name": "goodbooks-10k bounded subset",
+    "name": "goodbooks-10k complete catalog and ratings",
     "backend": "pinned public CSV -> parquet -> NumPy/SciPy exact scoring",
     "source": "https://github.com/zygmuntz/goodbooks-10k",
     "source_commit": "6dd165b555a7b47b2dd36743a425776e641ff50c",
     "license": "CC BY-SA 4.0",
-    "source_rows": 300000,
-    "catalog_size": 1000,
-    "interactions": 170264,
-    "train_interactions": 137192,
-    "test_interactions": 33072,
-    "positive_training_interactions": 92085,
-    "readers": 4630,
-    "evaluated_users": 500
+    "source_rows": 5976479,
+    "catalog_size": 10000,
+    "interactions": 5976479,
+    "train_interactions": 4781183,
+    "test_interactions": 1195296,
+    "positive_training_interactions": 3286330,
+    "readers": 53424,
+    "evaluated_users": 5000
   },
   "protocol": {
     "name": "Global source-order holdout, full catalog",
     "split": "80/20 source-file order; timestamps unavailable",
-    "cutoff_row": 240000,
-    "candidate_count": 1000,
+    "cutoff_row": 4781183,
+    "candidate_count": 10000,
     "bootstrap_draws": 1000,
     "confidence": 0.95,
     "seed": 20260926,
     "positive_threshold": 4,
-    "description": "All unseen catalog items ranked. Training ratings excluded. Paired user bootstrap and Benjamini-Hochberg correction. Source order is a proxy, not a date-validated temporal split."
+    "description": "All unseen catalog items ranked. Training ratings excluded. Paired user bootstrap and Benjamini-Hochberg correction. Source order is a proxy, not a date-validated temporal split.",
+    "evaluation_users": 5000,
+    "diversity_definition": "Symmetric sparse collaborative pair dissimilarity: one minus the average of both directed top100-pruned cosine edges for each unordered pair. Missing pruned edges count as zero. This is not complete unpruned cosine dissimilarity."
   },
   "metrics": [
     {
       "model": "popularity",
       "label": "Popularity",
       "ndcg": {
-        "mean": 0.04691566954534413,
-        "low": 0.033952457837471604,
-        "high": 0.05931221356792861
+        "mean": 0.04061625991852034,
+        "low": 0.03725796184780824,
+        "high": 0.04414880011067741
       },
       "recall": {
-        "mean": 0.056563671026828924,
-        "low": 0.04136217537457669,
-        "high": 0.07173224824395877
+        "mean": 0.01822175294143225,
+        "low": 0.01650458554091062,
+        "high": 0.020141672328470934
       },
       "hit_rate": {
-        "mean": 0.15,
-        "low": 0.118,
-        "high": 0.18
+        "mean": 0.154,
+        "low": 0.144195,
+        "high": 0.164405
       },
       "recall200": {
-        "mean": 0.5426504289693626,
-        "low": 0.5072564296241091,
-        "high": 0.5745869535307461
+        "mean": 0.1298090406004845,
+        "low": 0.12494329512674407,
+        "high": 0.13456833077964625
       },
       "long_tail_share": {
         "mean": 0.0,
@@ -58,184 +60,444 @@
         "high": 0.0
       },
       "novelty": {
-        "mean": 6.796002032038045,
-        "low": 6.7750823625073116,
-        "high": 6.817123588137455
+        "mean": 8.195693251419067,
+        "low": 8.191412708773614,
+        "high": 8.19982911233902
       },
       "diversity": {
-        "mean": 0.5360269082410696,
-        "low": 0.5259845114556624,
-        "high": 0.5460772945845499
+        "mean": 0.5465242793798447,
+        "low": 0.5435302969735861,
+        "high": 0.5494495958518982
       },
       "calibration": {
-        "mean": 0.24036485428070475,
-        "low": 0.2315427692006467,
-        "high": 0.2500150701258082
+        "mean": 0.2850193190391849,
+        "low": 0.2808333787387917,
+        "high": 0.28906875464391235
       },
       "coverage": {
-        "mean": 0.042,
-        "expected_resampled_coverage": 0.040042,
-        "low": 0.036,
-        "high": 0.042,
+        "mean": 0.0047,
+        "expected_resampled_coverage": 0.0046105,
+        "low": 0.0044,
+        "high": 0.0047,
         "interval_kind": "Observed distinct coverage with a separate 95% user-resampling range, not a confidence interval; the observed point may be outside the range"
       },
-      "observed_coverage": 0.042
+      "observed_coverage": 0.0047
     },
     {
       "model": "item_cosine",
       "label": "Item cosine",
       "ndcg": {
-        "mean": 0.06641209719227888,
-        "low": 0.05212839581192735,
-        "high": 0.08093763505619736
+        "mean": 0.054080605362626794,
+        "low": 0.05071832553077024,
+        "high": 0.05792080592526684
       },
       "recall": {
-        "mean": 0.08050789148678715,
-        "low": 0.06379288757660469,
-        "high": 0.0987336091104428
+        "mean": 0.0260764460647902,
+        "low": 0.02378454858451606,
+        "high": 0.028312202822395938
       },
       "hit_rate": {
-        "mean": 0.216,
-        "low": 0.18,
-        "high": 0.252
+        "mean": 0.238,
+        "low": 0.2264,
+        "high": 0.2508
       },
       "recall200": {
-        "mean": 0.6229755583032298,
-        "low": 0.5878372582370621,
-        "high": 0.6545323220006547
+        "mean": 0.25854086783199126,
+        "low": 0.25172771697074586,
+        "high": 0.2654016846951689
       },
       "long_tail_share": {
-        "mean": 0.0238,
-        "low": 0.0158,
-        "high": 0.032805
+        "mean": 0.07837999999999999,
+        "low": 0.07261849999999999,
+        "high": 0.08442200000000001
       },
       "novelty": {
-        "mean": 7.152975985759331,
-        "low": 7.114223211107945,
-        "high": 7.197650713966762
+        "mean": 9.66895172367096,
+        "low": 9.624988033952713,
+        "high": 9.716520495629311
       },
       "diversity": {
-        "mean": 0.6395257903849233,
-        "low": 0.6313502207801895,
-        "high": 0.6474668510808774
+        "mean": 0.7126762565135956,
+        "low": 0.7103419567334651,
+        "high": 0.715132018840015
       },
       "calibration": {
-        "mean": 0.1544796567457698,
-        "low": 0.14729512750666834,
-        "high": 0.16238401645637357
+        "mean": 0.11348863401022281,
+        "low": 0.11165939451079447,
+        "high": 0.11533667812708809
       },
       "coverage": {
-        "mean": 0.175,
-        "expected_resampled_coverage": 0.14774500000000002,
-        "low": 0.133,
-        "high": 0.161,
+        "mean": 0.2349,
+        "expected_resampled_coverage": 0.1987919,
+        "low": 0.1927975,
+        "high": 0.2047,
         "interval_kind": "Observed distinct coverage with a separate 95% user-resampling range, not a confidence interval; the observed point may be outside the range"
       },
-      "observed_coverage": 0.175
+      "observed_coverage": 0.2349
     },
     {
       "model": "als",
       "label": "Implicit ALS",
       "ndcg": {
-        "mean": 0.07361532206748918,
-        "low": 0.05959094725643609,
-        "high": 0.08818747452469786
+        "mean": 0.05456165309508006,
+        "low": 0.05126348686142536,
+        "high": 0.057931384702290485
       },
       "recall": {
-        "mean": 0.10055849015599046,
-        "low": 0.08144430279352809,
-        "high": 0.12150114375178796
+        "mean": 0.02768997854829412,
+        "low": 0.02560277514151218,
+        "high": 0.029874516535220608
       },
       "hit_rate": {
-        "mean": 0.258,
-        "low": 0.22,
-        "high": 0.302
+        "mean": 0.276,
+        "low": 0.26439500000000005,
+        "high": 0.28840499999999997
       },
       "recall200": {
-        "mean": 0.6744309372535854,
-        "low": 0.6435984101729663,
-        "high": 0.7058866932811783
+        "mean": 0.2606654427702636,
+        "low": 0.2542992792388456,
+        "high": 0.2671672276711896
       },
       "long_tail_share": {
-        "mean": 0.15760000000000002,
-        "low": 0.140795,
-        "high": 0.17440500000000003
+        "mean": 0.0013200000000000002,
+        "low": 0.00088,
+        "high": 0.00186
       },
       "novelty": {
-        "mean": 8.353998591668947,
-        "low": 8.303763488176612,
-        "high": 8.406924743511889
+        "mean": 9.838761867141724,
+        "low": 9.812629301371574,
+        "high": 9.862983665628434
       },
       "diversity": {
-        "mean": 0.8132223479588827,
-        "low": 0.8077761382692501,
-        "high": 0.8185162946045172
+        "mean": 0.7796904458165169,
+        "low": 0.7768595542883874,
+        "high": 0.7824509358567
       },
       "calibration": {
-        "mean": 0.09830334205070344,
-        "low": 0.09279106584759599,
-        "high": 0.10349956765987921
+        "mean": 0.0978958389684623,
+        "low": 0.09621855113652082,
+        "high": 0.09946741572368815
       },
       "coverage": {
-        "mean": 0.425,
-        "expected_resampled_coverage": 0.391875,
-        "low": 0.379,
-        "high": 0.404,
+        "mean": 0.1149,
+        "expected_resampled_coverage": 0.1064341,
+        "low": 0.1042,
+        "high": 0.1085,
         "interval_kind": "Observed distinct coverage with a separate 95% user-resampling range, not a confidence interval; the observed point may be outside the range"
       },
-      "observed_coverage": 0.425
+      "observed_coverage": 0.1149
     },
     {
       "model": "blend",
       "label": "Fixed blend",
       "ndcg": {
-        "mean": 0.07354437799659147,
-        "low": 0.05864752289531646,
-        "high": 0.08854579021865112
+        "mean": 0.05377059884666187,
+        "low": 0.05038288155399936,
+        "high": 0.057597850813602115
       },
       "recall": {
-        "mean": 0.0871961923671933,
-        "low": 0.07015655565316553,
-        "high": 0.1066504680181908
+        "mean": 0.02624842872504055,
+        "low": 0.024000152911949978,
+        "high": 0.028660940364824153
       },
       "hit_rate": {
-        "mean": 0.236,
-        "low": 0.2,
-        "high": 0.276
+        "mean": 0.2434,
+        "low": 0.23119499999999998,
+        "high": 0.256005
       },
       "recall200": {
-        "mean": 0.6574006612911248,
-        "low": 0.6235776365945004,
-        "high": 0.6891248602667575
+        "mean": 0.2706557740087379,
+        "low": 0.26406705496194316,
+        "high": 0.27736920895865647
       },
       "long_tail_share": {
-        "mean": 0.0228,
-        "low": 0.015395,
-        "high": 0.031599999999999996
+        "mean": 0.04172,
+        "low": 0.03798,
+        "high": 0.0459605
       },
       "novelty": {
-        "mean": 7.283923153021942,
-        "low": 7.245842373331076,
-        "high": 7.325174836453522
+        "mean": 9.378631101036072,
+        "low": 9.34211042972088,
+        "high": 9.418257063364983
       },
       "diversity": {
-        "mean": 0.6722590838825337,
-        "low": 0.6639427657709982,
-        "high": 0.6800334331739244
+        "mean": 0.7101000273704529,
+        "low": 0.7075619907194376,
+        "high": 0.7125975442957878
       },
       "calibration": {
-        "mean": 0.13427458241404047,
-        "low": 0.1278156606663721,
-        "high": 0.14161606282618425
+        "mean": 0.11482899669971268,
+        "low": 0.11288329253789554,
+        "high": 0.11670309546314205
       },
       "coverage": {
-        "mean": 0.209,
-        "expected_resampled_coverage": 0.17969900000000003,
-        "low": 0.165975,
-        "high": 0.193,
+        "mean": 0.1804,
+        "expected_resampled_coverage": 0.15242100000000003,
+        "low": 0.1475,
+        "high": 0.1575025,
         "interval_kind": "Observed distinct coverage with a separate 95% user-resampling range, not a confidence interval; the observed point may be outside the range"
       },
-      "observed_coverage": 0.209
+      "observed_coverage": 0.1804
+    },
+    {
+      "model": "content",
+      "label": "Content TF-IDF",
+      "ndcg": {
+        "mean": 0.04106800045007483,
+        "low": 0.03808713819824787,
+        "high": 0.04416753373132765
+      },
+      "recall": {
+        "mean": 0.021589478236140023,
+        "low": 0.019667631952501197,
+        "high": 0.023623039273104218
+      },
+      "hit_rate": {
+        "mean": 0.2052,
+        "low": 0.193795,
+        "high": 0.21740500000000001
+      },
+      "recall200": {
+        "mean": 0.13988597107487513,
+        "low": 0.13481800198682148,
+        "high": 0.14511660771123763
+      },
+      "long_tail_share": {
+        "mean": 0.66098,
+        "low": 0.6555765,
+        "high": 0.6663804999999999
+      },
+      "novelty": {
+        "mean": 14.023324592208862,
+        "low": 13.995442650198937,
+        "high": 14.051456399583817
+      },
+      "diversity": {
+        "mean": 0.9335916214704514,
+        "low": 0.931425764079392,
+        "high": 0.9356255767965317
+      },
+      "calibration": {
+        "mean": 0.09606379829012403,
+        "low": 0.09448691442874235,
+        "high": 0.0975861473522533
+      },
+      "coverage": {
+        "mean": 0.3703,
+        "expected_resampled_coverage": 0.3196221,
+        "low": 0.3142,
+        "high": 0.32490250000000004,
+        "interval_kind": "Observed distinct coverage with a separate 95% user-resampling range, not a confidence interval; the observed point may be outside the range"
+      },
+      "observed_coverage": 0.3703
+    },
+    {
+      "model": "lambdamart",
+      "label": "LambdaMART",
+      "ndcg": {
+        "mean": 0.043962687569028845,
+        "low": 0.041463619295476324,
+        "high": 0.04661219361260706
+      },
+      "recall": {
+        "mean": 0.024823084502577024,
+        "low": 0.022775439456140894,
+        "high": 0.027039892054749905
+      },
+      "hit_rate": {
+        "mean": 0.2658,
+        "low": 0.2542,
+        "high": 0.2784
+      },
+      "recall200": {
+        "mean": 0.21538888699135833,
+        "low": 0.2096584698023663,
+        "high": 0.22144291064057636
+      },
+      "long_tail_share": {
+        "mean": 0.6091799999999999,
+        "low": 0.6017580000000001,
+        "high": 0.6171235000000002
+      },
+      "novelty": {
+        "mean": 13.962245782279968,
+        "low": 13.909739481773377,
+        "high": 14.017710510368348
+      },
+      "diversity": {
+        "mean": 0.9528938694238662,
+        "low": 0.9516665406256914,
+        "high": 0.9542070482593774
+      },
+      "calibration": {
+        "mean": 0.12898835579111742,
+        "low": 0.1271434510413966,
+        "high": 0.13094376131119254
+      },
+      "coverage": {
+        "mean": 0.2721,
+        "expected_resampled_coverage": 0.23173939999999998,
+        "low": 0.2262975,
+        "high": 0.2366,
+        "interval_kind": "Observed distinct coverage with a separate 95% user-resampling range, not a confidence interval; the observed point may be outside the range"
+      },
+      "observed_coverage": 0.2721
+    },
+    {
+      "model": "two_tower",
+      "label": "Two-tower neural",
+      "ndcg": {
+        "mean": 0.0018575106028640561,
+        "low": 0.0013993021610877155,
+        "high": 0.0023642672240619628
+      },
+      "recall": {
+        "mean": 0.0010737242375285728,
+        "low": 0.0006459790043939146,
+        "high": 0.0016319382529645517
+      },
+      "hit_rate": {
+        "mean": 0.0156,
+        "low": 0.012195000000000001,
+        "high": 0.0192
+      },
+      "recall200": {
+        "mean": 0.01619911314545124,
+        "low": 0.014599665715192759,
+        "high": 0.018057673901599097
+      },
+      "long_tail_share": {
+        "mean": 0.9966200000000001,
+        "low": 0.9960399999999999,
+        "high": 0.9971804999999999
+      },
+      "novelty": {
+        "mean": 16.752111789131163,
+        "low": 16.732498961348533,
+        "high": 16.77115711028576
+      },
+      "diversity": {
+        "mean": 0.9997814142227173,
+        "low": 0.9997590740659833,
+        "high": 0.9998026206809282
+      },
+      "calibration": {
+        "mean": 0.24152823695073203,
+        "low": 0.23862974442376383,
+        "high": 0.24433271504120574
+      },
+      "coverage": {
+        "mean": 0.0469,
+        "expected_resampled_coverage": 0.0426678,
+        "low": 0.0412,
+        "high": 0.0441,
+        "interval_kind": "Observed distinct coverage with a separate 95% user-resampling range, not a confidence interval; the observed point may be outside the range"
+      },
+      "observed_coverage": 0.0469
+    },
+    {
+      "model": "session_cosine",
+      "label": "Session cosine",
+      "ndcg": {
+        "mean": 0.08996756747832806,
+        "low": 0.08551850536057082,
+        "high": 0.09468239259049745
+      },
+      "recall": {
+        "mean": 0.048238578452985625,
+        "low": 0.04533292723224113,
+        "high": 0.051406902841058325
+      },
+      "hit_rate": {
+        "mean": 0.3652,
+        "low": 0.351995,
+        "high": 0.37860499999999997
+      },
+      "recall200": {
+        "mean": 0.289962245687209,
+        "low": 0.2830122717198631,
+        "high": 0.2967141859762104
+      },
+      "long_tail_share": {
+        "mean": 0.19794,
+        "low": 0.189836,
+        "high": 0.206241
+      },
+      "novelty": {
+        "mean": 10.94297947254181,
+        "low": 10.892522812600136,
+        "high": 10.999393640236853
+      },
+      "diversity": {
+        "mean": 0.7618298793196678,
+        "low": 0.7587958978223801,
+        "high": 0.7649866900169849
+      },
+      "calibration": {
+        "mean": 0.14740049116573267,
+        "low": 0.14500455331169565,
+        "high": 0.14992283412679877
+      },
+      "coverage": {
+        "mean": 0.4884,
+        "expected_resampled_coverage": 0.4127386,
+        "low": 0.4045,
+        "high": 0.4213,
+        "interval_kind": "Observed distinct coverage with a separate 95% user-resampling range, not a confidence interval; the observed point may be outside the range"
+      },
+      "observed_coverage": 0.4884
+    },
+    {
+      "model": "recurrent",
+      "label": "Elman recurrent",
+      "ndcg": {
+        "mean": 0.02319976371167538,
+        "low": 0.021198122566799368,
+        "high": 0.025221973768886116
+      },
+      "recall": {
+        "mean": 0.011568912128165253,
+        "low": 0.010254148145010068,
+        "high": 0.012793854064482682
+      },
+      "hit_rate": {
+        "mean": 0.142,
+        "low": 0.1326,
+        "high": 0.1514
+      },
+      "recall200": {
+        "mean": 0.1040726790065919,
+        "low": 0.09946915646699732,
+        "high": 0.10858337171469004
+      },
+      "long_tail_share": {
+        "mean": 0.08807999999999999,
+        "low": 0.08491900000000001,
+        "high": 0.09136
+      },
+      "novelty": {
+        "mean": 11.883802137756348,
+        "low": 11.861710528206826,
+        "high": 11.90656696864128
+      },
+      "diversity": {
+        "mean": 0.8948546868920326,
+        "low": 0.8926212390330434,
+        "high": 0.8969467232209444
+      },
+      "calibration": {
+        "mean": 0.21544010020351434,
+        "low": 0.21232678842795638,
+        "high": 0.21862954460907738
+      },
+      "coverage": {
+        "mean": 0.0842,
+        "expected_resampled_coverage": 0.07831579999999999,
+        "low": 0.0769,
+        "high": 0.0797025,
+        "interval_kind": "Observed distinct coverage with a separate 95% user-resampling range, not a confidence interval; the observed point may be outside the range"
+      },
+      "observed_coverage": 0.0842
     }
   ],
   "comparisons": [
@@ -243,78 +505,438 @@
       "left": "popularity",
       "right": "item_cosine",
       "difference": {
-        "mean": -0.019496427646934735,
-        "low": -0.030981643413996948,
-        "high": -0.00898567776813932
+        "mean": -0.013464345444106459,
+        "low": -0.01701181018067654,
+        "high": -0.009873655268139332
       },
-      "p": 0.0006,
-      "q": 0.0018,
+      "p": 0.0002,
+      "q": 0.00024000000000000003,
       "significant": true
     },
     {
       "left": "popularity",
       "right": "als",
       "difference": {
-        "mean": -0.026699652522145036,
-        "low": -0.04455096223738595,
-        "high": -0.009307272027439679
+        "mean": -0.013945393176559726,
+        "low": -0.017636895541126272,
+        "high": -0.010113385958495393
       },
-      "p": 0.0032,
-      "q": 0.0064,
+      "p": 0.0002,
+      "q": 0.00024000000000000003,
       "significant": true
     },
     {
       "left": "popularity",
       "right": "blend",
       "difference": {
-        "mean": -0.026628708451247315,
-        "low": -0.03939063475255154,
-        "high": -0.014315223102025083
+        "mean": -0.01315433892814153,
+        "low": -0.01659063362593483,
+        "high": -0.009832559944471117
       },
       "p": 0.0002,
-      "q": 0.0012000000000000001,
+      "q": 0.00024000000000000003,
+      "significant": true
+    },
+    {
+      "left": "popularity",
+      "right": "content",
+      "difference": {
+        "mean": -0.0004517405315544934,
+        "low": -0.005278227207130508,
+        "high": 0.0036343788317194834
+      },
+      "p": 0.8416,
+      "q": 0.8416,
+      "significant": false
+    },
+    {
+      "left": "popularity",
+      "right": "lambdamart",
+      "difference": {
+        "mean": -0.0033464276505085037,
+        "low": -0.007453484711092609,
+        "high": 0.0007289754642434093
+      },
+      "p": 0.1042,
+      "q": 0.117225,
+      "significant": false
+    },
+    {
+      "left": "popularity",
+      "right": "two_tower",
+      "difference": {
+        "mean": 0.03875874931565629,
+        "low": 0.03537854295448107,
+        "high": 0.04223084081929346
+      },
+      "p": 0.0002,
+      "q": 0.00024000000000000003,
+      "significant": true
+    },
+    {
+      "left": "popularity",
+      "right": "session_cosine",
+      "difference": {
+        "mean": -0.049351307559807725,
+        "low": -0.05413620545464593,
+        "high": -0.044476701070561606
+      },
+      "p": 0.0002,
+      "q": 0.00024000000000000003,
+      "significant": true
+    },
+    {
+      "left": "popularity",
+      "right": "recurrent",
+      "difference": {
+        "mean": 0.01741649620684496,
+        "low": 0.013817196920798783,
+        "high": 0.021431819782478833
+      },
+      "p": 0.0002,
+      "q": 0.00024000000000000003,
       "significant": true
     },
     {
       "left": "item_cosine",
       "right": "als",
       "difference": {
-        "mean": -0.007203224875210302,
-        "low": -0.02151230518320301,
-        "high": 0.0062992252999041955
+        "mean": -0.00048104773245326695,
+        "low": -0.0034264235885567195,
+        "high": 0.002837712277662875
       },
-      "p": 0.3282,
-      "q": 0.39383999999999997,
+      "p": 0.7572,
+      "q": 0.7788342857142857,
       "significant": false
     },
     {
       "left": "item_cosine",
       "right": "blend",
       "difference": {
-        "mean": -0.007132280804312579,
-        "low": -0.012624322596763413,
-        "high": -0.001850869412453796
+        "mean": 0.00031000651596492865,
+        "low": -0.0007432434845069678,
+        "high": 0.001418658059104049
       },
-      "p": 0.0112,
-      "q": 0.0168,
+      "p": 0.5912,
+      "q": 0.6259764705882352,
+      "significant": false
+    },
+    {
+      "left": "item_cosine",
+      "right": "content",
+      "difference": {
+        "mean": 0.013012604912551965,
+        "low": 0.009025311978677042,
+        "high": 0.01682048277626776
+      },
+      "p": 0.0002,
+      "q": 0.00024000000000000003,
+      "significant": true
+    },
+    {
+      "left": "item_cosine",
+      "right": "lambdamart",
+      "difference": {
+        "mean": 0.010117917793597954,
+        "low": 0.006389842536963615,
+        "high": 0.014117685055676864
+      },
+      "p": 0.0002,
+      "q": 0.00024000000000000003,
+      "significant": true
+    },
+    {
+      "left": "item_cosine",
+      "right": "two_tower",
+      "difference": {
+        "mean": 0.052223094759762737,
+        "low": 0.04868878517481355,
+        "high": 0.05602302234490685
+      },
+      "p": 0.0002,
+      "q": 0.00024000000000000003,
+      "significant": true
+    },
+    {
+      "left": "item_cosine",
+      "right": "session_cosine",
+      "difference": {
+        "mean": -0.03588696211570126,
+        "low": -0.040030338401245195,
+        "high": -0.031433168208443794
+      },
+      "p": 0.0002,
+      "q": 0.00024000000000000003,
+      "significant": true
+    },
+    {
+      "left": "item_cosine",
+      "right": "recurrent",
+      "difference": {
+        "mean": 0.030880841650951413,
+        "low": 0.027012129226576646,
+        "high": 0.034889112554409164
+      },
+      "p": 0.0002,
+      "q": 0.00024000000000000003,
       "significant": true
     },
     {
       "left": "als",
       "right": "blend",
       "difference": {
-        "mean": 7.094407089772403e-05,
-        "low": -0.012193434588785171,
-        "high": 0.012937956877092762
+        "mean": 0.0007910542484181949,
+        "low": -0.002031940793989787,
+        "high": 0.0034327208491489315
       },
-      "p": 0.9896,
-      "q": 0.9895999999999999,
+      "p": 0.5812,
+      "q": 0.6259764705882352,
       "significant": false
+    },
+    {
+      "left": "als",
+      "right": "content",
+      "difference": {
+        "mean": 0.013493652645005233,
+        "low": 0.009307220221921906,
+        "high": 0.017371710299898615
+      },
+      "p": 0.0002,
+      "q": 0.00024000000000000003,
+      "significant": true
+    },
+    {
+      "left": "als",
+      "right": "lambdamart",
+      "difference": {
+        "mean": 0.01059896552605122,
+        "low": 0.0071064549732374775,
+        "high": 0.0143992290322963
+      },
+      "p": 0.0002,
+      "q": 0.00024000000000000003,
+      "significant": true
+    },
+    {
+      "left": "als",
+      "right": "two_tower",
+      "difference": {
+        "mean": 0.05270414249221601,
+        "low": 0.04949196336116203,
+        "high": 0.05609912813926474
+      },
+      "p": 0.0002,
+      "q": 0.00024000000000000003,
+      "significant": true
+    },
+    {
+      "left": "als",
+      "right": "session_cosine",
+      "difference": {
+        "mean": -0.035405914383248,
+        "low": -0.040293260091325916,
+        "high": -0.03105452444583931
+      },
+      "p": 0.0002,
+      "q": 0.00024000000000000003,
+      "significant": true
+    },
+    {
+      "left": "als",
+      "right": "recurrent",
+      "difference": {
+        "mean": 0.03136188938340469,
+        "low": 0.02791641404059427,
+        "high": 0.03493865293040999
+      },
+      "p": 0.0002,
+      "q": 0.00024000000000000003,
+      "significant": true
+    },
+    {
+      "left": "blend",
+      "right": "content",
+      "difference": {
+        "mean": 0.012702598396587035,
+        "low": 0.008736892238316772,
+        "high": 0.016526787574039064
+      },
+      "p": 0.0002,
+      "q": 0.00024000000000000003,
+      "significant": true
+    },
+    {
+      "left": "blend",
+      "right": "lambdamart",
+      "difference": {
+        "mean": 0.009807911277633028,
+        "low": 0.00591272712840142,
+        "high": 0.013795572281708865
+      },
+      "p": 0.0002,
+      "q": 0.00024000000000000003,
+      "significant": true
+    },
+    {
+      "left": "blend",
+      "right": "two_tower",
+      "difference": {
+        "mean": 0.051913088243797825,
+        "low": 0.04857762182278266,
+        "high": 0.0557534341959152
+      },
+      "p": 0.0002,
+      "q": 0.00024000000000000003,
+      "significant": true
+    },
+    {
+      "left": "blend",
+      "right": "session_cosine",
+      "difference": {
+        "mean": -0.036196968631666195,
+        "low": -0.04057736362175643,
+        "high": -0.0316901124893651
+      },
+      "p": 0.0002,
+      "q": 0.00024000000000000003,
+      "significant": true
+    },
+    {
+      "left": "blend",
+      "right": "recurrent",
+      "difference": {
+        "mean": 0.03057083513498649,
+        "low": 0.026779154316842333,
+        "high": 0.034720676935642604
+      },
+      "p": 0.0002,
+      "q": 0.00024000000000000003,
+      "significant": true
+    },
+    {
+      "left": "content",
+      "right": "lambdamart",
+      "difference": {
+        "mean": -0.00289468711895401,
+        "low": -0.006098051425100066,
+        "high": 0.00044387172699734577
+      },
+      "p": 0.0736,
+      "q": 0.08547096774193548,
+      "significant": false
+    },
+    {
+      "left": "content",
+      "right": "two_tower",
+      "difference": {
+        "mean": 0.039210489847210775,
+        "low": 0.03623342870472323,
+        "high": 0.04239176658004391
+      },
+      "p": 0.0002,
+      "q": 0.00024000000000000003,
+      "significant": true
+    },
+    {
+      "left": "content",
+      "right": "session_cosine",
+      "difference": {
+        "mean": -0.048899567028253224,
+        "low": -0.05339931085933592,
+        "high": -0.04421612350269096
+      },
+      "p": 0.0002,
+      "q": 0.00024000000000000003,
+      "significant": true
+    },
+    {
+      "left": "content",
+      "right": "recurrent",
+      "difference": {
+        "mean": 0.017868236738399452,
+        "low": 0.01432845632105622,
+        "high": 0.021286651868107614
+      },
+      "p": 0.0002,
+      "q": 0.00024000000000000003,
+      "significant": true
+    },
+    {
+      "left": "lambdamart",
+      "right": "two_tower",
+      "difference": {
+        "mean": 0.04210517696616479,
+        "low": 0.03956013938370349,
+        "high": 0.044854193159521064
+      },
+      "p": 0.0002,
+      "q": 0.00024000000000000003,
+      "significant": true
+    },
+    {
+      "left": "lambdamart",
+      "right": "session_cosine",
+      "difference": {
+        "mean": -0.046004879909299225,
+        "low": -0.05052912757693616,
+        "high": -0.04171859571106802
+      },
+      "p": 0.0002,
+      "q": 0.00024000000000000003,
+      "significant": true
+    },
+    {
+      "left": "lambdamart",
+      "right": "recurrent",
+      "difference": {
+        "mean": 0.02076292385735346,
+        "low": 0.017802491304869446,
+        "high": 0.023785174317662618
+      },
+      "p": 0.0002,
+      "q": 0.00024000000000000003,
+      "significant": true
+    },
+    {
+      "left": "two_tower",
+      "right": "session_cosine",
+      "difference": {
+        "mean": -0.08811005687546401,
+        "low": -0.0928045921664418,
+        "high": -0.08363936954815322
+      },
+      "p": 0.0002,
+      "q": 0.00024000000000000003,
+      "significant": true
+    },
+    {
+      "left": "two_tower",
+      "right": "recurrent",
+      "difference": {
+        "mean": -0.021342253108811327,
+        "low": -0.023335049481995586,
+        "high": -0.019240178121270133
+      },
+      "p": 0.0002,
+      "q": 0.00024000000000000003,
+      "significant": true
+    },
+    {
+      "left": "session_cosine",
+      "right": "recurrent",
+      "difference": {
+        "mean": 0.06676780376665269,
+        "low": 0.06269172762591102,
+        "high": 0.07113124745540732
+      },
+      "p": 0.0002,
+      "q": 0.00024000000000000003,
+      "significant": true
     }
   ],
   "winner": {
-    "observed": "als",
-    "corrected": null
+    "observed": "session_cosine",
+    "corrected": "session_cosine"
   },
   "inflation": {
     "split": [
@@ -322,85 +944,190 @@
         "model": "popularity",
         "label": "Popularity",
         "full": {
-          "mean": 0.04691566954534413,
-          "low": 0.033952457837471604,
-          "high": 0.05931221356792861
+          "mean": 0.04061625991852034,
+          "low": 0.03725796184780824,
+          "high": 0.04414880011067741
         },
         "shortcut": {
-          "mean": 0.1536453327949012,
-          "low": 0.13613539599639524,
-          "high": 0.1727475747087474
+          "mean": 0.09088562549059477,
+          "low": 0.08697288290859152,
+          "high": 0.09467649292540106
         },
         "delta": {
-          "mean": 0.10672966324955707,
-          "low": 0.08604888017453145,
-          "high": 0.1286727579798869
+          "mean": 0.05026936557207443,
+          "low": 0.04520287982754248,
+          "high": 0.05517565380940016
         },
-        "ordered_users": 500,
-        "random_users": 500
+        "ordered_users": 5000,
+        "random_users": 5000
       },
       {
         "model": "item_cosine",
         "label": "Item cosine",
         "full": {
-          "mean": 0.06641209719227888,
-          "low": 0.05212839581192735,
-          "high": 0.08093763505619736
+          "mean": 0.054080605362626794,
+          "low": 0.05071832553077024,
+          "high": 0.05792080592526684
         },
         "shortcut": {
-          "mean": 0.2772139168739864,
-          "low": 0.2550699854968888,
-          "high": 0.2997621257217676
+          "mean": 0.2705207572669085,
+          "low": 0.2642768150716017,
+          "high": 0.2765555513780176
         },
         "delta": {
-          "mean": 0.21080181968170753,
-          "low": 0.1837038585224737,
-          "high": 0.23828559914402261
+          "mean": 0.2164401519042817,
+          "low": 0.20901000317815097,
+          "high": 0.2235130477334129
         },
-        "ordered_users": 500,
-        "random_users": 500
+        "ordered_users": 5000,
+        "random_users": 5000
       },
       {
         "model": "als",
         "label": "Implicit ALS",
         "full": {
-          "mean": 0.07361532206748918,
-          "low": 0.05959094725643609,
-          "high": 0.08818747452469786
+          "mean": 0.05456165309508006,
+          "low": 0.05126348686142536,
+          "high": 0.057931384702290485
         },
         "shortcut": {
-          "mean": 0.24579176680844278,
-          "low": 0.2232700982558469,
-          "high": 0.26731529306262963
+          "mean": 0.19066202700302945,
+          "low": 0.1855266843366432,
+          "high": 0.19584550528966002
         },
         "delta": {
-          "mean": 0.17217644474095362,
-          "low": 0.1478299695790915,
-          "high": 0.19987534949645996
+          "mean": 0.13610037390794938,
+          "low": 0.13002576277098704,
+          "high": 0.14221150216508746
         },
-        "ordered_users": 500,
-        "random_users": 500
+        "ordered_users": 5000,
+        "random_users": 5000
       },
       {
         "model": "blend",
         "label": "Fixed blend",
         "full": {
-          "mean": 0.07354437799659147,
-          "low": 0.05864752289531646,
-          "high": 0.08854579021865112
+          "mean": 0.05377059884666187,
+          "low": 0.05038288155399936,
+          "high": 0.057597850813602115
         },
         "shortcut": {
-          "mean": 0.28626353309707553,
-          "low": 0.26427753454105757,
-          "high": 0.3078520834856986
+          "mean": 0.25385873182222174,
+          "low": 0.24795123919270784,
+          "high": 0.25983616607117627
         },
         "delta": {
-          "mean": 0.21271915510048406,
-          "low": 0.1858821378877782,
-          "high": 0.23928511767419838
+          "mean": 0.20008813297555988,
+          "low": 0.1927001177218458,
+          "high": 0.2066456707523954
         },
-        "ordered_users": 500,
-        "random_users": 500
+        "ordered_users": 5000,
+        "random_users": 5000
+      },
+      {
+        "model": "content",
+        "label": "Content TF-IDF",
+        "full": {
+          "mean": 0.04106800045007483,
+          "low": 0.03808713819824787,
+          "high": 0.04416753373132765
+        },
+        "shortcut": {
+          "mean": 0.14633462180522128,
+          "low": 0.14132890936550077,
+          "high": 0.1515460482060111
+        },
+        "delta": {
+          "mean": 0.10526662135514644,
+          "low": 0.0994226591159809,
+          "high": 0.11125859031365481
+        },
+        "ordered_users": 5000,
+        "random_users": 5000
+      },
+      {
+        "model": "lambdamart",
+        "label": "LambdaMART",
+        "full": {
+          "mean": 0.043962687569028845,
+          "low": 0.041463619295476324,
+          "high": 0.04661219361260706
+        },
+        "shortcut": {
+          "mean": 0.2991004193727846,
+          "low": 0.2925202735349275,
+          "high": 0.30535343333019954
+        },
+        "delta": {
+          "mean": 0.25513773180375576,
+          "low": 0.24769454344232775,
+          "high": 0.2619888527762188
+        },
+        "ordered_users": 5000,
+        "random_users": 5000
+      },
+      {
+        "model": "two_tower",
+        "label": "Two-tower neural",
+        "full": {
+          "mean": 0.0018575106028640561,
+          "low": 0.0013993021610877155,
+          "high": 0.0023642672240619628
+        },
+        "shortcut": {
+          "mean": 0.0003729758773226736,
+          "low": 0.00018278016747235386,
+          "high": 0.0005738792583396996
+        },
+        "delta": {
+          "mean": -0.0014845347255413826,
+          "low": -0.0019967449190611557,
+          "high": -0.0010155128637316976
+        },
+        "ordered_users": 5000,
+        "random_users": 5000
+      },
+      {
+        "model": "session_cosine",
+        "label": "Session cosine",
+        "full": {
+          "mean": 0.08996756747832806,
+          "low": 0.08551850536057082,
+          "high": 0.09468239259049745
+        },
+        "shortcut": {
+          "mean": 0.17390573190299438,
+          "low": 0.16886119584175055,
+          "high": 0.17839174837960067
+        },
+        "delta": {
+          "mean": 0.08393816442466633,
+          "low": 0.07729077879358853,
+          "high": 0.08987812333442267
+        },
+        "ordered_users": 5000,
+        "random_users": 5000
+      },
+      {
+        "model": "recurrent",
+        "label": "Elman recurrent",
+        "full": {
+          "mean": 0.02319976371167538,
+          "low": 0.021198122566799368,
+          "high": 0.025221973768886116
+        },
+        "shortcut": {
+          "mean": 0.023297089652503822,
+          "low": 0.021543312014890834,
+          "high": 0.02506250504027781
+        },
+        "delta": {
+          "mean": 9.732594082844173e-05,
+          "low": -0.002531141651578604,
+          "high": 0.002903914226102799
+        },
+        "ordered_users": 5000,
+        "random_users": 5000
       }
     ],
     "sampled": [
@@ -408,176 +1135,318 @@
         "model": "popularity",
         "label": "Popularity",
         "full": {
-          "mean": 0.04691566954534413,
-          "low": 0.033952457837471604,
-          "high": 0.05931221356792861
+          "mean": 0.04061625991852034,
+          "low": 0.03725796184780824,
+          "high": 0.04414880011067741
         },
         "shortcut": {
-          "mean": 0.22967953841901106,
-          "low": 0.20633808069380752,
-          "high": 0.2507161977796111
+          "mean": 0.400179167551907,
+          "low": 0.3919275609453502,
+          "high": 0.40826609554243143
         },
         "delta": {
-          "mean": 0.1827638688736669,
-          "low": 0.164670816944624,
-          "high": 0.19917325200947897
+          "mean": 0.3595629076333868,
+          "low": 0.3520789108821867,
+          "high": 0.36683386302655313
         },
-        "users": 500
+        "users": 5000
       },
       {
         "model": "item_cosine",
         "label": "Item cosine",
         "full": {
-          "mean": 0.06641209719227888,
-          "low": 0.05212839581192735,
-          "high": 0.08093763505619736
+          "mean": 0.054080605362626794,
+          "low": 0.05071832553077024,
+          "high": 0.05792080592526684
         },
         "shortcut": {
-          "mean": 0.2731520476768105,
-          "low": 0.24684932980580365,
-          "high": 0.29825056170355396
+          "mean": 0.5706049866559232,
+          "low": 0.5625202116420334,
+          "high": 0.5785094314840278
         },
         "delta": {
-          "mean": 0.2067399504845317,
-          "low": 0.18866536757768368,
-          "high": 0.22457962191197187
+          "mean": 0.5165243812932964,
+          "low": 0.5090652771777415,
+          "high": 0.5244084791181872
         },
-        "users": 500
+        "users": 5000
       },
       {
         "model": "als",
         "label": "Implicit ALS",
         "full": {
-          "mean": 0.07361532206748918,
-          "low": 0.05959094725643609,
-          "high": 0.08818747452469786
+          "mean": 0.05456165309508006,
+          "low": 0.05126348686142536,
+          "high": 0.057931384702290485
         },
         "shortcut": {
-          "mean": 0.31089130191945197,
-          "low": 0.2849456984576864,
-          "high": 0.33676731609101823
+          "mean": 0.5688530843759935,
+          "low": 0.5609167924149379,
+          "high": 0.5771730114681972
         },
         "delta": {
-          "mean": 0.2372759798519628,
-          "low": 0.21675677371934934,
-          "high": 0.25624350004803126
+          "mean": 0.5142914312809133,
+          "low": 0.50715043505118,
+          "high": 0.521872798975854
         },
-        "users": 500
+        "users": 5000
       },
       {
         "model": "blend",
         "label": "Fixed blend",
         "full": {
-          "mean": 0.07354437799659147,
-          "low": 0.05864752289531646,
-          "high": 0.08854579021865112
+          "mean": 0.05377059884666187,
+          "low": 0.05038288155399936,
+          "high": 0.057597850813602115
         },
         "shortcut": {
-          "mean": 0.30124505090269793,
-          "low": 0.27582394730143567,
-          "high": 0.32631526935568467
+          "mean": 0.5785410343192071,
+          "low": 0.5705733756592561,
+          "high": 0.5868173344284122
         },
         "delta": {
-          "mean": 0.2277006729061065,
-          "low": 0.2087221290906993,
-          "high": 0.2468230167844606
+          "mean": 0.5247704354725452,
+          "low": 0.5172030771032526,
+          "high": 0.5322545218657245
         },
-        "users": 500
+        "users": 5000
+      },
+      {
+        "model": "content",
+        "label": "Content TF-IDF",
+        "full": {
+          "mean": 0.04106800045007483,
+          "low": 0.03808713819824787,
+          "high": 0.04416753373132765
+        },
+        "shortcut": {
+          "mean": 0.42112341380347645,
+          "low": 0.41232521566851216,
+          "high": 0.42967137313125875
+        },
+        "delta": {
+          "mean": 0.38005541335340165,
+          "low": 0.37227692242781785,
+          "high": 0.3875537258640387
+        },
+        "users": 5000
+      },
+      {
+        "model": "lambdamart",
+        "label": "LambdaMART",
+        "full": {
+          "mean": 0.043962687569028845,
+          "low": 0.041463619295476324,
+          "high": 0.04661219361260706
+        },
+        "shortcut": {
+          "mean": 0.4625253713007669,
+          "low": 0.45341836639280975,
+          "high": 0.4713073130590881
+        },
+        "delta": {
+          "mean": 0.41856268373173805,
+          "low": 0.4103248566233875,
+          "high": 0.4264377129165727
+        },
+        "users": 5000
+      },
+      {
+        "model": "two_tower",
+        "label": "Two-tower neural",
+        "full": {
+          "mean": 0.0018575106028640561,
+          "low": 0.0013993021610877155,
+          "high": 0.0023642672240619628
+        },
+        "shortcut": {
+          "mean": 0.11380403515967348,
+          "low": 0.10979798734011072,
+          "high": 0.11762931369665183
+        },
+        "delta": {
+          "mean": 0.11194652455680944,
+          "low": 0.1082028334309458,
+          "high": 0.11574263975763512
+        },
+        "users": 5000
+      },
+      {
+        "model": "session_cosine",
+        "label": "Session cosine",
+        "full": {
+          "mean": 0.08996756747832806,
+          "low": 0.08551850536057082,
+          "high": 0.09468239259049745
+        },
+        "shortcut": {
+          "mean": 0.5944359601236916,
+          "low": 0.5863092246361634,
+          "high": 0.6032335383502047
+        },
+        "delta": {
+          "mean": 0.5044683926453637,
+          "low": 0.4973047549586596,
+          "high": 0.5120908635035663
+        },
+        "users": 5000
+      },
+      {
+        "model": "recurrent",
+        "label": "Elman recurrent",
+        "full": {
+          "mean": 0.02319976371167538,
+          "low": 0.021198122566799368,
+          "high": 0.025221973768886116
+        },
+        "shortcut": {
+          "mean": 0.3298920212027334,
+          "low": 0.32209463626912077,
+          "high": 0.3379339555608493
+        },
+        "delta": {
+          "mean": 0.3066922574910581,
+          "low": 0.29953266462879685,
+          "high": 0.3139958137514915
+        },
+        "users": 5000
       }
     ],
-    "ordered_winner": "als",
-    "random_winner": "blend",
-    "sampled_winner": "als",
+    "ordered_winner": "session_cosine",
+    "random_winner": "lambdamart",
+    "sampled_winner": "session_cosine",
     "note": "Random-split rows also change the eligible cohort. Sampled negatives use identical held-out users and positives. A protocol difference is not proof of online gain or a causal leakage estimate."
   },
   "cold_slices": [
     {
       "slice": "Cold readers (0-4 positive training items)",
-      "users": 200,
+      "users": 1000,
       "model": "popularity",
       "label": "Popularity",
       "ndcg": {
-        "mean": 0.19928932115759562,
-        "low": 0.15994183981188528,
-        "high": 0.24218326648962238
+        "mean": 0.2619347084153013,
+        "low": 0.24529131236521598,
+        "high": 0.2786712084270095
       },
       "recall": {
-        "mean": 0.08581878311914216,
-        "low": 0.06667546159534198,
-        "high": 0.10768846731075822
+        "mean": 0.03360486531583873,
+        "low": 0.031211519839922805,
+        "high": 0.035929325297720416
       },
       "recall200": {
-        "mean": 0.5793430452885108,
-        "low": 0.5391401474543064,
-        "high": 0.6198323646076154
+        "mean": 0.2252428707320323,
+        "low": 0.21665362141238115,
+        "high": 0.23381604688316487
       }
     },
     {
       "slice": "Cold readers (0-4 positive training items)",
-      "users": 200,
+      "users": 1000,
       "model": "item_cosine",
       "label": "Item cosine",
       "ndcg": {
-        "mean": 0.203254995704089,
-        "low": 0.1657062785273677,
-        "high": 0.2455040371274139
+        "mean": 0.26477441540588165,
+        "low": 0.24800492702101945,
+        "high": 0.28166023975438065
       },
       "recall": {
-        "mean": 0.08831008951011961,
-        "low": 0.06771977205365232,
-        "high": 0.11063416844358197
+        "mean": 0.03391601202677079,
+        "low": 0.03158798572421636,
+        "high": 0.036122160296180754
       },
       "recall200": {
-        "mean": 0.5965392388975334,
-        "low": 0.5548003643085502,
-        "high": 0.6378789760086491
+        "mean": 0.2313651138341928,
+        "low": 0.2229300530794243,
+        "high": 0.23980574362052903
       }
     },
     {
       "slice": "Cold readers (0-4 positive training items)",
-      "users": 200,
+      "users": 1000,
       "model": "als",
       "label": "Implicit ALS",
       "ndcg": {
-        "mean": 0.21038943594052,
-        "low": 0.1709544840205363,
-        "high": 0.2520036408556223
+        "mean": 0.2628022317548988,
+        "low": 0.24570654145508997,
+        "high": 0.2791549467011053
       },
       "recall": {
-        "mean": 0.09758241093869105,
-        "low": 0.07533223596918674,
-        "high": 0.1213356257381209
+        "mean": 0.033742819246284,
+        "low": 0.03130766377059079,
+        "high": 0.035991628072081325
       },
       "recall200": {
-        "mean": 0.6008526004263554,
-        "low": 0.5595425618740704,
-        "high": 0.6374820654932839
+        "mean": 0.23092498301830797,
+        "low": 0.2219365384677171,
+        "high": 0.23983957945342252
       }
     },
     {
       "slice": "Cold readers (0-4 positive training items)",
-      "users": 200,
+      "users": 1000,
       "model": "blend",
       "label": "Fixed blend",
       "ndcg": {
-        "mean": 0.20388342889311473,
-        "low": 0.16636418390388855,
-        "high": 0.24629758701952428
+        "mean": 0.2666576270384401,
+        "low": 0.24981676370128014,
+        "high": 0.283708764853277
       },
       "recall": {
-        "mean": 0.09352437522440532,
-        "low": 0.07247017021653539,
-        "high": 0.11670179695949853
+        "mean": 0.034019122872229864,
+        "low": 0.03166891259199968,
+        "high": 0.03621106346973593
       },
       "recall200": {
-        "mean": 0.6018695960403906,
-        "low": 0.559344736305621,
-        "high": 0.6421673772038659
+        "mean": 0.23278319369717718,
+        "low": 0.22398228195034858,
+        "high": 0.24163847808222944
+      }
+    },
+    {
+      "slice": "Cold readers (0-4 positive training items)",
+      "users": 1000,
+      "model": "content",
+      "label": "Content TF-IDF",
+      "ndcg": {
+        "mean": 0.25721799009914215,
+        "low": 0.240291744500538,
+        "high": 0.2738402824576209
+      },
+      "recall": {
+        "mean": 0.03276948132922534,
+        "low": 0.030399276164907188,
+        "high": 0.034921891505411515
+      },
+      "recall200": {
+        "mean": 0.21779712023601341,
+        "low": 0.20893261505083785,
+        "high": 0.22610291768371976
+      }
+    },
+    {
+      "slice": "Cold readers (0-4 positive training items)",
+      "users": 1000,
+      "model": "lambdamart",
+      "label": "LambdaMART",
+      "ndcg": {
+        "mean": 0.056120815774923574,
+        "low": 0.049584391813980215,
+        "high": 0.06316205553882129
+      },
+      "recall": {
+        "mean": 0.006366287938459704,
+        "low": 0.005553721132764529,
+        "high": 0.007269954454672097
+      },
+      "recall200": {
+        "mean": 0.049757793474855566,
+        "low": 0.045403567022044566,
+        "high": 0.054393268998908416
       }
     },
     {
       "slice": "Cold item positives",
-      "users": 14,
+      "users": 2369,
       "model": "popularity",
       "label": "Popularity",
       "ndcg": {
@@ -598,7 +1467,7 @@
     },
     {
       "slice": "Cold item positives",
-      "users": 14,
+      "users": 2369,
       "model": "item_cosine",
       "label": "Item cosine",
       "ndcg": {
@@ -619,7 +1488,7 @@
     },
     {
       "slice": "Cold item positives",
-      "users": 14,
+      "users": 2369,
       "model": "als",
       "label": "Implicit ALS",
       "ndcg": {
@@ -640,9 +1509,177 @@
     },
     {
       "slice": "Cold item positives",
-      "users": 14,
+      "users": 2369,
       "model": "blend",
       "label": "Fixed blend",
+      "ndcg": {
+        "mean": 0.0,
+        "low": 0.0,
+        "high": 0.0
+      },
+      "recall": {
+        "mean": 0.0,
+        "low": 0.0,
+        "high": 0.0
+      },
+      "recall200": {
+        "mean": 0.0,
+        "low": 0.0,
+        "high": 0.0
+      }
+    },
+    {
+      "slice": "Cold item positives",
+      "users": 2369,
+      "model": "content",
+      "label": "Content TF-IDF",
+      "ndcg": {
+        "mean": 0.018694616569429702,
+        "low": 0.015619701164938394,
+        "high": 0.021776728112231844
+      },
+      "recall": {
+        "mean": 0.02986722473158468,
+        "low": 0.024214260039561567,
+        "high": 0.03553669204256741
+      },
+      "recall200": {
+        "mean": 0.15335075549242366,
+        "low": 0.14181648770208305,
+        "high": 0.16579730398911527
+      }
+    },
+    {
+      "slice": "Cold item positives",
+      "users": 2369,
+      "model": "lambdamart",
+      "label": "LambdaMART",
+      "ndcg": {
+        "mean": 0.0,
+        "low": 0.0,
+        "high": 0.0
+      },
+      "recall": {
+        "mean": 0.0,
+        "low": 0.0,
+        "high": 0.0
+      },
+      "recall200": {
+        "mean": 0.3091902799113259,
+        "low": 0.29153824223091196,
+        "high": 0.32351764004637173
+      }
+    },
+    {
+      "slice": "Cold readers (0-4 positive training items)",
+      "users": 1000,
+      "model": "two_tower",
+      "label": "Two-tower neural",
+      "ndcg": {
+        "mean": 0.24501870085373584,
+        "low": 0.22754736846497667,
+        "high": 0.26113384232061587
+      },
+      "recall": {
+        "mean": 0.031176669438698772,
+        "low": 0.028798675664846306,
+        "high": 0.033286057440429624
+      },
+      "recall200": {
+        "mean": 0.21160597232311024,
+        "low": 0.2024502945060491,
+        "high": 0.22039693067974245
+      }
+    },
+    {
+      "slice": "Cold readers (0-4 positive training items)",
+      "users": 1000,
+      "model": "session_cosine",
+      "label": "Session cosine",
+      "ndcg": {
+        "mean": 0.26499117328034005,
+        "low": 0.2482811631431382,
+        "high": 0.2817928146322843
+      },
+      "recall": {
+        "mean": 0.033895160673869114,
+        "low": 0.03158023222316946,
+        "high": 0.03610454266138971
+      },
+      "recall200": {
+        "mean": 0.2315105671573291,
+        "low": 0.22289448626643985,
+        "high": 0.23993356554145212
+      }
+    },
+    {
+      "slice": "Cold readers (0-4 positive training items)",
+      "users": 1000,
+      "model": "recurrent",
+      "label": "Elman recurrent",
+      "ndcg": {
+        "mean": 0.25132313127940864,
+        "low": 0.23406178882670645,
+        "high": 0.2676655516745821
+      },
+      "recall": {
+        "mean": 0.03191847311193828,
+        "low": 0.029554992637043302,
+        "high": 0.0340922809969086
+      },
+      "recall200": {
+        "mean": 0.21861919700177737,
+        "low": 0.20937573486104566,
+        "high": 0.227064812396555
+      }
+    },
+    {
+      "slice": "Cold item positives",
+      "users": 2369,
+      "model": "two_tower",
+      "label": "Two-tower neural",
+      "ndcg": {
+        "mean": 0.0,
+        "low": 0.0,
+        "high": 0.0
+      },
+      "recall": {
+        "mean": 0.0,
+        "low": 0.0,
+        "high": 0.0
+      },
+      "recall200": {
+        "mean": 0.0,
+        "low": 0.0,
+        "high": 0.0
+      }
+    },
+    {
+      "slice": "Cold item positives",
+      "users": 2369,
+      "model": "session_cosine",
+      "label": "Session cosine",
+      "ndcg": {
+        "mean": 0.0,
+        "low": 0.0,
+        "high": 0.0
+      },
+      "recall": {
+        "mean": 0.0,
+        "low": 0.0,
+        "high": 0.0
+      },
+      "recall200": {
+        "mean": 0.0,
+        "low": 0.0,
+        "high": 0.0
+      }
+    },
+    {
+      "slice": "Cold item positives",
+      "users": 2369,
+      "model": "recurrent",
+      "label": "Elman recurrent",
       "ndcg": {
         "mean": 0.0,
         "low": 0.0,
@@ -660,6 +1697,186 @@
       }
     }
   ],
+  "cold_reader_analysis": {
+    "status": "measured",
+    "cohorts": [
+      {
+        "cohort": "Warm: at least5 training positives",
+        "users": 5000,
+        "training_positives": {
+          "mean": 58.418,
+          "low": 57.7,
+          "high": 59.08553
+        },
+        "holdout_positives": {
+          "mean": 17.1344,
+          "low": 16.654590000000002,
+          "high": 17.615460000000002
+        },
+        "target_training_popularity": {
+          "mean": 1075.8415292578936,
+          "low": 1045.0279991683615,
+          "high": 1104.513828005262
+        },
+        "popularity_ndcg": {
+          "mean": 0.04061625991852034,
+          "low": 0.03725796184780824,
+          "high": 0.04414880011067741
+        },
+        "no_training_history_share": {
+          "mean": 0.0,
+          "low": 0.0,
+          "high": 0.0
+        },
+        "single_holdout_positive_share": {
+          "mean": 0.0866,
+          "low": 0.0792,
+          "high": 0.0942
+        }
+      },
+      {
+        "cohort": "Cold: 0-4 training positives",
+        "users": 1000,
+        "training_positives": {
+          "mean": 0.19,
+          "low": 0.145,
+          "high": 0.234
+        },
+        "holdout_positives": {
+          "mean": 74.455,
+          "low": 72.791725,
+          "high": 76.105575
+        },
+        "target_training_popularity": {
+          "mean": 1843.7953109588623,
+          "low": 1785.6651450403212,
+          "high": 1902.742832145691
+        },
+        "popularity_ndcg": {
+          "mean": 0.2619347084153013,
+          "low": 0.24529131236521598,
+          "high": 0.2786712084270095
+        },
+        "no_training_history_share": {
+          "mean": 0.92,
+          "low": 0.903,
+          "high": 0.937
+        },
+        "single_holdout_positive_share": {
+          "mean": 0.0,
+          "low": 0.0,
+          "high": 0.0
+        }
+      }
+    ],
+    "strata": [
+      {
+        "cohort": "Warm: at least5 training positives",
+        "holdout_positive_count": "1",
+        "users": 433,
+        "popularity_ndcg": {
+          "mean": 0.0022187918942532074,
+          "low": 0.0,
+          "high": 0.005011904972090609
+        },
+        "target_training_popularity": {
+          "mean": 923.4849884526559,
+          "low": 760.481986143187,
+          "high": 1106.6076789838337
+        }
+      },
+      {
+        "cohort": "Warm: at least5 training positives",
+        "holdout_positive_count": "2-5",
+        "users": 1016,
+        "popularity_ndcg": {
+          "mean": 0.010737878964064002,
+          "low": 0.007231724224352821,
+          "high": 0.014806337529749114
+        },
+        "target_training_popularity": {
+          "mean": 1000.6286587242301,
+          "low": 928.626400244852,
+          "high": 1083.3087425526467
+        }
+      },
+      {
+        "cohort": "Warm: at least5 training positives",
+        "holdout_positive_count": "6+",
+        "users": 3551,
+        "popularity_ndcg": {
+          "mean": 0.05384705088000592,
+          "low": 0.049595210701865594,
+          "high": 0.05854450331285136
+        },
+        "target_training_popularity": {
+          "mean": 1115.9391520770628,
+          "low": 1082.3326421327372,
+          "high": 1151.215325188583
+        }
+      },
+      {
+        "cohort": "Cold: 0-4 training positives",
+        "holdout_positive_count": "2-5",
+        "users": 2,
+        "popularity_ndcg": {
+          "mean": 0.0,
+          "low": 0.0,
+          "high": 0.0
+        },
+        "target_training_popularity": {
+          "mean": 2257.5,
+          "low": 7.0,
+          "high": 4508.0
+        }
+      },
+      {
+        "cohort": "Cold: 0-4 training positives",
+        "holdout_positive_count": "6+",
+        "users": 998,
+        "popularity_ndcg": {
+          "mean": 0.2624596276706426,
+          "low": 0.2453037415833266,
+          "high": 0.279572550719195
+        },
+        "target_training_popularity": {
+          "mean": 1842.966243445754,
+          "low": 1783.1197737772145,
+          "high": 1903.2450767182636
+        }
+      }
+    ],
+    "explanation": "Cold and warm readers are different held-out cohorts. NDCG normalizes by the number of relevant holdout items up to10, while target-book popularity and the unseen candidate sets also differ. Compare the measured positive counts, target popularity, and within-count strata here; a higher cold score does not show that lacking history improves a reader's recommendations."
+  },
+  "ranker_training": {
+    "status": "trained",
+    "objective": "lambdarank",
+    "training_groups": 2553,
+    "candidate_rows": 947402,
+    "relevant_candidates": 17223,
+    "trees": 70,
+    "features": [
+      "cosine_normalized",
+      "als_normalized",
+      "popularity_normalized",
+      "blend_score",
+      "log_popularity",
+      "log_history_count",
+      "cosine_raw",
+      "als_raw",
+      "training_cold_item"
+    ],
+    "candidate_sources": [
+      "popularity",
+      "item_cosine",
+      "als",
+      "blend"
+    ],
+    "candidate_k_per_source": 200,
+    "detail": "Candidate union labels come from an earlier held-out source-order window; every feature uses only its prefix training interactions. Snapshot metadata is not a ranker feature. Hyperparameters fixed before final holdout evaluation. Full-catalog inference, including items outside the candidate union, is published without a selection gate.",
+    "feature_cutoff_row": 3585887,
+    "label_end_row": 4781183
+  },
   "reranking": {
     "status": "measured",
     "users": 100,
@@ -669,29 +1886,29 @@
       {
         "stage": "Popularity baseline",
         "ndcg": {
-          "mean": 0.03998820050531571,
-          "low": 0.01956824144047028,
-          "high": 0.06664636222923556
+          "mean": 0.047589948079909544,
+          "low": 0.024550941913922722,
+          "high": 0.07631508959410378
         },
         "recall": {
-          "mean": 0.06160470085470084,
-          "low": 0.030903869047619048,
-          "high": 0.10127874694749696
+          "mean": 0.0184838267794584,
+          "low": 0.009636186888544368,
+          "high": 0.02951232071218532
         },
         "hit_rate": {
-          "mean": 0.15,
-          "low": 0.09,
-          "high": 0.22
+          "mean": 0.19,
+          "low": 0.12,
+          "high": 0.28
         },
         "tag_diversity": {
-          "mean": 0.5394363395863396,
-          "low": 0.521774989578323,
-          "high": 0.5573920222061889
+          "mean": 0.5324824755491422,
+          "low": 0.5133433864438033,
+          "high": 0.5515567332050666
         },
         "genre_divergence": {
-          "mean": 0.3313160631552439,
-          "low": 0.3043624646410838,
-          "high": 0.35951415018040417
+          "mean": 0.36571610335177646,
+          "low": 0.33063313742725076,
+          "high": 0.39814648889881726
         },
         "long_tail_share": {
           "mean": 0.0,
@@ -702,113 +1919,47 @@
       {
         "stage": "Blend before author rules",
         "ndcg": {
-          "mean": 0.08983051092946795,
-          "low": 0.058397546062889605,
-          "high": 0.1261273108314587
+          "mean": 0.059812610586391896,
+          "low": 0.03619960076621217,
+          "high": 0.08840803216075839
         },
         "recall": {
-          "mean": 0.10669861791954814,
-          "low": 0.06793223165723165,
-          "high": 0.14910236656108747
+          "mean": 0.026275348434119047,
+          "low": 0.0159330457762017,
+          "high": 0.037959966331145116
         },
         "hit_rate": {
-          "mean": 0.29,
-          "low": 0.21,
-          "high": 0.38
+          "mean": 0.27,
+          "low": 0.19,
+          "high": 0.36
         },
         "tag_diversity": {
-          "mean": 0.5834068783068783,
-          "low": 0.5635876815776816,
-          "high": 0.6025790353936187
+          "mean": 0.5455205226871893,
+          "low": 0.5134024571107904,
+          "high": 0.5769089075276576
         },
         "genre_divergence": {
-          "mean": 0.19208290075195472,
-          "low": 0.1738971194430715,
-          "high": 0.20979936024392984
+          "mean": 0.1454166888189897,
+          "low": 0.13017471653812998,
+          "high": 0.1609716817445844
         },
         "long_tail_share": {
-          "mean": 0.034,
-          "low": 0.015,
-          "high": 0.06199999999999999
+          "mean": 0.059000000000000004,
+          "low": 0.033,
+          "high": 0.09202499999999998
         }
       },
       {
         "stage": "Author rules",
         "ndcg": {
-          "mean": 0.0941525861061412,
-          "low": 0.06302672437325224,
-          "high": 0.13018673867070527
+          "mean": 0.06168251132567392,
+          "low": 0.03776207650753479,
+          "high": 0.09085199998272944
         },
         "recall": {
-          "mean": 0.11230179252272274,
-          "low": 0.07361066698159721,
-          "high": 0.1537751082251082
-        },
-        "hit_rate": {
-          "mean": 0.31,
-          "low": 0.23,
-          "high": 0.4
-        },
-        "tag_diversity": {
-          "mean": 0.6239428250761584,
-          "low": 0.6063681862273529,
-          "high": 0.6388030533509701
-        },
-        "genre_divergence": {
-          "mean": 0.16889569297605636,
-          "low": 0.15403967972005833,
-          "high": 0.18394240434014203
-        },
-        "long_tail_share": {
-          "mean": 0.023000000000000003,
-          "low": 0.011000000000000001,
-          "high": 0.03802499999999998
-        }
-      },
-      {
-        "stage": "MMR diversity",
-        "ndcg": {
-          "mean": 0.08874701543451598,
-          "low": 0.05923861441207197,
-          "high": 0.12243958345329956
-        },
-        "recall": {
-          "mean": 0.11642145064238088,
-          "low": 0.07633211568792964,
-          "high": 0.16162745545797869
-        },
-        "hit_rate": {
-          "mean": 0.31,
-          "low": 0.23,
-          "high": 0.4
-        },
-        "tag_diversity": {
-          "mean": 0.7328575036075037,
-          "low": 0.7249938213484046,
-          "high": 0.7403305112634279
-        },
-        "genre_divergence": {
-          "mean": 0.1557012631792282,
-          "low": 0.1439315916055433,
-          "high": 0.16752962154755757
-        },
-        "long_tail_share": {
-          "mean": 0.022000000000000002,
-          "low": 0.011000000000000001,
-          "high": 0.035
-        }
-      },
-      {
-        "stage": "Genre calibration",
-        "ndcg": {
-          "mean": 0.08752884025218342,
-          "low": 0.056991513022104465,
-          "high": 0.12294399273462467
-        },
-        "recall": {
-          "mean": 0.10681526612921961,
-          "low": 0.067848629342234,
-          "high": 0.14911390315111242
+          "mean": 0.027599495936756254,
+          "low": 0.01704477344695308,
+          "high": 0.03918213023260279
         },
         "hit_rate": {
           "mean": 0.29,
@@ -816,26 +1967,92 @@
           "high": 0.38
         },
         "tag_diversity": {
-          "mean": 0.6648956790123455,
-          "low": 0.6509303978274812,
-          "high": 0.6766923709315377
+          "mean": 0.5789260622093955,
+          "low": 0.5478410295414462,
+          "high": 0.6074144781144781
         },
         "genre_divergence": {
-          "mean": 0.059304966419841953,
-          "low": 0.052337394345658095,
-          "high": 0.06585838611956017
+          "mean": 0.1361857962629346,
+          "low": 0.12252294400460993,
+          "high": 0.15060319691125654
         },
         "long_tail_share": {
-          "mean": 0.030000000000000006,
-          "low": 0.016,
-          "high": 0.047
+          "mean": 0.04200000000000001,
+          "low": 0.024000000000000004,
+          "high": 0.063
+        }
+      },
+      {
+        "stage": "MMR diversity",
+        "ndcg": {
+          "mean": 0.05812820322336067,
+          "low": 0.03541622825879316,
+          "high": 0.08605047155281231
+        },
+        "recall": {
+          "mean": 0.023965911947302666,
+          "low": 0.013581501394217493,
+          "high": 0.03763576846837919
+        },
+        "hit_rate": {
+          "mean": 0.26,
+          "low": 0.18,
+          "high": 0.3402499999999998
+        },
+        "tag_diversity": {
+          "mean": 0.6973904441237775,
+          "low": 0.6760337628266794,
+          "high": 0.7181475585217252
+        },
+        "genre_divergence": {
+          "mean": 0.11019741466995142,
+          "low": 0.0991465215930792,
+          "high": 0.12090101582314784
+        },
+        "long_tail_share": {
+          "mean": 0.03900000000000001,
+          "low": 0.022000000000000002,
+          "high": 0.056999999999999995
+        }
+      },
+      {
+        "stage": "Genre calibration",
+        "ndcg": {
+          "mean": 0.056812004547539895,
+          "low": 0.035738731555441716,
+          "high": 0.08417054004766474
+        },
+        "recall": {
+          "mean": 0.023412187893578604,
+          "low": 0.01503972599356236,
+          "high": 0.03304860016382042
+        },
+        "hit_rate": {
+          "mean": 0.28,
+          "low": 0.2,
+          "high": 0.37
+        },
+        "tag_diversity": {
+          "mean": 0.6382014590347924,
+          "low": 0.6117888724547057,
+          "high": 0.663042476150393
+        },
+        "genre_divergence": {
+          "mean": 0.05733025872899358,
+          "low": 0.050964797253756196,
+          "high": 0.06377711335204174
+        },
+        "long_tail_share": {
+          "mean": 0.044000000000000004,
+          "low": 0.027000000000000003,
+          "high": 0.06302499999999998
         }
       }
     ]
   },
   "cold_items": {
-    "catalog_items": 267,
-    "eligible_readers": 14,
+    "catalog_items": 323,
+    "eligible_readers": 2369,
     "status": "measured"
   },
   "ope": {
@@ -1555,20 +2772,919 @@
       "generated_at": "2026-09-27T02:23:14.249276+00:00"
     },
     "open_bandit": {
-      "status": "measured_alternative_target",
+      "status": "measured_six_file_bts_benchmark",
       "source_commit": "8cbd5fa4558b7ad2ba4781546d6604e4cc3e07c4",
-      "campaign": "all",
-      "logging_rows": 10000,
-      "training_rows": 5000,
-      "evaluation_rows": 5000,
-      "actions": 80,
-      "target": "Uniform sanity check and fixed 20%-uniform/80%-training-CTR policy, separately per slot",
-      "detail": "Real random-policy logs, held-out chronological second half. Target and smoothed action reward model fit only the first half. BTS observed reward is descriptive, not target-policy ground truth. Row bootstrap does not model repeated-reader dependence or model-fit uncertainty; action-only DM therefore has a conditional zero-width interval. The learned target has low effective sample size, so no improvement is established. Per-position propensities must not be multiplied into a claimed joint-slate propensity.",
+      "campaign": "all / men / women",
+      "campaigns": [
+        {
+          "campaign": "all",
+          "actions": 80,
+          "logging_rows": 10000,
+          "bts_rows": 10000,
+          "training_rows": 5000,
+          "evaluation_rows": 5000,
+          "bts_reference_rows": 4964,
+          "cutoff": "2019-11-27 13:57:03.381609+00:00",
+          "on_policy_bts": {
+            "mean": 0.003424657534246575,
+            "low": 0.0021393476764695408,
+            "high": 0.00547793623533976
+          },
+          "logged_propensity_diagnostic": {
+            "max_distinct_values_within_item_position": 325,
+            "max_range_within_item_position": 0.95114,
+            "interpretation": "Logged BTS propensities vary within item and position. The frozen upstream prior is a reproducible benchmark approximation, not an exact per-impression policy reconstruction."
+          }
+        },
+        {
+          "campaign": "men",
+          "actions": 34,
+          "logging_rows": 10000,
+          "bts_rows": 10000,
+          "training_rows": 5000,
+          "evaluation_rows": 5000,
+          "bts_reference_rows": 4804,
+          "cutoff": "2019-11-27 12:30:04.544419+00:00",
+          "on_policy_bts": {
+            "mean": 0.005412156536219817,
+            "low": 0.003696155288259714,
+            "high": 0.00791850781970212
+          },
+          "logged_propensity_diagnostic": {
+            "max_distinct_values_within_item_position": 541,
+            "max_range_within_item_position": 0.713565,
+            "interpretation": "Logged BTS propensities vary within item and position. The frozen upstream prior is a reproducible benchmark approximation, not an exact per-impression policy reconstruction."
+          }
+        },
+        {
+          "campaign": "women",
+          "actions": 46,
+          "logging_rows": 10000,
+          "bts_rows": 10000,
+          "training_rows": 5000,
+          "evaluation_rows": 5000,
+          "bts_reference_rows": 4955,
+          "cutoff": "2019-11-27 13:12:47.359928+00:00",
+          "on_policy_bts": {
+            "mean": 0.005045408678102927,
+            "low": 0.003419900671184565,
+            "high": 0.007437768255681801
+          },
+          "logged_propensity_diagnostic": {
+            "max_distinct_values_within_item_position": 358,
+            "max_range_within_item_position": 0.96244,
+            "interpretation": "Logged BTS propensities vary within item and position. The frozen upstream prior is a reproducible benchmark approximation, not an exact per-impression policy reconstruction."
+          }
+        }
+      ],
+      "logging_rows": 30000,
+      "training_rows": 15000,
+      "evaluation_rows": 15000,
+      "actions": {
+        "all": 80,
+        "men": 34,
+        "women": 46
+      },
+      "target": "Official production-prior BernoulliTS Monte Carlo approximation and uniform sanity check",
+      "detail": "All six random/BTS samples. Official campaign beta priors define the BTS target through beta draws ranked into three positions. Random logs after a shared cutoff provide OPE; BTS logs after the same cutoff provide an empirical on-policy benchmark with Wilson intervals. Logged BTS propensities vary within item/slot, so the frozen-prior approximation is not proven identical to the deployed per-impression policy. Differences include target mismatch and sampling error, not pure estimator error. Row bootstrap is conditional on the fitted reward model and Monte Carlo target, ignores repeated-reader dependence, and is not joint-slate inference.",
+      "reference_method": "https://raw.githubusercontent.com/st-tech/zr-obp/8cbd5fa4558b7ad2ba4781546d6604e4cc3e07c4/examples/obd/evaluate_off_policy_estimators.py",
+      "policy_source": "https://raw.githubusercontent.com/st-tech/zr-obp/8cbd5fa4558b7ad2ba4781546d6604e4cc3e07c4/obp/policy/contextfree.py",
+      "prior_sha256": "81a54fbdc184021ccc62ab97de81ec35461c032e3d7f99ccaa0a9745f732d251",
+      "monte_carlo": [
+        {
+          "campaign": "all",
+          "simulations": 200000,
+          "seed": 12345,
+          "maximum_probability_se": 0.0009622273483304245,
+          "maximum_independent_seed_difference": 0.0014850000000000002,
+          "probabilities": [
+            [
+              0.01075,
+              0.00913,
+              0.008965
+            ],
+            [
+              0.001665,
+              0.00081,
+              0.00075
+            ],
+            [
+              0.0056,
+              0.006265,
+              0.00636
+            ],
+            [
+              0.00054,
+              0.0012,
+              0.00191
+            ],
+            [
+              0.000325,
+              0.00017,
+              0.000105
+            ],
+            [
+              0.008665,
+              0.00495,
+              0.00384
+            ],
+            [
+              0.00247,
+              0.001215,
+              0.00099
+            ],
+            [
+              0.007755,
+              0.025395,
+              0.05162
+            ],
+            [
+              0.004335,
+              0.00228,
+              0.002025
+            ],
+            [
+              0.00709,
+              0.00416,
+              0.003235
+            ],
+            [
+              0.001015,
+              0.00057,
+              0.000415
+            ],
+            [
+              0.00379,
+              0.005585,
+              0.006865
+            ],
+            [
+              0.003085,
+              0.00315,
+              0.003145
+            ],
+            [
+              0.00491,
+              0.003465,
+              0.003225
+            ],
+            [
+              0.004915,
+              0.00577,
+              0.00666
+            ],
+            [
+              0.00032,
+              0.00048,
+              0.000725
+            ],
+            [
+              0.000205,
+              0.000145,
+              0.000165
+            ],
+            [
+              6e-05,
+              8.5e-05,
+              0.0001
+            ],
+            [
+              0.0091,
+              0.02413,
+              0.041945
+            ],
+            [
+              0.004555,
+              0.003755,
+              0.003225
+            ],
+            [
+              0.00138,
+              0.00065,
+              0.00055
+            ],
+            [
+              0.002165,
+              0.00086,
+              0.0006
+            ],
+            [
+              0.00241,
+              0.00183,
+              0.0018
+            ],
+            [
+              0.02861,
+              0.01039,
+              0.006825
+            ],
+            [
+              0.00654,
+              0.003435,
+              0.002575
+            ],
+            [
+              0.000605,
+              0.000545,
+              0.00036
+            ],
+            [
+              0.019695,
+              0.00862,
+              0.006145
+            ],
+            [
+              0.02788,
+              0.01379,
+              0.010345
+            ],
+            [
+              0.024585,
+              0.028615,
+              0.029905
+            ],
+            [
+              0.00094,
+              0.000595,
+              0.000565
+            ],
+            [
+              0.000495,
+              0.000485,
+              0.000365
+            ],
+            [
+              0.001885,
+              0.00109,
+              0.000875
+            ],
+            [
+              0.006115,
+              0.003585,
+              0.00293
+            ],
+            [
+              0.001995,
+              0.001165,
+              0.00103
+            ],
+            [
+              0.016345,
+              0.025075,
+              0.03195
+            ],
+            [
+              0.009485,
+              0.00932,
+              0.00928
+            ],
+            [
+              0.000715,
+              0.00035,
+              0.000235
+            ],
+            [
+              0.01568,
+              0.00914,
+              0.006905
+            ],
+            [
+              0.00217,
+              0.0023,
+              0.002515
+            ],
+            [
+              0.000355,
+              0.00205,
+              0.007
+            ],
+            [
+              5e-05,
+              3.5e-05,
+              4.5e-05
+            ],
+            [
+              0.027265,
+              0.04951,
+              0.06292
+            ],
+            [
+              0.01048,
+              0.005645,
+              0.004525
+            ],
+            [
+              0.018205,
+              0.012385,
+              0.009975
+            ],
+            [
+              0.00093,
+              0.000615,
+              0.00066
+            ],
+            [
+              0.010825,
+              0.01494,
+              0.01876
+            ],
+            [
+              0.004965,
+              0.00487,
+              0.004595
+            ],
+            [
+              0.01918,
+              0.016405,
+              0.015505
+            ],
+            [
+              0.02928,
+              0.015385,
+              0.012315
+            ],
+            [
+              0.0077,
+              0.00631,
+              0.00599
+            ],
+            [
+              0.00166,
+              0.00095,
+              0.000865
+            ],
+            [
+              0.018755,
+              0.038645,
+              0.056495
+            ],
+            [
+              0.023305,
+              0.01828,
+              0.01652
+            ],
+            [
+              0.004265,
+              0.00184,
+              0.001465
+            ],
+            [
+              0.00052,
+              0.00024,
+              0.00019
+            ],
+            [
+              0.00498,
+              0.00214,
+              0.00161
+            ],
+            [
+              0.000705,
+              0.000325,
+              0.00027
+            ],
+            [
+              0.00235,
+              0.002075,
+              0.002075
+            ],
+            [
+              0.011065,
+              0.00838,
+              0.00786
+            ],
+            [
+              0.090905,
+              0.0796,
+              0.06943
+            ],
+            [
+              0.060805,
+              0.039275,
+              0.031355
+            ],
+            [
+              0.19924,
+              0.245395,
+              0.19848
+            ],
+            [
+              0.00262,
+              0.00289,
+              0.0027
+            ],
+            [
+              0.07358,
+              0.080925,
+              0.0781
+            ],
+            [
+              0.0063,
+              0.002845,
+              0.00228
+            ],
+            [
+              0.00423,
+              0.00407,
+              0.00434
+            ],
+            [
+              0.00803,
+              0.00656,
+              0.006095
+            ],
+            [
+              0.00016,
+              9e-05,
+              5.5e-05
+            ],
+            [
+              0.009165,
+              0.00696,
+              0.00633
+            ],
+            [
+              0.00578,
+              0.00455,
+              0.004385
+            ],
+            [
+              0.001045,
+              0.000575,
+              0.000515
+            ],
+            [
+              0.00852,
+              0.00573,
+              0.00478
+            ],
+            [
+              0.000725,
+              0.000395,
+              0.0003
+            ],
+            [
+              0.009495,
+              0.00655,
+              0.00515
+            ],
+            [
+              0.002025,
+              0.00101,
+              0.00076
+            ],
+            [
+              0.003305,
+              0.003455,
+              0.004315
+            ],
+            [
+              0.000565,
+              0.000275,
+              0.000215
+            ],
+            [
+              0.00091,
+              0.00083,
+              0.000695
+            ],
+            [
+              0.006925,
+              0.007415,
+              0.007715
+            ],
+            [
+              0.057985,
+              0.07503,
+              0.08034
+            ]
+          ]
+        },
+        {
+          "campaign": "men",
+          "simulations": 200000,
+          "seed": 12345,
+          "maximum_probability_se": 0.0010371895785607375,
+          "maximum_independent_seed_difference": 0.001810000000000006,
+          "probabilities": [
+            [
+              0.046655,
+              0.04604,
+              0.052375
+            ],
+            [
+              0.00416,
+              0.00313,
+              0.003175
+            ],
+            [
+              0.032275,
+              0.04057,
+              0.052565
+            ],
+            [
+              0.01348,
+              0.031985,
+              0.058615
+            ],
+            [
+              0.000775,
+              0.000555,
+              0.00043
+            ],
+            [
+              0.00266,
+              0.00181,
+              0.00178
+            ],
+            [
+              0.036145,
+              0.056925,
+              0.077815
+            ],
+            [
+              0.016765,
+              0.021105,
+              0.02899
+            ],
+            [
+              0.01657,
+              0.015595,
+              0.01726
+            ],
+            [
+              0.0331,
+              0.044755,
+              0.058955
+            ],
+            [
+              0.003905,
+              0.00777,
+              0.01344
+            ],
+            [
+              0.00087,
+              0.000845,
+              0.00129
+            ],
+            [
+              0.000415,
+              0.00062,
+              0.00089
+            ],
+            [
+              0.28825,
+              0.313325,
+              0.20963
+            ],
+            [
+              0.017685,
+              0.0176,
+              0.021515
+            ],
+            [
+              0.0034,
+              0.0023,
+              0.00256
+            ],
+            [
+              0.004545,
+              0.002435,
+              0.0024
+            ],
+            [
+              0.00889,
+              0.00904,
+              0.010805
+            ],
+            [
+              0.053375,
+              0.022085,
+              0.019555
+            ],
+            [
+              0.0163,
+              0.01042,
+              0.009655
+            ],
+            [
+              0.001875,
+              0.00196,
+              0.00242
+            ],
+            [
+              0.03975,
+              0.02156,
+              0.01879
+            ],
+            [
+              0.06344,
+              0.0363,
+              0.03388
+            ],
+            [
+              0.155215,
+              0.16196,
+              0.153205
+            ],
+            [
+              0.00275,
+              0.00246,
+              0.0029
+            ],
+            [
+              0.000315,
+              0.00031,
+              0.000265
+            ],
+            [
+              0.032585,
+              0.02876,
+              0.03279
+            ],
+            [
+              0.021275,
+              0.020905,
+              0.024385
+            ],
+            [
+              0.003,
+              0.002355,
+              0.00257
+            ],
+            [
+              0.025145,
+              0.020795,
+              0.022215
+            ],
+            [
+              0.001815,
+              0.001495,
+              0.00159
+            ],
+            [
+              0.02868,
+              0.023135,
+              0.024185
+            ],
+            [
+              0.00437,
+              0.0025,
+              0.0025
+            ],
+            [
+              0.019565,
+              0.026595,
+              0.034605
+            ]
+          ]
+        },
+        {
+          "campaign": "women",
+          "simulations": 200000,
+          "seed": 12345,
+          "maximum_probability_se": 0.000995365342412021,
+          "maximum_independent_seed_difference": 0.004040000000000016,
+          "probabilities": [
+            [
+              0.02886,
+              0.01211,
+              0.008825
+            ],
+            [
+              0.001935,
+              0.00108,
+              0.00075
+            ],
+            [
+              0.008745,
+              0.03479,
+              0.07638
+            ],
+            [
+              0.00444,
+              0.003095,
+              0.002465
+            ],
+            [
+              0.00934,
+              0.005495,
+              0.004415
+            ],
+            [
+              0.00193,
+              0.001495,
+              0.001255
+            ],
+            [
+              0.003135,
+              0.001915,
+              0.0015
+            ],
+            [
+              0.005225,
+              0.00312,
+              0.002745
+            ],
+            [
+              0.0008,
+              0.00044,
+              0.000385
+            ],
+            [
+              0.01154,
+              0.02072,
+              0.028555
+            ],
+            [
+              0.005875,
+              0.0072,
+              0.008595
+            ],
+            [
+              0.00041,
+              0.00019,
+              0.00017
+            ],
+            [
+              0.015325,
+              0.008285,
+              0.006305
+            ],
+            [
+              0.005105,
+              0.005375,
+              0.005865
+            ],
+            [
+              0.001115,
+              0.007805,
+              0.02531
+            ],
+            [
+              0.00018,
+              9.5e-05,
+              0.0001
+            ],
+            [
+              0.02653,
+              0.052465,
+              0.071665
+            ],
+            [
+              0.00182,
+              0.00134,
+              0.00134
+            ],
+            [
+              0.01516,
+              0.01076,
+              0.0093
+            ],
+            [
+              0.000255,
+              0.00021,
+              0.000185
+            ],
+            [
+              0.00969,
+              0.016775,
+              0.02338
+            ],
+            [
+              0.00289,
+              0.003215,
+              0.00358
+            ],
+            [
+              0.02028,
+              0.01761,
+              0.016465
+            ],
+            [
+              0.01199,
+              0.0072,
+              0.005945
+            ],
+            [
+              0.004785,
+              0.005155,
+              0.004985
+            ],
+            [
+              0.00287,
+              0.001775,
+              0.00154
+            ],
+            [
+              0.013605,
+              0.035635,
+              0.0594
+            ],
+            [
+              0.055485,
+              0.036885,
+              0.030755
+            ],
+            [
+              0.001245,
+              0.00062,
+              0.000595
+            ],
+            [
+              0.000405,
+              0.000165,
+              0.00015
+            ],
+            [
+              0.00199,
+              0.000925,
+              0.0008
+            ],
+            [
+              0.001405,
+              0.00079,
+              0.000695
+            ],
+            [
+              0.0073,
+              0.006505,
+              0.006205
+            ],
+            [
+              0.002995,
+              0.00299,
+              0.003155
+            ],
+            [
+              0.20236,
+              0.11813,
+              0.085875
+            ],
+            [
+              0.05421,
+              0.03032,
+              0.02427
+            ],
+            [
+              0.20674,
+              0.272295,
+              0.21691
+            ],
+            [
+              0.00316,
+              0.003515,
+              0.004215
+            ],
+            [
+              0.115555,
+              0.114,
+              0.10418
+            ],
+            [
+              0.00034,
+              0.00028,
+              0.00019
+            ],
+            [
+              0.03024,
+              0.02389,
+              0.02137
+            ],
+            [
+              0.00456,
+              0.004525,
+              0.004735
+            ],
+            [
+              0.00081,
+              0.000575,
+              0.000545
+            ],
+            [
+              0.00222,
+              0.00193,
+              0.001905
+            ],
+            [
+              0.02443,
+              0.02354,
+              0.02427
+            ],
+            [
+              0.070715,
+              0.09277,
+              0.097775
+            ]
+          ]
+        }
+      ],
       "rows": [
         {
           "campaign": "all",
           "policy": "Uniform sanity check",
           "position": 1,
+          "population": "OBD all; random held-out slot 1; cutoff 2019-11-27 13:57:03.381609+00:00",
           "sample_size": 1628,
           "estimator": "IPS",
           "estimate": {
@@ -1579,20 +3695,27 @@
           "effective_sample_size": 1628.0,
           "observed_logging": {
             "mean": 0.0042997542997543,
-            "low": 0.0012285012285012285,
-            "high": 0.007371007371007371
+            "low": 0.0020843495447302168,
+            "high": 0.008848979011334208
           },
           "bts_reference": {
-            "mean": 0.0005830903790087463,
-            "low": 0.0,
-            "high": 0.001749271137026239
+            "mean": 0.0005889281507656066,
+            "low": 0.00010396784539651164,
+            "high": 0.003328466351348239
           },
-          "bts_reference_n": 1715
+          "bts_reference_n": 1698,
+          "difference_from_bts": {
+            "mean": 0.0037108261489886933,
+            "low": 0.0006902180047056372,
+            "high": 0.007396329834492379
+          },
+          "comparison_identifies_exact_logged_policy": false
         },
         {
           "campaign": "all",
           "policy": "Uniform sanity check",
           "position": 1,
+          "population": "OBD all; random held-out slot 1; cutoff 2019-11-27 13:57:03.381609+00:00",
           "sample_size": 1628,
           "estimator": "SNIPS",
           "estimate": {
@@ -1603,20 +3726,27 @@
           "effective_sample_size": 1628.0,
           "observed_logging": {
             "mean": 0.0042997542997543,
-            "low": 0.0012285012285012285,
-            "high": 0.007371007371007371
+            "low": 0.0020843495447302168,
+            "high": 0.008848979011334208
           },
           "bts_reference": {
-            "mean": 0.0005830903790087463,
-            "low": 0.0,
-            "high": 0.001749271137026239
+            "mean": 0.0005889281507656066,
+            "low": 0.00010396784539651164,
+            "high": 0.003328466351348239
           },
-          "bts_reference_n": 1715
+          "bts_reference_n": 1698,
+          "difference_from_bts": {
+            "mean": 0.0037108261489886933,
+            "low": 0.0006902180047056372,
+            "high": 0.007396329834492379
+          },
+          "comparison_identifies_exact_logged_policy": false
         },
         {
           "campaign": "all",
           "policy": "Uniform sanity check",
           "position": 1,
+          "population": "OBD all; random held-out slot 1; cutoff 2019-11-27 13:57:03.381609+00:00",
           "sample_size": 1628,
           "estimator": "DM",
           "estimate": {
@@ -1627,20 +3757,27 @@
           "effective_sample_size": 1628.0,
           "observed_logging": {
             "mean": 0.0042997542997543,
-            "low": 0.0012285012285012285,
-            "high": 0.007371007371007371
+            "low": 0.0020843495447302168,
+            "high": 0.008848979011334208
           },
           "bts_reference": {
-            "mean": 0.0005830903790087463,
-            "low": 0.0,
-            "high": 0.001749271137026239
+            "mean": 0.0005889281507656066,
+            "low": 0.00010396784539651164,
+            "high": 0.003328466351348239
           },
-          "bts_reference_n": 1715
+          "bts_reference_n": 1698,
+          "difference_from_bts": {
+            "mean": 0.0030869835145829784,
+            "low": 0.001909127213051765,
+            "high": 0.003675911665348585
+          },
+          "comparison_identifies_exact_logged_policy": false
         },
         {
           "campaign": "all",
           "policy": "Uniform sanity check",
           "position": 1,
+          "population": "OBD all; random held-out slot 1; cutoff 2019-11-27 13:57:03.381609+00:00",
           "sample_size": 1628,
           "estimator": "DR",
           "estimate": {
@@ -1651,116 +3788,151 @@
           "effective_sample_size": 1628.0,
           "observed_logging": {
             "mean": 0.0042997542997543,
-            "low": 0.0012285012285012285,
-            "high": 0.007371007371007371
+            "low": 0.0020843495447302168,
+            "high": 0.008848979011334208
           },
           "bts_reference": {
-            "mean": 0.0005830903790087463,
-            "low": 0.0,
-            "high": 0.001749271137026239
+            "mean": 0.0005889281507656066,
+            "low": 0.00010396784539651164,
+            "high": 0.003328466351348239
           },
-          "bts_reference_n": 1715
+          "bts_reference_n": 1698,
+          "difference_from_bts": {
+            "mean": 0.003472394600582419,
+            "low": 0.0005421070831723939,
+            "high": 0.007275021794511486
+          },
+          "comparison_identifies_exact_logged_policy": false
         },
         {
           "campaign": "all",
-          "policy": "Fixed training CTR policy",
+          "policy": "Official prior BTS approximation",
           "position": 1,
+          "population": "OBD all; random held-out slot 1; cutoff 2019-11-27 13:57:03.381609+00:00",
           "sample_size": 1628,
           "estimator": "IPS",
           "estimate": {
-            "mean": 0.0008599508599508601,
-            "low": 0.0003685503685503686,
-            "high": 0.0014742014742014744
+            "mean": 0.0025164619164619166,
+            "low": 0.00043541154791154786,
+            "high": 0.00572254914004914
           },
-          "effective_sample_size": 29.40318517864109,
+          "effective_sample_size": 340.0209498169067,
           "observed_logging": {
             "mean": 0.0042997542997543,
-            "low": 0.0012285012285012285,
-            "high": 0.007371007371007371
+            "low": 0.0020843495447302168,
+            "high": 0.008848979011334208
           },
           "bts_reference": {
-            "mean": 0.0005830903790087463,
-            "low": 0.0,
-            "high": 0.001749271137026239
+            "mean": 0.0005889281507656066,
+            "low": 0.00010396784539651164,
+            "high": 0.003328466351348239
           },
-          "bts_reference_n": 1715
+          "bts_reference_n": 1698,
+          "difference_from_bts": {
+            "mean": 0.0019275337656963101,
+            "low": -0.0005906028048607554,
+            "high": 0.00549476696822103
+          },
+          "comparison_identifies_exact_logged_policy": false
         },
         {
           "campaign": "all",
-          "policy": "Fixed training CTR policy",
+          "policy": "Official prior BTS approximation",
           "position": 1,
+          "population": "OBD all; random held-out slot 1; cutoff 2019-11-27 13:57:03.381609+00:00",
           "sample_size": 1628,
           "estimator": "SNIPS",
           "estimate": {
-            "mean": 0.0009474824038982135,
-            "low": 0.0003223033949290933,
-            "high": 0.001964636542239686
+            "mean": 0.0028268890640629043,
+            "low": 0.0004850440407225657,
+            "high": 0.006442187115489133
           },
-          "effective_sample_size": 29.40318517864109,
+          "effective_sample_size": 340.0209498169067,
           "observed_logging": {
             "mean": 0.0042997542997543,
-            "low": 0.0012285012285012285,
-            "high": 0.007371007371007371
+            "low": 0.0020843495447302168,
+            "high": 0.008848979011334208
           },
           "bts_reference": {
-            "mean": 0.0005830903790087463,
-            "low": 0.0,
-            "high": 0.001749271137026239
+            "mean": 0.0005889281507656066,
+            "low": 0.00010396784539651164,
+            "high": 0.003328466351348239
           },
-          "bts_reference_n": 1715
+          "bts_reference_n": 1698,
+          "difference_from_bts": {
+            "mean": 0.002237960913297298,
+            "low": -0.0004473225895641678,
+            "high": 0.006264849720330919
+          },
+          "comparison_identifies_exact_logged_policy": false
         },
         {
           "campaign": "all",
-          "policy": "Fixed training CTR policy",
+          "policy": "Official prior BTS approximation",
           "position": 1,
+          "population": "OBD all; random held-out slot 1; cutoff 2019-11-27 13:57:03.381609+00:00",
           "sample_size": 1628,
           "estimator": "DM",
           "estimate": {
-            "mean": 0.023387813912017087,
-            "low": 0.023387813912017087,
-            "high": 0.023387813912017087
+            "mean": 0.0024389705227219477,
+            "low": 0.0024389705227219477,
+            "high": 0.0024389705227219477
           },
-          "effective_sample_size": 29.40318517864109,
+          "effective_sample_size": 340.0209498169067,
           "observed_logging": {
             "mean": 0.0042997542997543,
-            "low": 0.0012285012285012285,
-            "high": 0.007371007371007371
+            "low": 0.0020843495447302168,
+            "high": 0.008848979011334208
           },
           "bts_reference": {
-            "mean": 0.0005830903790087463,
-            "low": 0.0,
-            "high": 0.001749271137026239
+            "mean": 0.0005889281507656066,
+            "low": 0.00010396784539651164,
+            "high": 0.003328466351348239
           },
-          "bts_reference_n": 1715
+          "bts_reference_n": 1698,
+          "difference_from_bts": {
+            "mean": 0.0018500423719563413,
+            "low": 0.0006721860704251279,
+            "high": 0.0024389705227219477
+          },
+          "comparison_identifies_exact_logged_policy": false
         },
         {
           "campaign": "all",
-          "policy": "Fixed training CTR policy",
+          "policy": "Official prior BTS approximation",
           "position": 1,
+          "population": "OBD all; random held-out slot 1; cutoff 2019-11-27 13:57:03.381609+00:00",
           "sample_size": 1628,
           "estimator": "DR",
           "estimate": {
-            "mean": 0.0034281704082807316,
-            "low": -0.007072629612781607,
-            "high": 0.012064577246112786
+            "mean": 0.0026438781175045175,
+            "low": 0.0005471063846328128,
+            "high": 0.0057718890432302515
           },
-          "effective_sample_size": 29.40318517864109,
+          "effective_sample_size": 340.0209498169067,
           "observed_logging": {
             "mean": 0.0042997542997543,
-            "low": 0.0012285012285012285,
-            "high": 0.007371007371007371
+            "low": 0.0020843495447302168,
+            "high": 0.008848979011334208
           },
           "bts_reference": {
-            "mean": 0.0005830903790087463,
-            "low": 0.0,
-            "high": 0.001749271137026239
+            "mean": 0.0005889281507656066,
+            "low": 0.00010396784539651164,
+            "high": 0.003328466351348239
           },
-          "bts_reference_n": 1715
+          "bts_reference_n": 1698,
+          "difference_from_bts": {
+            "mean": 0.002054949966738911,
+            "low": -0.0004303943445498852,
+            "high": 0.00554417542603332
+          },
+          "comparison_identifies_exact_logged_policy": false
         },
         {
           "campaign": "all",
           "policy": "Uniform sanity check",
           "position": 2,
+          "population": "OBD all; random held-out slot 2; cutoff 2019-11-27 13:57:03.381609+00:00",
           "sample_size": 1692,
           "estimator": "IPS",
           "estimate": {
@@ -1771,20 +3943,27 @@
           "effective_sample_size": 1692.0,
           "observed_logging": {
             "mean": 0.004728132387706856,
-            "low": 0.0017730496453900709,
-            "high": 0.008274231678486997
+            "low": 0.0023977450051142204,
+            "high": 0.009302322072200945
           },
           "bts_reference": {
-            "mean": 0.005357142857142857,
-            "low": 0.002380952380952381,
-            "high": 0.008928571428571428
+            "mean": 0.005385996409335727,
+            "low": 0.002836175517126499,
+            "high": 0.010204735731913963
           },
-          "bts_reference_n": 1680
+          "bts_reference_n": 1671,
+          "difference_from_bts": {
+            "mean": -0.0006578640216288716,
+            "low": -0.00543056139144607,
+            "high": 0.004114833348188327
+          },
+          "comparison_identifies_exact_logged_policy": false
         },
         {
           "campaign": "all",
           "policy": "Uniform sanity check",
           "position": 2,
+          "population": "OBD all; random held-out slot 2; cutoff 2019-11-27 13:57:03.381609+00:00",
           "sample_size": 1692,
           "estimator": "SNIPS",
           "estimate": {
@@ -1795,20 +3974,27 @@
           "effective_sample_size": 1692.0,
           "observed_logging": {
             "mean": 0.004728132387706856,
-            "low": 0.0017730496453900709,
-            "high": 0.008274231678486997
+            "low": 0.0023977450051142204,
+            "high": 0.009302322072200945
           },
           "bts_reference": {
-            "mean": 0.005357142857142857,
-            "low": 0.002380952380952381,
-            "high": 0.008928571428571428
+            "mean": 0.005385996409335727,
+            "low": 0.002836175517126499,
+            "high": 0.010204735731913963
           },
-          "bts_reference_n": 1680
+          "bts_reference_n": 1671,
+          "difference_from_bts": {
+            "mean": -0.0006578640216288716,
+            "low": -0.00543056139144607,
+            "high": 0.004114833348188327
+          },
+          "comparison_identifies_exact_logged_policy": false
         },
         {
           "campaign": "all",
           "policy": "Uniform sanity check",
           "position": 2,
+          "population": "OBD all; random held-out slot 2; cutoff 2019-11-27 13:57:03.381609+00:00",
           "sample_size": 1692,
           "estimator": "DM",
           "estimate": {
@@ -1819,20 +4005,27 @@
           "effective_sample_size": 1692.0,
           "observed_logging": {
             "mean": 0.004728132387706856,
-            "low": 0.0017730496453900709,
-            "high": 0.008274231678486997
+            "low": 0.0023977450051142204,
+            "high": 0.009302322072200945
           },
           "bts_reference": {
-            "mean": 0.005357142857142857,
-            "low": 0.002380952380952381,
-            "high": 0.008928571428571428
+            "mean": 0.005385996409335727,
+            "low": 0.002836175517126499,
+            "high": 0.010204735731913963
           },
-          "bts_reference_n": 1680
+          "bts_reference_n": 1671,
+          "difference_from_bts": {
+            "mean": -0.001734359915293345,
+            "low": -0.005339985289320873,
+            "high": 0.0012578603121153925
+          },
+          "comparison_identifies_exact_logged_policy": false
         },
         {
           "campaign": "all",
           "policy": "Uniform sanity check",
           "position": 2,
+          "population": "OBD all; random held-out slot 2; cutoff 2019-11-27 13:57:03.381609+00:00",
           "sample_size": 1692,
           "estimator": "DR",
           "estimate": {
@@ -1843,116 +4036,151 @@
           "effective_sample_size": 1692.0,
           "observed_logging": {
             "mean": 0.004728132387706856,
-            "low": 0.0017730496453900709,
-            "high": 0.008274231678486997
+            "low": 0.0023977450051142204,
+            "high": 0.009302322072200945
           },
           "bts_reference": {
-            "mean": 0.005357142857142857,
-            "low": 0.002380952380952381,
-            "high": 0.008928571428571428
+            "mean": 0.005385996409335727,
+            "low": 0.002836175517126499,
+            "high": 0.010204735731913963
           },
-          "bts_reference_n": 1680
+          "bts_reference_n": 1671,
+          "difference_from_bts": {
+            "mean": -0.0006406993976123066,
+            "low": -0.0054796205366227264,
+            "high": 0.004177994246497004
+          },
+          "comparison_identifies_exact_logged_policy": false
         },
         {
           "campaign": "all",
-          "policy": "Fixed training CTR policy",
+          "policy": "Official prior BTS approximation",
           "position": 2,
+          "population": "OBD all; random held-out slot 2; cutoff 2019-11-27 13:57:03.381609+00:00",
           "sample_size": 1692,
           "estimator": "IPS",
           "estimate": {
-            "mean": 0.0009456264775413713,
-            "low": 0.00035460992907801426,
-            "high": 0.0016548463356973997
+            "mean": 0.01584420803782506,
+            "low": 0.001077068557919622,
+            "high": 0.04178560283687941
           },
-          "effective_sample_size": 31.74822690221346,
+          "effective_sample_size": 222.10623576856983,
           "observed_logging": {
             "mean": 0.004728132387706856,
-            "low": 0.0017730496453900709,
-            "high": 0.008274231678486997
+            "low": 0.0023977450051142204,
+            "high": 0.009302322072200945
           },
           "bts_reference": {
-            "mean": 0.005357142857142857,
-            "low": 0.002380952380952381,
-            "high": 0.008928571428571428
+            "mean": 0.005385996409335727,
+            "low": 0.002836175517126499,
+            "high": 0.010204735731913963
           },
-          "bts_reference_n": 1680
+          "bts_reference_n": 1671,
+          "difference_from_bts": {
+            "mean": 0.010458211628489334,
+            "low": -0.0053979255213041834,
+            "high": 0.03632218724932197
+          },
+          "comparison_identifies_exact_logged_policy": false
         },
         {
           "campaign": "all",
-          "policy": "Fixed training CTR policy",
+          "policy": "Official prior BTS approximation",
           "position": 2,
+          "population": "OBD all; random held-out slot 2; cutoff 2019-11-27 13:57:03.381609+00:00",
           "sample_size": 1692,
           "estimator": "SNIPS",
           "estimate": {
-            "mean": 0.0009886307464162137,
-            "low": 0.0003707365299060801,
-            "high": 0.0019629837352776224
+            "mean": 0.016029536767171466,
+            "low": 0.0010970841371080846,
+            "high": 0.042701104581484836
           },
-          "effective_sample_size": 31.74822690221346,
+          "effective_sample_size": 222.10623576856983,
           "observed_logging": {
             "mean": 0.004728132387706856,
-            "low": 0.0017730496453900709,
-            "high": 0.008274231678486997
+            "low": 0.0023977450051142204,
+            "high": 0.009302322072200945
           },
           "bts_reference": {
-            "mean": 0.005357142857142857,
-            "low": 0.002380952380952381,
-            "high": 0.008928571428571428
+            "mean": 0.005385996409335727,
+            "low": 0.002836175517126499,
+            "high": 0.010204735731913963
           },
-          "bts_reference_n": 1680
+          "bts_reference_n": 1671,
+          "difference_from_bts": {
+            "mean": 0.010643540357835738,
+            "low": -0.0053239227680411776,
+            "high": 0.03737366906277274
+          },
+          "comparison_identifies_exact_logged_policy": false
         },
         {
           "campaign": "all",
-          "policy": "Fixed training CTR policy",
+          "policy": "Official prior BTS approximation",
           "position": 2,
+          "population": "OBD all; random held-out slot 2; cutoff 2019-11-27 13:57:03.381609+00:00",
           "sample_size": 1692,
           "estimator": "DM",
           "estimate": {
-            "mean": 0.02604797435763201,
-            "low": 0.02604797435763201,
-            "high": 0.02604797435763201
+            "mean": 0.0031054529254207065,
+            "low": 0.0031054529254207065,
+            "high": 0.0031054529254207065
           },
-          "effective_sample_size": 31.74822690221346,
+          "effective_sample_size": 222.10623576856983,
           "observed_logging": {
             "mean": 0.004728132387706856,
-            "low": 0.0017730496453900709,
-            "high": 0.008274231678486997
+            "low": 0.0023977450051142204,
+            "high": 0.009302322072200945
           },
           "bts_reference": {
-            "mean": 0.005357142857142857,
-            "low": 0.002380952380952381,
-            "high": 0.008928571428571428
+            "mean": 0.005385996409335727,
+            "low": 0.002836175517126499,
+            "high": 0.010204735731913963
           },
-          "bts_reference_n": 1680
+          "bts_reference_n": 1671,
+          "difference_from_bts": {
+            "mean": -0.002280543483915021,
+            "low": -0.005886168857942548,
+            "high": 0.0007116767434937167
+          },
+          "comparison_identifies_exact_logged_policy": false
         },
         {
           "campaign": "all",
-          "policy": "Fixed training CTR policy",
+          "policy": "Official prior BTS approximation",
           "position": 2,
+          "population": "OBD all; random held-out slot 2; cutoff 2019-11-27 13:57:03.381609+00:00",
           "sample_size": 1692,
           "estimator": "DR",
           "estimate": {
-            "mean": 0.0023256690532972683,
-            "low": -0.008405290186866312,
-            "high": 0.01214454839820999
+            "mean": 0.01584272668977885,
+            "low": 0.0010529627586610434,
+            "high": 0.04194077534864909
           },
-          "effective_sample_size": 31.74822690221346,
+          "effective_sample_size": 222.10623576856983,
           "observed_logging": {
             "mean": 0.004728132387706856,
-            "low": 0.0017730496453900709,
-            "high": 0.008274231678486997
+            "low": 0.0023977450051142204,
+            "high": 0.009302322072200945
           },
           "bts_reference": {
-            "mean": 0.005357142857142857,
-            "low": 0.002380952380952381,
-            "high": 0.008928571428571428
+            "mean": 0.005385996409335727,
+            "low": 0.002836175517126499,
+            "high": 0.010204735731913963
           },
-          "bts_reference_n": 1680
+          "bts_reference_n": 1671,
+          "difference_from_bts": {
+            "mean": 0.010456730280443123,
+            "low": -0.005395141344616384,
+            "high": 0.03635345957357163
+          },
+          "comparison_identifies_exact_logged_policy": false
         },
         {
           "campaign": "all",
           "policy": "Uniform sanity check",
           "position": 3,
+          "population": "OBD all; random held-out slot 3; cutoff 2019-11-27 13:57:03.381609+00:00",
           "sample_size": 1680,
           "estimator": "IPS",
           "estimate": {
@@ -1963,20 +4191,27 @@
           "effective_sample_size": 1680.0,
           "observed_logging": {
             "mean": 0.002380952380952381,
-            "low": 0.0005952380952380953,
-            "high": 0.004776785714285701
+            "low": 0.0009262834385276326,
+            "high": 0.006106123774552561
           },
           "bts_reference": {
-            "mean": 0.004361370716510903,
-            "low": 0.001869158878504673,
-            "high": 0.007476635514018692
+            "mean": 0.00438871473354232,
+            "low": 0.002127505946481483,
+            "high": 0.009031485911194004
           },
-          "bts_reference_n": 1605
+          "bts_reference_n": 1595,
+          "difference_from_bts": {
+            "mean": -0.0020077623525899388,
+            "low": -0.00575109158083296,
+            "high": 0.0017633228840125308
+          },
+          "comparison_identifies_exact_logged_policy": false
         },
         {
           "campaign": "all",
           "policy": "Uniform sanity check",
           "position": 3,
+          "population": "OBD all; random held-out slot 3; cutoff 2019-11-27 13:57:03.381609+00:00",
           "sample_size": 1680,
           "estimator": "SNIPS",
           "estimate": {
@@ -1987,20 +4222,27 @@
           "effective_sample_size": 1680.0,
           "observed_logging": {
             "mean": 0.002380952380952381,
-            "low": 0.0005952380952380953,
-            "high": 0.004776785714285701
+            "low": 0.0009262834385276326,
+            "high": 0.006106123774552561
           },
           "bts_reference": {
-            "mean": 0.004361370716510903,
-            "low": 0.001869158878504673,
-            "high": 0.007476635514018692
+            "mean": 0.00438871473354232,
+            "low": 0.002127505946481483,
+            "high": 0.009031485911194004
           },
-          "bts_reference_n": 1605
+          "bts_reference_n": 1595,
+          "difference_from_bts": {
+            "mean": -0.0020077623525899388,
+            "low": -0.00575109158083296,
+            "high": 0.0017633228840125308
+          },
+          "comparison_identifies_exact_logged_policy": false
         },
         {
           "campaign": "all",
           "policy": "Uniform sanity check",
           "position": 3,
+          "population": "OBD all; random held-out slot 3; cutoff 2019-11-27 13:57:03.381609+00:00",
           "sample_size": 1680,
           "estimator": "DM",
           "estimate": {
@@ -2011,20 +4253,27 @@
           "effective_sample_size": 1680.0,
           "observed_logging": {
             "mean": 0.002380952380952381,
-            "low": 0.0005952380952380953,
-            "high": 0.004776785714285701
+            "low": 0.0009262834385276326,
+            "high": 0.006106123774552561
           },
           "bts_reference": {
-            "mean": 0.004361370716510903,
-            "low": 0.001869158878504673,
-            "high": 0.007476635514018692
+            "mean": 0.00438871473354232,
+            "low": 0.002127505946481483,
+            "high": 0.009031485911194004
           },
-          "bts_reference_n": 1605
+          "bts_reference_n": 1595,
+          "difference_from_bts": {
+            "mean": -0.0005041712031142111,
+            "low": -0.003638967441358725,
+            "high": 0.0026306250351303033
+          },
+          "comparison_identifies_exact_logged_policy": false
         },
         {
           "campaign": "all",
           "policy": "Uniform sanity check",
           "position": 3,
+          "population": "OBD all; random held-out slot 3; cutoff 2019-11-27 13:57:03.381609+00:00",
           "sample_size": 1680,
           "estimator": "DR",
           "estimate": {
@@ -2035,111 +4284,1633 @@
           "effective_sample_size": 1680.0,
           "observed_logging": {
             "mean": 0.002380952380952381,
-            "low": 0.0005952380952380953,
-            "high": 0.004776785714285701
+            "low": 0.0009262834385276326,
+            "high": 0.006106123774552561
           },
           "bts_reference": {
-            "mean": 0.004361370716510903,
-            "low": 0.001869158878504673,
-            "high": 0.007476635514018692
+            "mean": 0.00438871473354232,
+            "low": 0.002127505946481483,
+            "high": 0.009031485911194004
           },
-          "bts_reference_n": 1605
+          "bts_reference_n": 1595,
+          "difference_from_bts": {
+            "mean": -0.0018862808322103477,
+            "low": -0.0058843724432831,
+            "high": 0.0020171298760739073
+          },
+          "comparison_identifies_exact_logged_policy": false
         },
         {
           "campaign": "all",
-          "policy": "Fixed training CTR policy",
+          "policy": "Official prior BTS approximation",
           "position": 3,
+          "population": "OBD all; random held-out slot 3; cutoff 2019-11-27 13:57:03.381609+00:00",
           "sample_size": 1680,
           "estimator": "IPS",
           "estimate": {
-            "mean": 0.0004761904761904763,
+            "mean": 0.00043261904761904757,
             "low": 0.0,
-            "high": 0.0009523809523809526
+            "high": 0.0010038095238095238
           },
-          "effective_sample_size": 25.429167909334936,
+          "effective_sample_size": 281.6874436523815,
           "observed_logging": {
             "mean": 0.002380952380952381,
-            "low": 0.0005952380952380953,
-            "high": 0.004776785714285701
+            "low": 0.0009262834385276326,
+            "high": 0.006106123774552561
           },
           "bts_reference": {
-            "mean": 0.004361370716510903,
-            "low": 0.001869158878504673,
-            "high": 0.007476635514018692
+            "mean": 0.00438871473354232,
+            "low": 0.002127505946481483,
+            "high": 0.009031485911194004
           },
-          "bts_reference_n": 1605
+          "bts_reference_n": 1595,
+          "difference_from_bts": {
+            "mean": -0.003956095685923273,
+            "low": -0.007369314543215405,
+            "high": -0.0008654839714882823
+          },
+          "comparison_identifies_exact_logged_policy": false
         },
         {
           "campaign": "all",
-          "policy": "Fixed training CTR policy",
+          "policy": "Official prior BTS approximation",
           "position": 3,
+          "population": "OBD all; random held-out slot 3; cutoff 2019-11-27 13:57:03.381609+00:00",
           "sample_size": 1680,
           "estimator": "SNIPS",
           "estimate": {
-            "mean": 0.0006849315068493152,
+            "mean": 0.0004620470438652256,
             "low": 0.0,
-            "high": 0.0016306575196008554
+            "high": 0.0010342392598765933
           },
-          "effective_sample_size": 25.429167909334936,
+          "effective_sample_size": 281.6874436523815,
           "observed_logging": {
             "mean": 0.002380952380952381,
-            "low": 0.0005952380952380953,
-            "high": 0.004776785714285701
+            "low": 0.0009262834385276326,
+            "high": 0.006106123774552561
           },
           "bts_reference": {
-            "mean": 0.004361370716510903,
-            "low": 0.001869158878504673,
-            "high": 0.007476635514018692
+            "mean": 0.00438871473354232,
+            "low": 0.002127505946481483,
+            "high": 0.009031485911194004
           },
-          "bts_reference_n": 1605
+          "bts_reference_n": 1595,
+          "difference_from_bts": {
+            "mean": -0.003926667689677094,
+            "low": -0.007357052708060088,
+            "high": -0.0008446400309333778
+          },
+          "comparison_identifies_exact_logged_policy": false
         },
         {
           "campaign": "all",
-          "policy": "Fixed training CTR policy",
+          "policy": "Official prior BTS approximation",
           "position": 3,
+          "population": "OBD all; random held-out slot 3; cutoff 2019-11-27 13:57:03.381609+00:00",
           "sample_size": 1680,
           "estimator": "DM",
           "estimate": {
-            "mean": 0.03467078625710601,
-            "low": 0.03467078625710601,
-            "high": 0.03467078625710601
+            "mean": 0.004163040235579612,
+            "low": 0.004163040235579612,
+            "high": 0.004163040235579612
           },
-          "effective_sample_size": 25.429167909334936,
+          "effective_sample_size": 281.6874436523815,
           "observed_logging": {
             "mean": 0.002380952380952381,
-            "low": 0.0005952380952380953,
-            "high": 0.004776785714285701
+            "low": 0.0009262834385276326,
+            "high": 0.006106123774552561
           },
           "bts_reference": {
-            "mean": 0.004361370716510903,
-            "low": 0.001869158878504673,
-            "high": 0.007476635514018692
+            "mean": 0.00438871473354232,
+            "low": 0.002127505946481483,
+            "high": 0.009031485911194004
           },
-          "bts_reference_n": 1605
+          "bts_reference_n": 1595,
+          "difference_from_bts": {
+            "mean": -0.0002256744979627079,
+            "low": -0.003360470736207222,
+            "high": 0.002909121740281806
+          },
+          "comparison_identifies_exact_logged_policy": false
         },
         {
           "campaign": "all",
-          "policy": "Fixed training CTR policy",
+          "policy": "Official prior BTS approximation",
           "position": 3,
+          "population": "OBD all; random held-out slot 3; cutoff 2019-11-27 13:57:03.381609+00:00",
           "sample_size": 1680,
           "estimator": "DR",
           "estimate": {
-            "mean": 0.013412440133036071,
-            "low": 0.0020699348321685097,
-            "high": 0.02337365015183754
+            "mean": 0.0011699853161983539,
+            "low": 0.0003793796312609774,
+            "high": 0.0019646294737164175
           },
-          "effective_sample_size": 25.429167909334936,
+          "effective_sample_size": 281.6874436523815,
           "observed_logging": {
             "mean": 0.002380952380952381,
-            "low": 0.0005952380952380953,
-            "high": 0.004776785714285701
+            "low": 0.0009262834385276326,
+            "high": 0.006106123774552561
           },
           "bts_reference": {
-            "mean": 0.004361370716510903,
-            "low": 0.001869158878504673,
-            "high": 0.007476635514018692
+            "mean": 0.00438871473354232,
+            "low": 0.002127505946481483,
+            "high": 0.009031485911194004
           },
-          "bts_reference_n": 1605
+          "bts_reference_n": 1595,
+          "difference_from_bts": {
+            "mean": -0.003218729417343966,
+            "low": -0.006727351679652236,
+            "high": -0.0002387685421466549
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "men",
+          "policy": "Uniform sanity check",
+          "position": 1,
+          "population": "OBD men; random held-out slot 1; cutoff 2019-11-27 12:30:04.544419+00:00",
+          "sample_size": 1625,
+          "estimator": "IPS",
+          "estimate": {
+            "mean": 0.0036923076923076987,
+            "low": 0.001230769230769233,
+            "high": 0.006769230769230781
+          },
+          "effective_sample_size": 1624.9999999999995,
+          "observed_logging": {
+            "mean": 0.0036923076923076922,
+            "low": 0.0016932829407572663,
+            "high": 0.008032316033229792
+          },
+          "bts_reference": {
+            "mean": 0.004394224733207784,
+            "low": 0.002130178994964924,
+            "high": 0.009042789193041962
+          },
+          "bts_reference_n": 1593,
+          "difference_from_bts": {
+            "mean": -0.0007019170409000852,
+            "low": -0.005059056448886955,
+            "high": 0.0036304988169395067
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "men",
+          "policy": "Uniform sanity check",
+          "position": 1,
+          "population": "OBD men; random held-out slot 1; cutoff 2019-11-27 12:30:04.544419+00:00",
+          "sample_size": 1625,
+          "estimator": "SNIPS",
+          "estimate": {
+            "mean": 0.0036923076923076927,
+            "low": 0.0012307692307692308,
+            "high": 0.00676923076923077
+          },
+          "effective_sample_size": 1624.9999999999995,
+          "observed_logging": {
+            "mean": 0.0036923076923076922,
+            "low": 0.0016932829407572663,
+            "high": 0.008032316033229792
+          },
+          "bts_reference": {
+            "mean": 0.004394224733207784,
+            "low": 0.002130178994964924,
+            "high": 0.009042789193041962
+          },
+          "bts_reference_n": 1593,
+          "difference_from_bts": {
+            "mean": -0.0007019170409000913,
+            "low": -0.005059056448886957,
+            "high": 0.0036304988169394955
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "men",
+          "policy": "Uniform sanity check",
+          "position": 1,
+          "population": "OBD men; random held-out slot 1; cutoff 2019-11-27 12:30:04.544419+00:00",
+          "sample_size": 1625,
+          "estimator": "DM",
+          "estimate": {
+            "mean": 0.0027516580749044196,
+            "low": 0.0027516580749044196,
+            "high": 0.0027516580749044196
+          },
+          "effective_sample_size": 1624.9999999999995,
+          "observed_logging": {
+            "mean": 0.0036923076923076922,
+            "low": 0.0016932829407572663,
+            "high": 0.008032316033229792
+          },
+          "bts_reference": {
+            "mean": 0.004394224733207784,
+            "low": 0.002130178994964924,
+            "high": 0.009042789193041962
+          },
+          "bts_reference_n": 1593,
+          "difference_from_bts": {
+            "mean": -0.0016425666583033643,
+            "low": -0.004781298610594639,
+            "high": 0.0014961652939879098
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "men",
+          "policy": "Uniform sanity check",
+          "position": 1,
+          "population": "OBD men; random held-out slot 1; cutoff 2019-11-27 12:30:04.544419+00:00",
+          "sample_size": 1625,
+          "estimator": "DR",
+          "estimate": {
+            "mean": 0.003687802343790973,
+            "low": 0.001115073066822667,
+            "high": 0.007020617264578914
+          },
+          "effective_sample_size": 1624.9999999999995,
+          "observed_logging": {
+            "mean": 0.0036923076923076922,
+            "low": 0.0016932829407572663,
+            "high": 0.008032316033229792
+          },
+          "bts_reference": {
+            "mean": 0.004394224733207784,
+            "low": 0.002130178994964924,
+            "high": 0.009042789193041962
+          },
+          "bts_reference_n": 1593,
+          "difference_from_bts": {
+            "mean": -0.0007064223894168108,
+            "low": -0.00503920267296581,
+            "high": 0.0035786550285267
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "men",
+          "policy": "Official prior BTS approximation",
+          "position": 1,
+          "population": "OBD men; random held-out slot 1; cutoff 2019-11-27 12:30:04.544419+00:00",
+          "sample_size": 1625,
+          "estimator": "IPS",
+          "estimate": {
+            "mean": 0.0018204123076923109,
+            "low": 0.0003689706153846161,
+            "high": 0.003916517538461544
+          },
+          "effective_sample_size": 362.52481997752096,
+          "observed_logging": {
+            "mean": 0.0036923076923076922,
+            "low": 0.0016932829407572663,
+            "high": 0.008032316033229792
+          },
+          "bts_reference": {
+            "mean": 0.004394224733207784,
+            "low": 0.002130178994964924,
+            "high": 0.009042789193041962
+          },
+          "bts_reference_n": 1593,
+          "difference_from_bts": {
+            "mean": -0.002573812425515473,
+            "low": -0.006295569883722051,
+            "high": 0.0007864452190834935
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "men",
+          "policy": "Official prior BTS approximation",
+          "position": 1,
+          "population": "OBD men; random held-out slot 1; cutoff 2019-11-27 12:30:04.544419+00:00",
+          "sample_size": 1625,
+          "estimator": "SNIPS",
+          "estimate": {
+            "mean": 0.001767939567576673,
+            "low": 0.00035588977865425,
+            "high": 0.0038302532422101656
+          },
+          "effective_sample_size": 362.52481997752096,
+          "observed_logging": {
+            "mean": 0.0036923076923076922,
+            "low": 0.0016932829407572663,
+            "high": 0.008032316033229792
+          },
+          "bts_reference": {
+            "mean": 0.004394224733207784,
+            "low": 0.002130178994964924,
+            "high": 0.009042789193041962
+          },
+          "bts_reference_n": 1593,
+          "difference_from_bts": {
+            "mean": -0.002626285165631111,
+            "low": -0.00633813371113437,
+            "high": 0.0006899030723472082
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "men",
+          "policy": "Official prior BTS approximation",
+          "position": 1,
+          "population": "OBD men; random held-out slot 1; cutoff 2019-11-27 12:30:04.544419+00:00",
+          "sample_size": 1625,
+          "estimator": "DM",
+          "estimate": {
+            "mean": 0.0036891610461147195,
+            "low": 0.0036891610461147195,
+            "high": 0.0036891610461147195
+          },
+          "effective_sample_size": 362.52481997752096,
+          "observed_logging": {
+            "mean": 0.0036923076923076922,
+            "low": 0.0016932829407572663,
+            "high": 0.008032316033229792
+          },
+          "bts_reference": {
+            "mean": 0.004394224733207784,
+            "low": 0.002130178994964924,
+            "high": 0.009042789193041962
+          },
+          "bts_reference_n": 1593,
+          "difference_from_bts": {
+            "mean": -0.0007050636870930644,
+            "low": -0.0038437956393843386,
+            "high": 0.0024336682651982097
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "men",
+          "policy": "Official prior BTS approximation",
+          "position": 1,
+          "population": "OBD men; random held-out slot 1; cutoff 2019-11-27 12:30:04.544419+00:00",
+          "sample_size": 1625,
+          "estimator": "DR",
+          "estimate": {
+            "mean": 0.002290902918619119,
+            "low": 0.0007067133124736587,
+            "high": 0.004515462866715847
+          },
+          "effective_sample_size": 362.52481997752096,
+          "observed_logging": {
+            "mean": 0.0036923076923076922,
+            "low": 0.0016932829407572663,
+            "high": 0.008032316033229792
+          },
+          "bts_reference": {
+            "mean": 0.004394224733207784,
+            "low": 0.002130178994964924,
+            "high": 0.009042789193041962
+          },
+          "bts_reference_n": 1593,
+          "difference_from_bts": {
+            "mean": -0.0021033218145886648,
+            "low": -0.00597570171061723,
+            "high": 0.001265458253719754
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "men",
+          "policy": "Uniform sanity check",
+          "position": 2,
+          "population": "OBD men; random held-out slot 2; cutoff 2019-11-27 12:30:04.544419+00:00",
+          "sample_size": 1735,
+          "estimator": "IPS",
+          "estimate": {
+            "mean": 0.006916426512968312,
+            "low": 0.003458213256484156,
+            "high": 0.010951008645533162
+          },
+          "effective_sample_size": 1735.0000000000002,
+          "observed_logging": {
+            "mean": 0.0069164265129683,
+            "low": 0.003960906824898861,
+            "high": 0.012050592486589018
+          },
+          "bts_reference": {
+            "mean": 0.006993006993006993,
+            "low": 0.003909251231909168,
+            "high": 0.01247886355042331
+          },
+          "bts_reference_n": 1573,
+          "difference_from_bts": {
+            "mean": -7.658048003868125e-05,
+            "low": -0.0055028204700722306,
+            "high": 0.005983903442640687
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "men",
+          "policy": "Uniform sanity check",
+          "position": 2,
+          "population": "OBD men; random held-out slot 2; cutoff 2019-11-27 12:30:04.544419+00:00",
+          "sample_size": 1735,
+          "estimator": "SNIPS",
+          "estimate": {
+            "mean": 0.0069164265129683,
+            "low": 0.00345821325648415,
+            "high": 0.01095100864553314
+          },
+          "effective_sample_size": 1735.0000000000002,
+          "observed_logging": {
+            "mean": 0.0069164265129683,
+            "low": 0.003960906824898861,
+            "high": 0.012050592486589018
+          },
+          "bts_reference": {
+            "mean": 0.006993006993006993,
+            "low": 0.003909251231909168,
+            "high": 0.01247886355042331
+          },
+          "bts_reference_n": 1573,
+          "difference_from_bts": {
+            "mean": -7.65804800386934e-05,
+            "low": -0.005502820470072238,
+            "high": 0.005983903442640669
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "men",
+          "policy": "Uniform sanity check",
+          "position": 2,
+          "population": "OBD men; random held-out slot 2; cutoff 2019-11-27 12:30:04.544419+00:00",
+          "sample_size": 1735,
+          "estimator": "DM",
+          "estimate": {
+            "mean": 0.005391012715207556,
+            "low": 0.005391012715207556,
+            "high": 0.005391012715207556
+          },
+          "effective_sample_size": 1735.0000000000002,
+          "observed_logging": {
+            "mean": 0.0069164265129683,
+            "low": 0.003960906824898861,
+            "high": 0.012050592486589018
+          },
+          "bts_reference": {
+            "mean": 0.006993006993006993,
+            "low": 0.003909251231909168,
+            "high": 0.01247886355042331
+          },
+          "bts_reference_n": 1573,
+          "difference_from_bts": {
+            "mean": -0.001601994277799437,
+            "low": -0.005416361728530525,
+            "high": 0.00221237317293165
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "men",
+          "policy": "Uniform sanity check",
+          "position": 2,
+          "population": "OBD men; random held-out slot 2; cutoff 2019-11-27 12:30:04.544419+00:00",
+          "sample_size": 1735,
+          "estimator": "DR",
+          "estimate": {
+            "mean": 0.006820313273725293,
+            "low": 0.003243602324203594,
+            "high": 0.011086073935746985
+          },
+          "effective_sample_size": 1735.0000000000002,
+          "observed_logging": {
+            "mean": 0.0069164265129683,
+            "low": 0.003960906824898861,
+            "high": 0.012050592486589018
+          },
+          "bts_reference": {
+            "mean": 0.006993006993006993,
+            "low": 0.003909251231909168,
+            "high": 0.01247886355042331
+          },
+          "bts_reference_n": 1573,
+          "difference_from_bts": {
+            "mean": -0.00017269371928169998,
+            "low": -0.005532329345660623,
+            "high": 0.00599563124692521
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "men",
+          "policy": "Official prior BTS approximation",
+          "position": 2,
+          "population": "OBD men; random held-out slot 2; cutoff 2019-11-27 12:30:04.544419+00:00",
+          "sample_size": 1735,
+          "estimator": "IPS",
+          "estimate": {
+            "mean": 0.005799106628242085,
+            "low": 0.002300496829971186,
+            "high": 0.010268509510086475
+          },
+          "effective_sample_size": 366.43796230329593,
+          "observed_logging": {
+            "mean": 0.0069164265129683,
+            "low": 0.003960906824898861,
+            "high": 0.012050592486589018
+          },
+          "bts_reference": {
+            "mean": 0.006993006993006993,
+            "low": 0.003909251231909168,
+            "high": 0.01247886355042331
+          },
+          "bts_reference_n": 1573,
+          "difference_from_bts": {
+            "mean": -0.0011939003647649079,
+            "low": -0.006406268173390657,
+            "high": 0.00482073495340134
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "men",
+          "policy": "Official prior BTS approximation",
+          "position": 2,
+          "population": "OBD men; random held-out slot 2; cutoff 2019-11-27 12:30:04.544419+00:00",
+          "sample_size": 1735,
+          "estimator": "SNIPS",
+          "estimate": {
+            "mean": 0.006027217134507099,
+            "low": 0.002380093510127335,
+            "high": 0.010871896749104859
+          },
+          "effective_sample_size": 366.43796230329593,
+          "observed_logging": {
+            "mean": 0.0069164265129683,
+            "low": 0.003960906824898861,
+            "high": 0.012050592486589018
+          },
+          "bts_reference": {
+            "mean": 0.006993006993006993,
+            "low": 0.003909251231909168,
+            "high": 0.01247886355042331
+          },
+          "bts_reference_n": 1573,
+          "difference_from_bts": {
+            "mean": -0.0009657898584998943,
+            "low": -0.006263625803844291,
+            "high": 0.0051672168634143475
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "men",
+          "policy": "Official prior BTS approximation",
+          "position": 2,
+          "population": "OBD men; random held-out slot 2; cutoff 2019-11-27 12:30:04.544419+00:00",
+          "sample_size": 1735,
+          "estimator": "DM",
+          "estimate": {
+            "mean": 0.0032271591417654417,
+            "low": 0.0032271591417654417,
+            "high": 0.0032271591417654417
+          },
+          "effective_sample_size": 366.43796230329593,
+          "observed_logging": {
+            "mean": 0.0069164265129683,
+            "low": 0.003960906824898861,
+            "high": 0.012050592486589018
+          },
+          "bts_reference": {
+            "mean": 0.006993006993006993,
+            "low": 0.003909251231909168,
+            "high": 0.01247886355042331
+          },
+          "bts_reference_n": 1573,
+          "difference_from_bts": {
+            "mean": -0.0037658478512415513,
+            "low": -0.007580215301972639,
+            "high": 4.851959948953561e-05
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "men",
+          "policy": "Official prior BTS approximation",
+          "position": 2,
+          "population": "OBD men; random held-out slot 2; cutoff 2019-11-27 12:30:04.544419+00:00",
+          "sample_size": 1735,
+          "estimator": "DR",
+          "estimate": {
+            "mean": 0.006020645265824487,
+            "low": 0.0025447772498581236,
+            "high": 0.010468694385952094
+          },
+          "effective_sample_size": 366.43796230329593,
+          "observed_logging": {
+            "mean": 0.0069164265129683,
+            "low": 0.003960906824898861,
+            "high": 0.012050592486589018
+          },
+          "bts_reference": {
+            "mean": 0.006993006993006993,
+            "low": 0.003909251231909168,
+            "high": 0.01247886355042331
+          },
+          "bts_reference_n": 1573,
+          "difference_from_bts": {
+            "mean": -0.0009723617271825058,
+            "low": -0.006211650641809838,
+            "high": 0.005005329463960061
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "men",
+          "policy": "Uniform sanity check",
+          "position": 3,
+          "population": "OBD men; random held-out slot 3; cutoff 2019-11-27 12:30:04.544419+00:00",
+          "sample_size": 1640,
+          "estimator": "IPS",
+          "estimate": {
+            "mean": 0.0048780487804878135,
+            "low": 0.00182926829268293,
+            "high": 0.008536585365853673
+          },
+          "effective_sample_size": 1639.9999999999995,
+          "observed_logging": {
+            "mean": 0.004878048780487805,
+            "low": 0.002473832771382595,
+            "high": 0.00959634511239493
+          },
+          "bts_reference": {
+            "mean": 0.004884004884004884,
+            "low": 0.0024768557788737984,
+            "high": 0.009608025324656072
+          },
+          "bts_reference_n": 1638,
+          "difference_from_bts": {
+            "mean": -5.956103517070453e-06,
+            "low": -0.004278715864081711,
+            "high": 0.004266059144107935
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "men",
+          "policy": "Uniform sanity check",
+          "position": 3,
+          "population": "OBD men; random held-out slot 3; cutoff 2019-11-27 12:30:04.544419+00:00",
+          "sample_size": 1640,
+          "estimator": "SNIPS",
+          "estimate": {
+            "mean": 0.004878048780487806,
+            "low": 0.001829268292682927,
+            "high": 0.00853658536585366
+          },
+          "effective_sample_size": 1639.9999999999995,
+          "observed_logging": {
+            "mean": 0.004878048780487805,
+            "low": 0.002473832771382595,
+            "high": 0.00959634511239493
+          },
+          "bts_reference": {
+            "mean": 0.004884004884004884,
+            "low": 0.0024768557788737984,
+            "high": 0.009608025324656072
+          },
+          "bts_reference_n": 1638,
+          "difference_from_bts": {
+            "mean": -5.9561035170782595e-06,
+            "low": -0.004278715864081718,
+            "high": 0.004266059144107926
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "men",
+          "policy": "Uniform sanity check",
+          "position": 3,
+          "population": "OBD men; random held-out slot 3; cutoff 2019-11-27 12:30:04.544419+00:00",
+          "sample_size": 1640,
+          "estimator": "DM",
+          "estimate": {
+            "mean": 0.0035710174864901473,
+            "low": 0.0035710174864901473,
+            "high": 0.0035710174864901473
+          },
+          "effective_sample_size": 1639.9999999999995,
+          "observed_logging": {
+            "mean": 0.004878048780487805,
+            "low": 0.002473832771382595,
+            "high": 0.00959634511239493
+          },
+          "bts_reference": {
+            "mean": 0.004884004884004884,
+            "low": 0.0024768557788737984,
+            "high": 0.009608025324656072
+          },
+          "bts_reference_n": 1638,
+          "difference_from_bts": {
+            "mean": -0.0013129873975147367,
+            "low": -0.0049759910605184,
+            "high": 0.0017395156549883158
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "men",
+          "policy": "Uniform sanity check",
+          "position": 3,
+          "population": "OBD men; random held-out slot 3; cutoff 2019-11-27 12:30:04.544419+00:00",
+          "sample_size": 1640,
+          "estimator": "DR",
+          "estimate": {
+            "mean": 0.004895606723774996,
+            "low": 0.0017653842562500971,
+            "high": 0.008599691215763126
+          },
+          "effective_sample_size": 1639.9999999999995,
+          "observed_logging": {
+            "mean": 0.004878048780487805,
+            "low": 0.002473832771382595,
+            "high": 0.00959634511239493
+          },
+          "bts_reference": {
+            "mean": 0.004884004884004884,
+            "low": 0.0024768557788737984,
+            "high": 0.009608025324656072
+          },
+          "bts_reference_n": 1638,
+          "difference_from_bts": {
+            "mean": 1.1601839770111928e-05,
+            "low": -0.004355892480668789,
+            "high": 0.004439890952560703
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "men",
+          "policy": "Official prior BTS approximation",
+          "position": 3,
+          "population": "OBD men; random held-out slot 3; cutoff 2019-11-27 12:30:04.544419+00:00",
+          "sample_size": 1640,
+          "estimator": "IPS",
+          "estimate": {
+            "mean": 0.005814829268292693,
+            "low": 0.0004491731707317081,
+            "high": 0.015745407774390274
+          },
+          "effective_sample_size": 525.6804692559699,
+          "observed_logging": {
+            "mean": 0.004878048780487805,
+            "low": 0.002473832771382595,
+            "high": 0.00959634511239493
+          },
+          "bts_reference": {
+            "mean": 0.004884004884004884,
+            "low": 0.0024768557788737984,
+            "high": 0.009608025324656072
+          },
+          "bts_reference_n": 1638,
+          "difference_from_bts": {
+            "mean": 0.0009308243842878093,
+            "low": -0.0059671938968551734,
+            "high": 0.010687597846868601
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "men",
+          "policy": "Official prior BTS approximation",
+          "position": 3,
+          "population": "OBD men; random held-out slot 3; cutoff 2019-11-27 12:30:04.544419+00:00",
+          "sample_size": 1640,
+          "estimator": "SNIPS",
+          "estimate": {
+            "mean": 0.005728476777233472,
+            "low": 0.0004656344439254761,
+            "high": 0.015635058607171633
+          },
+          "effective_sample_size": 525.6804692559699,
+          "observed_logging": {
+            "mean": 0.004878048780487805,
+            "low": 0.002473832771382595,
+            "high": 0.00959634511239493
+          },
+          "bts_reference": {
+            "mean": 0.004884004884004884,
+            "low": 0.0024768557788737984,
+            "high": 0.009608025324656072
+          },
+          "bts_reference_n": 1638,
+          "difference_from_bts": {
+            "mean": 0.0008444718932285877,
+            "low": -0.005921127658332214,
+            "high": 0.010729819703684855
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "men",
+          "policy": "Official prior BTS approximation",
+          "position": 3,
+          "population": "OBD men; random held-out slot 3; cutoff 2019-11-27 12:30:04.544419+00:00",
+          "sample_size": 1640,
+          "estimator": "DM",
+          "estimate": {
+            "mean": 0.005948368432419943,
+            "low": 0.005948368432419943,
+            "high": 0.005948368432419943
+          },
+          "effective_sample_size": 525.6804692559699,
+          "observed_logging": {
+            "mean": 0.004878048780487805,
+            "low": 0.002473832771382595,
+            "high": 0.00959634511239493
+          },
+          "bts_reference": {
+            "mean": 0.004884004884004884,
+            "low": 0.0024768557788737984,
+            "high": 0.009608025324656072
+          },
+          "bts_reference_n": 1638,
+          "difference_from_bts": {
+            "mean": 0.0010643635484150586,
+            "low": -0.0025986401145886052,
+            "high": 0.004116866600918111
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "men",
+          "policy": "Official prior BTS approximation",
+          "position": 3,
+          "population": "OBD men; random held-out slot 3; cutoff 2019-11-27 12:30:04.544419+00:00",
+          "sample_size": 1640,
+          "estimator": "DR",
+          "estimate": {
+            "mean": 0.005739065647145528,
+            "low": 0.00032569082257530237,
+            "high": 0.015706802998193492
+          },
+          "effective_sample_size": 525.6804692559699,
+          "observed_logging": {
+            "mean": 0.004878048780487805,
+            "low": 0.002473832771382595,
+            "high": 0.00959634511239493
+          },
+          "bts_reference": {
+            "mean": 0.004884004884004884,
+            "low": 0.0024768557788737984,
+            "high": 0.009608025324656072
+          },
+          "bts_reference_n": 1638,
+          "difference_from_bts": {
+            "mean": 0.0008550607631406439,
+            "low": -0.006074101091554189,
+            "high": 0.011073843378048481
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "women",
+          "policy": "Uniform sanity check",
+          "position": 1,
+          "population": "OBD women; random held-out slot 1; cutoff 2019-11-27 13:12:47.359928+00:00",
+          "sample_size": 1648,
+          "estimator": "IPS",
+          "estimate": {
+            "mean": 0.0066747572815534,
+            "low": 0.003033980582524273,
+            "high": 0.010922330097087382
+          },
+          "effective_sample_size": 1648.0000000000002,
+          "observed_logging": {
+            "mean": 0.006674757281553398,
+            "low": 0.003731153653971324,
+            "high": 0.011912877244213799
+          },
+          "bts_reference": {
+            "mean": 0.006277463904582548,
+            "low": 0.003413359946062359,
+            "high": 0.01151702571558098
+          },
+          "bts_reference_n": 1593,
+          "difference_from_bts": {
+            "mean": 0.00039729337697085206,
+            "low": -0.00512672249343304,
+            "high": 0.005838555665258812
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "women",
+          "policy": "Uniform sanity check",
+          "position": 1,
+          "population": "OBD women; random held-out slot 1; cutoff 2019-11-27 13:12:47.359928+00:00",
+          "sample_size": 1648,
+          "estimator": "SNIPS",
+          "estimate": {
+            "mean": 0.006674757281553399,
+            "low": 0.0030339805825242727,
+            "high": 0.01092233009708738
+          },
+          "effective_sample_size": 1648.0000000000002,
+          "observed_logging": {
+            "mean": 0.006674757281553398,
+            "low": 0.003731153653971324,
+            "high": 0.011912877244213799
+          },
+          "bts_reference": {
+            "mean": 0.006277463904582548,
+            "low": 0.003413359946062359,
+            "high": 0.01151702571558098
+          },
+          "bts_reference_n": 1593,
+          "difference_from_bts": {
+            "mean": 0.0003972933769708512,
+            "low": -0.005126722493433041,
+            "high": 0.00583855566525881
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "women",
+          "policy": "Uniform sanity check",
+          "position": 1,
+          "population": "OBD women; random held-out slot 1; cutoff 2019-11-27 13:12:47.359928+00:00",
+          "sample_size": 1648,
+          "estimator": "DM",
+          "estimate": {
+            "mean": 0.0026412066846119636,
+            "low": 0.0026412066846119636,
+            "high": 0.0026412066846119636
+          },
+          "effective_sample_size": 1648.0000000000002,
+          "observed_logging": {
+            "mean": 0.006674757281553398,
+            "low": 0.003731153653971324,
+            "high": 0.011912877244213799
+          },
+          "bts_reference": {
+            "mean": 0.006277463904582548,
+            "low": 0.003413359946062359,
+            "high": 0.01151702571558098
+          },
+          "bts_reference_n": 1593,
+          "difference_from_bts": {
+            "mean": -0.0036362572199705847,
+            "low": -0.007402735562720115,
+            "high": 0.00013022112277894394
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "women",
+          "policy": "Uniform sanity check",
+          "position": 1,
+          "population": "OBD women; random held-out slot 1; cutoff 2019-11-27 13:12:47.359928+00:00",
+          "sample_size": 1648,
+          "estimator": "DR",
+          "estimate": {
+            "mean": 0.006507473544176497,
+            "low": 0.0028079728942705566,
+            "high": 0.010863294452615885
+          },
+          "effective_sample_size": 1648.0000000000002,
+          "observed_logging": {
+            "mean": 0.006674757281553398,
+            "low": 0.003731153653971324,
+            "high": 0.011912877244213799
+          },
+          "bts_reference": {
+            "mean": 0.006277463904582548,
+            "low": 0.003413359946062359,
+            "high": 0.01151702571558098
+          },
+          "bts_reference_n": 1593,
+          "difference_from_bts": {
+            "mean": 0.00023000963959394875,
+            "low": -0.00511781804374893,
+            "high": 0.005657206823980901
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "women",
+          "policy": "Official prior BTS approximation",
+          "position": 1,
+          "population": "OBD women; random held-out slot 1; cutoff 2019-11-27 13:12:47.359928+00:00",
+          "sample_size": 1648,
+          "estimator": "IPS",
+          "estimate": {
+            "mean": 0.010796462378640782,
+            "low": 0.002059529277912622,
+            "high": 0.025577339805825244
+          },
+          "effective_sample_size": 316.36149491723876,
+          "observed_logging": {
+            "mean": 0.006674757281553398,
+            "low": 0.003731153653971324,
+            "high": 0.011912877244213799
+          },
+          "bts_reference": {
+            "mean": 0.006277463904582548,
+            "low": 0.003413359946062359,
+            "high": 0.01151702571558098
+          },
+          "bts_reference_n": 1593,
+          "difference_from_bts": {
+            "mean": 0.004518998474058233,
+            "low": -0.005567134507329547,
+            "high": 0.01927901291412978
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "women",
+          "policy": "Official prior BTS approximation",
+          "position": 1,
+          "population": "OBD women; random held-out slot 1; cutoff 2019-11-27 13:12:47.359928+00:00",
+          "sample_size": 1648,
+          "estimator": "SNIPS",
+          "estimate": {
+            "mean": 0.010616872124188268,
+            "low": 0.0020353500434004503,
+            "high": 0.02512784958169292
+          },
+          "effective_sample_size": 316.36149491723876,
+          "observed_logging": {
+            "mean": 0.006674757281553398,
+            "low": 0.003731153653971324,
+            "high": 0.011912877244213799
+          },
+          "bts_reference": {
+            "mean": 0.006277463904582548,
+            "low": 0.003413359946062359,
+            "high": 0.01151702571558098
+          },
+          "bts_reference_n": 1593,
+          "difference_from_bts": {
+            "mean": 0.00433940821960572,
+            "low": -0.00567416277729499,
+            "high": 0.019437652363730407
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "women",
+          "policy": "Official prior BTS approximation",
+          "position": 1,
+          "population": "OBD women; random held-out slot 1; cutoff 2019-11-27 13:12:47.359928+00:00",
+          "sample_size": 1648,
+          "estimator": "DM",
+          "estimate": {
+            "mean": 0.00419378487252975,
+            "low": 0.00419378487252975,
+            "high": 0.00419378487252975
+          },
+          "effective_sample_size": 316.36149491723876,
+          "observed_logging": {
+            "mean": 0.006674757281553398,
+            "low": 0.003731153653971324,
+            "high": 0.011912877244213799
+          },
+          "bts_reference": {
+            "mean": 0.006277463904582548,
+            "low": 0.003413359946062359,
+            "high": 0.01151702571558098
+          },
+          "bts_reference_n": 1593,
+          "difference_from_bts": {
+            "mean": -0.0020836790320527985,
+            "low": -0.005850157374802329,
+            "high": 0.00168279931069673
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "women",
+          "policy": "Official prior BTS approximation",
+          "position": 1,
+          "population": "OBD women; random held-out slot 1; cutoff 2019-11-27 13:12:47.359928+00:00",
+          "sample_size": 1648,
+          "estimator": "DR",
+          "estimate": {
+            "mean": 0.010479888717165398,
+            "low": 0.0016502870362975891,
+            "high": 0.025129347187240816
+          },
+          "effective_sample_size": 316.36149491723876,
+          "observed_logging": {
+            "mean": 0.006674757281553398,
+            "low": 0.003731153653971324,
+            "high": 0.011912877244213799
+          },
+          "bts_reference": {
+            "mean": 0.006277463904582548,
+            "low": 0.003413359946062359,
+            "high": 0.01151702571558098
+          },
+          "bts_reference_n": 1593,
+          "difference_from_bts": {
+            "mean": 0.00420242481258285,
+            "low": -0.006018346405417482,
+            "high": 0.019273543227278526
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "women",
+          "policy": "Uniform sanity check",
+          "position": 2,
+          "population": "OBD women; random held-out slot 2; cutoff 2019-11-27 13:12:47.359928+00:00",
+          "sample_size": 1709,
+          "estimator": "IPS",
+          "estimate": {
+            "mean": 0.00643651258045641,
+            "low": 0.0029256875365710954,
+            "high": 0.010532475131655943
+          },
+          "effective_sample_size": 1709.0000000000002,
+          "observed_logging": {
+            "mean": 0.006436512580456407,
+            "low": 0.003597839953312719,
+            "high": 0.011489054801375312
+          },
+          "bts_reference": {
+            "mean": 0.004744958481613286,
+            "low": 0.0024062846417533027,
+            "high": 0.009335325032411678
+          },
+          "bts_reference_n": 1686,
+          "difference_from_bts": {
+            "mean": 0.0016915540988431234,
+            "low": -0.003651773424761934,
+            "high": 0.006404782926478828
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "women",
+          "policy": "Uniform sanity check",
+          "position": 2,
+          "population": "OBD women; random held-out slot 2; cutoff 2019-11-27 13:12:47.359928+00:00",
+          "sample_size": 1709,
+          "estimator": "SNIPS",
+          "estimate": {
+            "mean": 0.006436512580456409,
+            "low": 0.002925687536571095,
+            "high": 0.010532475131655943
+          },
+          "effective_sample_size": 1709.0000000000002,
+          "observed_logging": {
+            "mean": 0.006436512580456407,
+            "low": 0.003597839953312719,
+            "high": 0.011489054801375312
+          },
+          "bts_reference": {
+            "mean": 0.004744958481613286,
+            "low": 0.0024062846417533027,
+            "high": 0.009335325032411678
+          },
+          "bts_reference_n": 1686,
+          "difference_from_bts": {
+            "mean": 0.0016915540988431225,
+            "low": -0.003651773424761935,
+            "high": 0.006404782926478826
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "women",
+          "policy": "Uniform sanity check",
+          "position": 2,
+          "population": "OBD women; random held-out slot 2; cutoff 2019-11-27 13:12:47.359928+00:00",
+          "sample_size": 1709,
+          "estimator": "DM",
+          "estimate": {
+            "mean": 0.002525292180898627,
+            "low": 0.002525292180898627,
+            "high": 0.002525292180898627
+          },
+          "effective_sample_size": 1709.0000000000002,
+          "observed_logging": {
+            "mean": 0.006436512580456407,
+            "low": 0.003597839953312719,
+            "high": 0.011489054801375312
+          },
+          "bts_reference": {
+            "mean": 0.004744958481613286,
+            "low": 0.0024062846417533027,
+            "high": 0.009335325032411678
+          },
+          "bts_reference_n": 1686,
+          "difference_from_bts": {
+            "mean": -0.0022196663007146593,
+            "low": -0.006371504972126285,
+            "high": 0.0007459327502936449
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "women",
+          "policy": "Uniform sanity check",
+          "position": 2,
+          "population": "OBD women; random held-out slot 2; cutoff 2019-11-27 13:12:47.359928+00:00",
+          "sample_size": 1709,
+          "estimator": "DR",
+          "estimate": {
+            "mean": 0.006561231242791399,
+            "low": 0.00302240605785755,
+            "high": 0.010651541512086775
+          },
+          "effective_sample_size": 1709.0000000000002,
+          "observed_logging": {
+            "mean": 0.006436512580456407,
+            "low": 0.003597839953312719,
+            "high": 0.011489054801375312
+          },
+          "bts_reference": {
+            "mean": 0.004744958481613286,
+            "low": 0.0024062846417533027,
+            "high": 0.009335325032411678
+          },
+          "bts_reference_n": 1686,
+          "difference_from_bts": {
+            "mean": 0.0018162727611781126,
+            "low": -0.0036573487383945546,
+            "high": 0.006598328666592178
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "women",
+          "policy": "Official prior BTS approximation",
+          "position": 2,
+          "population": "OBD women; random held-out slot 2; cutoff 2019-11-27 13:12:47.359928+00:00",
+          "sample_size": 1709,
+          "estimator": "IPS",
+          "estimate": {
+            "mean": 0.008606764189584556,
+            "low": 0.0009970143358689295,
+            "high": 0.019213683879461676
+          },
+          "effective_sample_size": 288.43515556644803,
+          "observed_logging": {
+            "mean": 0.006436512580456407,
+            "low": 0.003597839953312719,
+            "high": 0.011489054801375312
+          },
+          "bts_reference": {
+            "mean": 0.004744958481613286,
+            "low": 0.0024062846417533027,
+            "high": 0.009335325032411678
+          },
+          "bts_reference_n": 1686,
+          "difference_from_bts": {
+            "mean": 0.0038618057079712696,
+            "low": -0.004945868093138898,
+            "high": 0.01481295139471655
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "women",
+          "policy": "Official prior BTS approximation",
+          "position": 2,
+          "population": "OBD women; random held-out slot 2; cutoff 2019-11-27 13:12:47.359928+00:00",
+          "sample_size": 1709,
+          "estimator": "SNIPS",
+          "estimate": {
+            "mean": 0.009366700495094096,
+            "low": 0.0011351546875538925,
+            "high": 0.02120415088124994
+          },
+          "effective_sample_size": 288.43515556644803,
+          "observed_logging": {
+            "mean": 0.006436512580456407,
+            "low": 0.003597839953312719,
+            "high": 0.011489054801375312
+          },
+          "bts_reference": {
+            "mean": 0.004744958481613286,
+            "low": 0.0024062846417533027,
+            "high": 0.009335325032411678
+          },
+          "bts_reference_n": 1686,
+          "difference_from_bts": {
+            "mean": 0.00462174201348081,
+            "low": -0.004774337939121421,
+            "high": 0.01706316207108628
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "women",
+          "policy": "Official prior BTS approximation",
+          "position": 2,
+          "population": "OBD women; random held-out slot 2; cutoff 2019-11-27 13:12:47.359928+00:00",
+          "sample_size": 1709,
+          "estimator": "DM",
+          "estimate": {
+            "mean": 0.001759086922074621,
+            "low": 0.001759086922074621,
+            "high": 0.001759086922074621
+          },
+          "effective_sample_size": 288.43515556644803,
+          "observed_logging": {
+            "mean": 0.006436512580456407,
+            "low": 0.003597839953312719,
+            "high": 0.011489054801375312
+          },
+          "bts_reference": {
+            "mean": 0.004744958481613286,
+            "low": 0.0024062846417533027,
+            "high": 0.009335325032411678
+          },
+          "bts_reference_n": 1686,
+          "difference_from_bts": {
+            "mean": -0.002985871559538665,
+            "low": -0.00713771023095029,
+            "high": -2.027250853036105e-05
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "women",
+          "policy": "Official prior BTS approximation",
+          "position": 2,
+          "population": "OBD women; random held-out slot 2; cutoff 2019-11-27 13:12:47.359928+00:00",
+          "sample_size": 1709,
+          "estimator": "DR",
+          "estimate": {
+            "mean": 0.00877602258203079,
+            "low": 0.0012731045431714305,
+            "high": 0.01939821078824529
+          },
+          "effective_sample_size": 288.43515556644803,
+          "observed_logging": {
+            "mean": 0.006436512580456407,
+            "low": 0.003597839953312719,
+            "high": 0.011489054801375312
+          },
+          "bts_reference": {
+            "mean": 0.004744958481613286,
+            "low": 0.0024062846417533027,
+            "high": 0.009335325032411678
+          },
+          "bts_reference_n": 1686,
+          "difference_from_bts": {
+            "mean": 0.004031064100417503,
+            "low": -0.004791475174880566,
+            "high": 0.015000863621726257
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "women",
+          "policy": "Uniform sanity check",
+          "position": 3,
+          "population": "OBD women; random held-out slot 3; cutoff 2019-11-27 13:12:47.359928+00:00",
+          "sample_size": 1643,
+          "estimator": "IPS",
+          "estimate": {
+            "mean": 0.0054777845404747425,
+            "low": 0.0024345709068776633,
+            "high": 0.009129640900791238
+          },
+          "effective_sample_size": 1643.0000000000002,
+          "observed_logging": {
+            "mean": 0.005477784540474742,
+            "low": 0.0028845530090584664,
+            "high": 0.010378082992548408
+          },
+          "bts_reference": {
+            "mean": 0.004176610978520286,
+            "low": 0.002024612512333574,
+            "high": 0.00859630574576171
+          },
+          "bts_reference_n": 1676,
+          "difference_from_bts": {
+            "mean": 0.0013011735619544561,
+            "low": -0.0035080481742897104,
+            "high": 0.0060987108830839465
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "women",
+          "policy": "Uniform sanity check",
+          "position": 3,
+          "population": "OBD women; random held-out slot 3; cutoff 2019-11-27 13:12:47.359928+00:00",
+          "sample_size": 1643,
+          "estimator": "SNIPS",
+          "estimate": {
+            "mean": 0.005477784540474742,
+            "low": 0.002434570906877663,
+            "high": 0.009129640900791236
+          },
+          "effective_sample_size": 1643.0000000000002,
+          "observed_logging": {
+            "mean": 0.005477784540474742,
+            "low": 0.0028845530090584664,
+            "high": 0.010378082992548408
+          },
+          "bts_reference": {
+            "mean": 0.004176610978520286,
+            "low": 0.002024612512333574,
+            "high": 0.00859630574576171
+          },
+          "bts_reference_n": 1676,
+          "difference_from_bts": {
+            "mean": 0.0013011735619544553,
+            "low": -0.003508048174289711,
+            "high": 0.006098710883083946
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "women",
+          "policy": "Uniform sanity check",
+          "position": 3,
+          "population": "OBD women; random held-out slot 3; cutoff 2019-11-27 13:12:47.359928+00:00",
+          "sample_size": 1643,
+          "estimator": "DM",
+          "estimate": {
+            "mean": 0.003669355820720146,
+            "low": 0.003669355820720146,
+            "high": 0.003669355820720146
+          },
+          "effective_sample_size": 1643.0000000000002,
+          "observed_logging": {
+            "mean": 0.005477784540474742,
+            "low": 0.0028845530090584664,
+            "high": 0.010378082992548408
+          },
+          "bts_reference": {
+            "mean": 0.004176610978520286,
+            "low": 0.002024612512333574,
+            "high": 0.00859630574576171
+          },
+          "bts_reference_n": 1676,
+          "difference_from_bts": {
+            "mean": -0.0005072551578001404,
+            "low": -0.004087207425103243,
+            "high": 0.0024760383982857783
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "women",
+          "policy": "Uniform sanity check",
+          "position": 3,
+          "population": "OBD women; random held-out slot 3; cutoff 2019-11-27 13:12:47.359928+00:00",
+          "sample_size": 1643,
+          "estimator": "DR",
+          "estimate": {
+            "mean": 0.0056536926572418305,
+            "low": 0.002473768726499881,
+            "high": 0.009453235962300433
+          },
+          "effective_sample_size": 1643.0000000000002,
+          "observed_logging": {
+            "mean": 0.005477784540474742,
+            "low": 0.0028845530090584664,
+            "high": 0.010378082992548408
+          },
+          "bts_reference": {
+            "mean": 0.004176610978520286,
+            "low": 0.002024612512333574,
+            "high": 0.00859630574576171
+          },
+          "bts_reference_n": 1676,
+          "difference_from_bts": {
+            "mean": 0.0014770816787215441,
+            "low": -0.003323302167954765,
+            "high": 0.006097782608726321
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "women",
+          "policy": "Official prior BTS approximation",
+          "position": 3,
+          "population": "OBD women; random held-out slot 3; cutoff 2019-11-27 13:12:47.359928+00:00",
+          "sample_size": 1643,
+          "estimator": "IPS",
+          "estimate": {
+            "mean": 0.005262142422398054,
+            "low": 0.0003614065733414487,
+            "high": 0.011432655356055999
+          },
+          "effective_sample_size": 358.8248149977353,
+          "observed_logging": {
+            "mean": 0.005477784540474742,
+            "low": 0.0028845530090584664,
+            "high": 0.010378082992548408
+          },
+          "bts_reference": {
+            "mean": 0.004176610978520286,
+            "low": 0.002024612512333574,
+            "high": 0.00859630574576171
+          },
+          "bts_reference_n": 1676,
+          "difference_from_bts": {
+            "mean": 0.0010855314438777677,
+            "low": -0.004907790086895006,
+            "high": 0.008115377452910086
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "women",
+          "policy": "Official prior BTS approximation",
+          "position": 3,
+          "population": "OBD women; random held-out slot 3; cutoff 2019-11-27 13:12:47.359928+00:00",
+          "sample_size": 1643,
+          "estimator": "SNIPS",
+          "estimate": {
+            "mean": 0.0053607748722698054,
+            "low": 0.0003846362580488776,
+            "high": 0.011585994126347443
+          },
+          "effective_sample_size": 358.8248149977353,
+          "observed_logging": {
+            "mean": 0.005477784540474742,
+            "low": 0.0028845530090584664,
+            "high": 0.010378082992548408
+          },
+          "bts_reference": {
+            "mean": 0.004176610978520286,
+            "low": 0.002024612512333574,
+            "high": 0.00859630574576171
+          },
+          "bts_reference_n": 1676,
+          "difference_from_bts": {
+            "mean": 0.001184163893749519,
+            "low": -0.00491030690480536,
+            "high": 0.008426137661457821
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "women",
+          "policy": "Official prior BTS approximation",
+          "position": 3,
+          "population": "OBD women; random held-out slot 3; cutoff 2019-11-27 13:12:47.359928+00:00",
+          "sample_size": 1643,
+          "estimator": "DM",
+          "estimate": {
+            "mean": 0.0077533355802850475,
+            "low": 0.0077533355802850475,
+            "high": 0.0077533355802850475
+          },
+          "effective_sample_size": 358.8248149977353,
+          "observed_logging": {
+            "mean": 0.005477784540474742,
+            "low": 0.0028845530090584664,
+            "high": 0.010378082992548408
+          },
+          "bts_reference": {
+            "mean": 0.004176610978520286,
+            "low": 0.002024612512333574,
+            "high": 0.00859630574576171
+          },
+          "bts_reference_n": 1676,
+          "difference_from_bts": {
+            "mean": 0.003576724601764761,
+            "low": -3.2276655383411956e-06,
+            "high": 0.0065600181578506795
+          },
+          "comparison_identifies_exact_logged_policy": false
+        },
+        {
+          "campaign": "women",
+          "policy": "Official prior BTS approximation",
+          "position": 3,
+          "population": "OBD women; random held-out slot 3; cutoff 2019-11-27 13:12:47.359928+00:00",
+          "sample_size": 1643,
+          "estimator": "DR",
+          "estimate": {
+            "mean": 0.005471987176717295,
+            "low": 0.00025771801202567753,
+            "high": 0.011818802479325027
+          },
+          "effective_sample_size": 358.8248149977353,
+          "observed_logging": {
+            "mean": 0.005477784540474742,
+            "low": 0.0028845530090584664,
+            "high": 0.010378082992548408
+          },
+          "bts_reference": {
+            "mean": 0.004176610978520286,
+            "low": 0.002024612512333574,
+            "high": 0.00859630574576171
+          },
+          "bts_reference_n": 1676,
+          "difference_from_bts": {
+            "mean": 0.0012953761981970083,
+            "low": -0.004852873835302072,
+            "high": 0.008468714285496044
+          },
+          "comparison_identifies_exact_logged_policy": false
         }
       ]
     },
@@ -2155,19 +5926,19 @@
       "detail": "Train-only scorers with exact full-catalog offline evaluation and persisted factors."
     },
     {
-      "name": "Two-tower model and LambdaMART",
-      "status": "not_implemented",
-      "detail": "The shipped ranking blend is fixed and does not claim learned learning-to-rank weights."
+      "name": "LambdaMART learned ranker",
+      "status": "measured",
+      "detail": "Learned over a retrieval candidate union using an earlier source-order window. Evaluated against all baselines over the complete unseen catalog."
     },
     {
       "name": "pgvector / approximate nearest neighbors",
-      "status": "not_implemented",
-      "detail": "Exact NumPy scoring is used. No approximate recall result is claimed."
+      "status": "measured_local_postgres",
+      "detail": "Exact SQL and HNSW measured on the frozen two-tower embeddings in local PostgreSQL, with the same training-seen filters. This is separate from the hosted D1 serving path."
     },
     {
-      "name": "Content and session path",
-      "status": "available",
-      "detail": "Interactive fallback uses stored cosine neighbors and tag overlap; no neural weights or independent content offline result."
+      "name": "Content TF-IDF path",
+      "status": "measured",
+      "detail": "Normalized title, author and tag TF-IDF profiles score all books including training-cold items. Uses undated metadata; no historical metadata availability claim."
     },
     {
       "name": "OPE simulator",
@@ -2176,25 +5947,270 @@
     },
     {
       "name": "Real logged-bandit OPE",
-      "status": "measured_alternative_target",
-      "detail": "Real random-policy logs, held-out chronological second half. Target and smoothed action reward model fit only the first half. BTS observed reward is descriptive, not target-policy ground truth. Row bootstrap does not model repeated-reader dependence or model-fit uncertainty; action-only DM therefore has a conditional zero-width interval. The learned target has low effective sample size, so no improvement is established. Per-position propensities must not be multiplied into a claimed joint-slate propensity."
+      "status": "measured_six_file_bts_benchmark",
+      "detail": "All six random/BTS samples. Official campaign beta priors define the BTS target through beta draws ranked into three positions. Random logs after a shared cutoff provide OPE; BTS logs after the same cutoff provide an empirical on-policy benchmark with Wilson intervals. Logged BTS propensities vary within item/slot, so the frozen-prior approximation is not proven identical to the deployed per-impression policy. Differences include target mismatch and sampling error, not pure estimator error. Row bootstrap is conditional on the fitted reward model and Monte Carlo target, ignores repeated-reader dependence, and is not joint-slate inference."
     },
     {
       "name": "Verified temporal features",
       "status": "unavailable",
       "detail": "Source ratings lack timestamps. Source-order train-only features are tested; metadata is a snapshot."
+    },
+    {
+      "name": "Two-tower neural retrieval",
+      "status": "measured",
+      "detail": "Independent user-ID and item-ID embeddings32 -> learned projection16 -> ReLU -> L2 normalization"
+    },
+    {
+      "name": "Recurrent session model",
+      "status": "measured",
+      "detail": "16-dimensional Elman tanh recurrent encoder with learned input/output item embeddings"
     }
   ],
   "limitations": [
     "goodbooks has no interaction timestamps; source-order holdout is not verified temporal evaluation.",
-    "The first 300,000 source records and 1,000 popular catalog items form a bounded, biased demonstration subset.",
+    "All source ratings and all10000 catalog items are ingested; headline metrics use a seeded sample of at most5000 eligible readers, not every reader.",
     "Only readers with at least five positive training items enter headline evaluation; cold readers are separate.",
-    "Snapshot genres and average ratings are descriptive metadata. Their historical availability cannot be verified.",
-    "The fixed blend is evaluated directly over the full catalog; a trained two-stage LambdaMART pipeline is not implemented.",
+    "Snapshot titles, authors and tags power the content baseline; their historical availability cannot be verified. Average ratings are descriptive metadata only.",
+    "LambdaMART trains on a candidate union from an earlier source-order window and scores the full unseen catalog; training negatives have a different distribution from full-catalog inference.",
     "Coverage.mean is observed distinct catalog coverage; low/high show a separate conditional user-resampling range, not a confidence interval. The observed point can exceed this range because resampling cannot invent unseen items. expected_resampled_coverage records the average resampled value.",
     "The random-split comparison uses a different eligible cohort, so it is not an isolated estimate of temporal leakage.",
     "Simulator reward models are oracle or deliberately misspecified. This is estimator validation, not reward-model learning.",
-    "Contextual BTS target-policy truth, online impact, neural models, approximate indexing, and historical point-in-time metadata remain unmeasured."
+    "Contextual BTS target-policy truth, online impact, and historical point-in-time metadata remain unmeasured.",
+    "Two-tower and recurrent models use explicit NumPy training and finite sampled training pairs/sequences. Their losses are optimization diagnostics; held-out results and both shortcuts are reported even when these neural models lose."
   ],
-  "run_seconds": 8.685
+  "run_seconds": 531.786,
+  "serving_artifacts": {
+    "schema_version": "1",
+    "artifact_version": "goodbooks-full-36eeb55d1ddd0268",
+    "catalog_size": 10000,
+    "factors": 16,
+    "alpha": 20,
+    "regularization": 0.1,
+    "training_cutoff_row": 4781183,
+    "source_rows": 5976479,
+    "files": {
+      "item_factors": "item-factors.f32",
+      "cosine_data": "cosine-data.f32",
+      "cosine_indices": "cosine-indices.u32",
+      "cosine_indptr": "cosine-indptr.u32",
+      "popularity": "popularity.f32",
+      "profiles": "edge-profiles.json",
+      "catalog": "catalog.json"
+    },
+    "sha256": {
+      "item-factors.f32": "c02bdbfaf96378bae0580f25238dc650fd1879f00240e87f89ef05bba38df702",
+      "popularity.f32": "37b4f95b6932332cfdf286e9afb9d8502c3e769170ff0f37420fddc7d2059317",
+      "cosine-data.f32": "2df389642ea01b3ba2b26e34e81b0c3348b7aed1494471beb65f9ef1167a88fc",
+      "cosine-indices.u32": "cc58799af0826d9c4cee5b3ab7645fe16a3e5b7db1260977fc6dc87c4ac2d91e",
+      "cosine-indptr.u32": "6d35fe9c0a54a903be059c231de2d4ffee75a0ca7a35346152af3ced80468bf8",
+      "edge-profiles.json": "bdb3d77f7e51153b91f9a6706b8c6395a49ff8f9bc017834d17496e903b6eec3"
+    },
+    "models": [
+      "popularity",
+      "item_cosine",
+      "als",
+      "blend"
+    ],
+    "blend_weights": {
+      "item_cosine": 0.55,
+      "als": 0.35,
+      "popularity": 0.1
+    },
+    "indexing": "Zero-based contiguous catalog index = book_id minus1; little-endian row-major arrays",
+    "cosine_neighbors": 100
+  },
+  "neural_training": {
+    "two_tower": {
+      "status": "measured",
+      "architecture": "Independent user-ID and item-ID embeddings32 -> learned projection16 -> ReLU -> L2 normalization",
+      "objective": "in-batch softmax cross entropy",
+      "training_pairs": 400000,
+      "batch_size": 128,
+      "temperature": 0.15,
+      "learning_rate": 0.035,
+      "optimizer": "AdaGrad",
+      "seed": 311,
+      "fixed_training_batch_loss_before": 5.682990074157715,
+      "fixed_training_batch_loss_after": 4.862734794616699,
+      "mean_training_loss": 4.911185934753418,
+      "detail": "All sampled positives precede the final source-order cutoff. Duplicate item IDs within a batch are masked as false negatives. ID encoders do not solve cold-user or cold-item generalization. Optimization loss is a training diagnostic, not held-out evidence."
+    },
+    "recurrent": {
+      "status": "measured",
+      "architecture": "16-dimensional Elman tanh recurrent encoder with learned input/output item embeddings",
+      "objective": "in-batch next-item softmax, backpropagation through6 time steps",
+      "training_sequences": 24000,
+      "sequence_length": 7,
+      "batch_size": 64,
+      "seed": 413,
+      "learning_rate": 0.035,
+      "optimizer": "AdaGrad with clipped recurrent gradients",
+      "fixed_training_batch_loss_before": 4.167908430099487,
+      "fixed_training_batch_loss_after": 3.3730236291885376,
+      "mean_training_loss": 3.879358195410834,
+      "detail": "A small Elman RNN, not a GRU or pretrained recurrent model. Sequences preserve source-file order, an unaudited chronology proxy. Final recommendations condition on the last12 positive training interactions; all training targets precede the final cutoff."
+    },
+    "random_shortcut_two_tower": {
+      "status": "measured",
+      "architecture": "Independent user-ID and item-ID embeddings32 -> learned projection16 -> ReLU -> L2 normalization",
+      "objective": "in-batch softmax cross entropy",
+      "training_pairs": 400000,
+      "batch_size": 128,
+      "temperature": 0.15,
+      "learning_rate": 0.035,
+      "optimizer": "AdaGrad",
+      "seed": 311,
+      "fixed_training_batch_loss_before": 5.631529808044434,
+      "fixed_training_batch_loss_after": 4.845702171325684,
+      "mean_training_loss": 4.914161029052734,
+      "detail": "All sampled positives precede the final source-order cutoff. Duplicate item IDs within a batch are masked as false negatives. ID encoders do not solve cold-user or cold-item generalization. Optimization loss is a training diagnostic, not held-out evidence."
+    },
+    "random_shortcut_recurrent": {
+      "status": "measured",
+      "architecture": "16-dimensional Elman tanh recurrent encoder with learned input/output item embeddings",
+      "objective": "in-batch next-item softmax, backpropagation through6 time steps",
+      "training_sequences": 24000,
+      "sequence_length": 7,
+      "batch_size": 64,
+      "seed": 413,
+      "learning_rate": 0.035,
+      "optimizer": "AdaGrad with clipped recurrent gradients",
+      "fixed_training_batch_loss_before": 4.160181125005086,
+      "fixed_training_batch_loss_after": 3.466651360193888,
+      "mean_training_loss": 3.9474047277238635,
+      "detail": "A small Elman RNN, not a GRU or pretrained recurrent model. Sequences preserve source-file order, an unaudited chronology proxy. Final recommendations condition on the last12 positive training interactions; all training targets precede the final cutoff."
+    },
+    "evaluation_users": 5000,
+    "cohort": "Same held-out reader IDs, positives, seen-item filters and full10000-item catalog as every other headline model",
+    "session_cosine": {
+      "history_length": 12,
+      "decay": 0.85,
+      "detail": "Source-order positive history, with earlier clicks exponentially downweighted"
+    },
+    "run_seconds": 112.48,
+    "geometry": {
+      "status": "measured_from_frozen_artifacts",
+      "dimensions": 16,
+      "item_mean_active_channels": 6.9819,
+      "query_mean_active_channels": 7.2686,
+      "item_zero_vector_fraction": 0.0323,
+      "warm_item_zero_vector_fraction": 0.0,
+      "query_zero_vector_fraction": 0.0,
+      "item_training_cold_count": 323,
+      "item_column_standard_deviations": [
+        0.007521976716816425,
+        0.31686219573020935,
+        0.19285832345485687,
+        0.18319465219974518,
+        0.019214974716305733,
+        0.007609657011926174,
+        0.013798793777823448,
+        0.32805150747299194,
+        0.14631524682044983,
+        0.09657891094684601,
+        0.36634668707847595,
+        0.005402858834713697,
+        0.30971992015838623,
+        0.23342952132225037,
+        0.22741365432739258,
+        0.01695120520889759
+      ],
+      "singular_values": [
+        58.234066009521484,
+        46.84131622314453,
+        37.55839157104492,
+        34.78863525390625,
+        25.682828903198242,
+        19.93007469177246,
+        14.705622673034668,
+        9.918562889099121,
+        8.381957054138184,
+        4.832939147949219,
+        1.4984177350997925,
+        1.224108338356018,
+        1.0259125232696533,
+        0.6829075217247009,
+        0.5419358611106873,
+        0.42769110202789307
+      ],
+      "stable_rank": 2.8535566329956055,
+      "training_positive_fraction_sampled": 0.12171632185446989,
+      "nominal_batch_chance_cross_entropy": 4.852030263919617,
+      "detail": "Exact descriptive geometry of the frozen arrays, not confidence intervals. Training-cold item vectors are deliberately zeroed. Low held-out accuracy and training loss near nominal batch chance show weak learning in this finite training budget; the nominal log128 reference ignores duplicate-item masking. Nonzero singular values and active channels do not support a claim of global dead-ReLU collapse. Local ANN recall on these weak embeddings must not be generalized to other models or catalogs."
+    }
+  },
+  "pgvector": {
+    "status": "measured_local_postgres",
+    "model": "two_tower",
+    "image": "pgvector/pgvector@sha256:cf134a767f474095eeba57e0117be8e568e011a63f33fbf252f14c9b760f8e6f",
+    "pgvector_version": "0.8.6",
+    "items": 10000,
+    "queries": 200,
+    "dimensions": 16,
+    "distance": "inner product",
+    "training_seen_excluded": true,
+    "exact": {
+      "p50_ms": 4.371350049041212,
+      "p99_ms": 5.880367945646866,
+      "query_plan": [
+        "Limit  (cost=1160.18..1160.68 rows=200 width=12)",
+        "  ->  Sort  (cost=1160.18..1185.10 rows=9967 width=12)",
+        "        Sort Key: ((embedding <#> '[0,0,0,0,0,0.12759863,0,0,0,0,0,0.99182594,0,0,0,0]'::vector))",
+        "        ->  Seq Scan on items  (cost=0.00..729.42 rows=9967 width=12)",
+        "              Filter: (item_id <> ALL ('{4,7,14,25,32,53,65,124,126,127,130,192,210,259,263,283,300,302,314,359,572,629,931,2317,2685,3304,3752,4058,4080,8033,8518,9295,9343}'::smallint[]))"
+      ]
+    },
+    "rows": [
+      {
+        "ef_search": 200,
+        "recall_at_200": {
+          "mean": 1.0,
+          "low": 1.0,
+          "high": 1.0
+        },
+        "p50_ms": 4.071499919518828,
+        "p99_ms": 5.70054708747193,
+        "query_plan": [
+          "Limit  (cost=358.63..415.41 rows=200 width=12)",
+          "  ->  Index Scan using stacks_benchmark_hnsw on items  (cost=358.63..3188.42 rows=9967 width=12)",
+          "        Order By: (embedding <#> '[0,0,0,0,0,0.12759863,0,0,0,0,0,0.99182594,0,0,0,0]'::vector)",
+          "        Filter: (item_id <> ALL ('{4,7,14,25,32,53,65,124,126,127,130,192,210,259,263,283,300,302,314,359,572,629,931,2317,2685,3304,3752,4058,4080,8033,8518,9295,9343}'::smallint[]))"
+        ]
+      },
+      {
+        "ef_search": 400,
+        "recall_at_200": {
+          "mean": 1.0,
+          "low": 1.0,
+          "high": 1.0
+        },
+        "p50_ms": 3.9463500143028796,
+        "p99_ms": 5.210654978873208,
+        "query_plan": [
+          "Limit  (cost=638.90..690.06 rows=200 width=12)",
+          "  ->  Index Scan using stacks_benchmark_hnsw on items  (cost=638.90..3188.42 rows=9967 width=12)",
+          "        Order By: (embedding <#> '[0,0,0,0,0,0.12759863,0,0,0,0,0,0.99182594,0,0,0,0]'::vector)",
+          "        Filter: (item_id <> ALL ('{4,7,14,25,32,53,65,124,126,127,130,192,210,259,263,283,300,302,314,359,572,629,931,2317,2685,3304,3752,4058,4080,8033,8518,9295,9343}'::smallint[]))"
+        ]
+      },
+      {
+        "ef_search": 800,
+        "recall_at_200": {
+          "mean": 1.0,
+          "low": 1.0,
+          "high": 1.0
+        },
+        "p50_ms": 3.9141500019468367,
+        "p99_ms": 5.753521031001582,
+        "query_plan": [
+          "Limit  (cost=1155.14..1195.94 rows=200 width=12)",
+          "  ->  Index Scan using stacks_benchmark_hnsw on items  (cost=1155.14..3188.42 rows=9967 width=12)",
+          "        Order By: (embedding <#> '[0,0,0,0,0,0.12759863,0,0,0,0,0,0.99182594,0,0,0,0]'::vector)",
+          "        Filter: (item_id <> ALL ('{4,7,14,25,32,53,65,124,126,127,130,192,210,259,263,283,300,302,314,359,572,629,931,2317,2685,3304,3752,4058,4080,8033,8518,9295,9343}'::smallint[]))"
+        ]
+      }
+    ],
+    "detail": "Local Docker PostgreSQL benchmark with frozen two-tower embeddings. Exact SQL and HNSW use identical training-seen exclusions. Latencies include the local client round trip, are warm sequential requests, and do not describe the hosted D1 API. Recall intervals resample queries.",
+    "artifact_sha256": "58e5f86f7b9ad1acb6b73d3dc7b7354eeaba9fe70176b8af1c1744200923b826"
+  }
 }

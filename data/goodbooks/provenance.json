@@ -6,15 +6,15 @@
   "license": "CC BY-SA 4.0",
   "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
   "transformations": [
-    "First 300000 source rows",
-    "Book IDs 1 through 1000",
+    "All 5976479 source rows",
+    "Book IDs 1 through 10000",
     "Discard external cover URLs",
     "Map reader tags to named genre families"
   ],
   "files": [
     {
-      "name": "ratings-first-300000.csv",
-      "sha256": "bcfe9e37f70a20145ae4c9dbeb5d40250059e34e2fd85e518ecf8709e420bb6a"
+      "name": "ratings.csv",
+      "sha256": "1ee8a97172bd6d97147a30d9cfb3029ac240bd27ba2aa9365981c051c65113f8"
     },
     {
       "name": "books.csv",

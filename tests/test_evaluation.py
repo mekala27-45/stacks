@@ -9,10 +9,21 @@ from scipy.sparse import csr_matrix
 from packages.evaluation.metrics import (
     benjamini_hochberg,
     bootstrap,
+    intra_list_diversity,
     rank_unseen,
     ranking_metrics,
     wilson_interval,
 )
+
+
+def test_sparse_pair_diversity_is_invariant_to_recommendation_order():
+    directed = csr_matrix([[0, 1, 0], [0, 0, 0.6], [0.2, 0, 0]], dtype=np.float32)
+    expected = 1 - (0.5 + 0.3 + 0.1) / 3
+    assert intra_list_diversity(directed, np.array([0, 1, 2])) == pytest.approx(expected)
+    assert intra_list_diversity(directed, np.array([2, 1, 0])) == pytest.approx(expected)
+    assert intra_list_diversity(directed, np.array([0])) == 0
+
+
 from packages.ope import estimate, estimate_intervals
 from packages.retrieval import train_models
 from packages.sim import Simulator
@@ -114,7 +125,8 @@ def test_committed_protocol_and_manifest_are_honest_when_available():
         pytest.skip("Evidence pipeline has not run")
     manifest = json.loads(path.read_text(encoding="utf-8"))
     assert manifest["ope"]["simulator"]["seeds"] == 200
-    assert len(manifest["comparisons"]) == 6
+    model_count = len(manifest["metrics"])
+    assert len(manifest["comparisons"]) == model_count * (model_count - 1) // 2
     assert (
         manifest["dataset"]["train_interactions"] + manifest["dataset"]["test_interactions"]
         == manifest["dataset"]["interactions"]
@@ -157,8 +169,10 @@ def test_persisted_training_popularity_matches_200_independent_recomputations():
     manifest = json.loads((root / "results" / "manifest.json").read_text(encoding="utf-8"))
     training = ratings[(ratings.source_row < manifest["protocol"]["cutoff_row"]) & (ratings.rating >= 4)]
     stored = np.load(path)["popularity"]
-    for item in np.random.default_rng(89).choice(np.arange(1, 1001), size=200, replace=False):
-        assert stored[item - 1] == len(training[training.book_id == item])
+    counts = training.book_id.value_counts()
+    catalog_size = manifest["dataset"]["catalog_size"]
+    for item in np.random.default_rng(89).choice(np.arange(1, catalog_size + 1), size=200, replace=False):
+        assert stored[item - 1] == counts.get(item, 0)
 
 
 def test_real_obd_uniform_policy_sanity_when_present():
@@ -167,7 +181,7 @@ def test_real_obd_uniform_policy_sanity_when_present():
     if not path.exists():
         pytest.skip("Evidence pipeline has not run")
     result = json.loads(path.read_text(encoding="utf-8"))["ope"]["open_bandit"]
-    if result["status"] != "measured_alternative_target":
+    if result["status"] not in {"measured_alternative_target", "measured_six_file_bts_benchmark"}:
         pytest.skip(result["detail"])
     for row in result["rows"]:
         if row["policy"] == "Uniform sanity check" and row["estimator"] in {"IPS", "SNIPS"}:

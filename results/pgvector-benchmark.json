@@ -1,0 +1,74 @@
+{
+  "status": "measured_local_postgres",
+  "model": "two_tower",
+  "image": "pgvector/pgvector@sha256:cf134a767f474095eeba57e0117be8e568e011a63f33fbf252f14c9b760f8e6f",
+  "pgvector_version": "0.8.6",
+  "items": 10000,
+  "queries": 200,
+  "dimensions": 16,
+  "distance": "inner product",
+  "training_seen_excluded": true,
+  "exact": {
+    "p50_ms": 4.371350049041212,
+    "p99_ms": 5.880367945646866,
+    "query_plan": [
+      "Limit  (cost=1160.18..1160.68 rows=200 width=12)",
+      "  ->  Sort  (cost=1160.18..1185.10 rows=9967 width=12)",
+      "        Sort Key: ((embedding <#> '[0,0,0,0,0,0.12759863,0,0,0,0,0,0.99182594,0,0,0,0]'::vector))",
+      "        ->  Seq Scan on items  (cost=0.00..729.42 rows=9967 width=12)",
+      "              Filter: (item_id <> ALL ('{4,7,14,25,32,53,65,124,126,127,130,192,210,259,263,283,300,302,314,359,572,629,931,2317,2685,3304,3752,4058,4080,8033,8518,9295,9343}'::smallint[]))"
+    ]
+  },
+  "rows": [
+    {
+      "ef_search": 200,
+      "recall_at_200": {
+        "mean": 1.0,
+        "low": 1.0,
+        "high": 1.0
+      },
+      "p50_ms": 4.071499919518828,
+      "p99_ms": 5.70054708747193,
+      "query_plan": [
+        "Limit  (cost=358.63..415.41 rows=200 width=12)",
+        "  ->  Index Scan using stacks_benchmark_hnsw on items  (cost=358.63..3188.42 rows=9967 width=12)",
+        "        Order By: (embedding <#> '[0,0,0,0,0,0.12759863,0,0,0,0,0,0.99182594,0,0,0,0]'::vector)",
+        "        Filter: (item_id <> ALL ('{4,7,14,25,32,53,65,124,126,127,130,192,210,259,263,283,300,302,314,359,572,629,931,2317,2685,3304,3752,4058,4080,8033,8518,9295,9343}'::smallint[]))"
+      ]
+    },
+    {
+      "ef_search": 400,
+      "recall_at_200": {
+        "mean": 1.0,
+        "low": 1.0,
+        "high": 1.0
+      },
+      "p50_ms": 3.9463500143028796,
+      "p99_ms": 5.210654978873208,
+      "query_plan": [
+        "Limit  (cost=638.90..690.06 rows=200 width=12)",
+        "  ->  Index Scan using stacks_benchmark_hnsw on items  (cost=638.90..3188.42 rows=9967 width=12)",
+        "        Order By: (embedding <#> '[0,0,0,0,0,0.12759863,0,0,0,0,0,0.99182594,0,0,0,0]'::vector)",
+        "        Filter: (item_id <> ALL ('{4,7,14,25,32,53,65,124,126,127,130,192,210,259,263,283,300,302,314,359,572,629,931,2317,2685,3304,3752,4058,4080,8033,8518,9295,9343}'::smallint[]))"
+      ]
+    },
+    {
+      "ef_search": 800,
+      "recall_at_200": {
+        "mean": 1.0,
+        "low": 1.0,
+        "high": 1.0
+      },
+      "p50_ms": 3.9141500019468367,
+      "p99_ms": 5.753521031001582,
+      "query_plan": [
+        "Limit  (cost=1155.14..1195.94 rows=200 width=12)",
+        "  ->  Index Scan using stacks_benchmark_hnsw on items  (cost=1155.14..3188.42 rows=9967 width=12)",
+        "        Order By: (embedding <#> '[0,0,0,0,0,0.12759863,0,0,0,0,0,0.99182594,0,0,0,0]'::vector)",
+        "        Filter: (item_id <> ALL ('{4,7,14,25,32,53,65,124,126,127,130,192,210,259,263,283,300,302,314,359,572,629,931,2317,2685,3304,3752,4058,4080,8033,8518,9295,9343}'::smallint[]))"
+      ]
+    }
+  ],
+  "detail": "Local Docker PostgreSQL benchmark with frozen two-tower embeddings. Exact SQL and HNSW use identical training-seen exclusions. Latencies include the local client round trip, are warm sequential requests, and do not describe the hosted D1 API. Recall intervals resample queries.",
+  "artifact_sha256": "58e5f86f7b9ad1acb6b73d3dc7b7354eeaba9fe70176b8af1c1744200923b826"
+}

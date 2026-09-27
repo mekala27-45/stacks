@@ -1,0 +1,40 @@
+{
+  "schema_version": "1",
+  "artifact_version": "goodbooks-full-36eeb55d1ddd0268",
+  "catalog_size": 10000,
+  "factors": 16,
+  "alpha": 20,
+  "regularization": 0.1,
+  "training_cutoff_row": 4781183,
+  "source_rows": 5976479,
+  "files": {
+    "item_factors": "item-factors.f32",
+    "cosine_data": "cosine-data.f32",
+    "cosine_indices": "cosine-indices.u32",
+    "cosine_indptr": "cosine-indptr.u32",
+    "popularity": "popularity.f32",
+    "profiles": "edge-profiles.json",
+    "catalog": "catalog.json"
+  },
+  "sha256": {
+    "item-factors.f32": "c02bdbfaf96378bae0580f25238dc650fd1879f00240e87f89ef05bba38df702",
+    "popularity.f32": "37b4f95b6932332cfdf286e9afb9d8502c3e769170ff0f37420fddc7d2059317",
+    "cosine-data.f32": "2df389642ea01b3ba2b26e34e81b0c3348b7aed1494471beb65f9ef1167a88fc",
+    "cosine-indices.u32": "cc58799af0826d9c4cee5b3ab7645fe16a3e5b7db1260977fc6dc87c4ac2d91e",
+    "cosine-indptr.u32": "6d35fe9c0a54a903be059c231de2d4ffee75a0ca7a35346152af3ced80468bf8",
+    "edge-profiles.json": "bdb3d77f7e51153b91f9a6706b8c6395a49ff8f9bc017834d17496e903b6eec3"
+  },
+  "models": [
+    "popularity",
+    "item_cosine",
+    "als",
+    "blend"
+  ],
+  "blend_weights": {
+    "item_cosine": 0.55,
+    "als": 0.35,
+    "popularity": 0.1
+  },
+  "indexing": "Zero-based contiguous catalog index = book_id minus1; little-endian row-major arrays",
+  "cosine_neighbors": 100
+}

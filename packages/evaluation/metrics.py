@@ -1,6 +1,16 @@
 from collections.abc import Iterable
 
 import numpy as np
+from scipy.sparse import csr_matrix
+
+
+def intra_list_diversity(cosine: csr_matrix, items: np.ndarray) -> float:
+    """Symmetric sparse pair dissimilarity; omitted pruned edges count as zero."""
+    if len(items) < 2:
+        return 0.0
+    similarity = cosine[np.ix_(items, items)].toarray()
+    symmetric = np.clip((similarity + similarity.T) / 2, 0, 1)
+    return float(1 - symmetric[np.triu_indices(len(items), 1)].mean())
 
 
 def rank_unseen(scores: np.ndarray, seen: Iterable[int], candidates: np.ndarray | None = None) -> np.ndarray:

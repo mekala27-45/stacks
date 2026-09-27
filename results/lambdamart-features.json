@@ -1,0 +1,42 @@
+{
+  "features": [
+    "cosine_normalized",
+    "als_normalized",
+    "popularity_normalized",
+    "blend_score",
+    "log_popularity",
+    "log_history_count",
+    "cosine_raw",
+    "als_raw",
+    "training_cold_item"
+  ],
+  "training": {
+    "status": "trained",
+    "objective": "lambdarank",
+    "training_groups": 2553,
+    "candidate_rows": 947402,
+    "relevant_candidates": 17223,
+    "trees": 70,
+    "features": [
+      "cosine_normalized",
+      "als_normalized",
+      "popularity_normalized",
+      "blend_score",
+      "log_popularity",
+      "log_history_count",
+      "cosine_raw",
+      "als_raw",
+      "training_cold_item"
+    ],
+    "candidate_sources": [
+      "popularity",
+      "item_cosine",
+      "als",
+      "blend"
+    ],
+    "candidate_k_per_source": 200,
+    "detail": "Candidate union labels come from an earlier held-out source-order window; every feature uses only its prefix training interactions. Snapshot metadata is not a ranker feature. Hyperparameters fixed before final holdout evaluation. Full-catalog inference, including items outside the candidate union, is published without a selection gate.",
+    "feature_cutoff_row": 3585887,
+    "label_end_row": 4781183
+  }
+}

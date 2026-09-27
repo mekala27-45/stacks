@@ -18,13 +18,15 @@ def matrices(
         shape=(len(user_map), catalog_size),
     )
     seen = {
-        user_map[int(uid)]: {int(item) - 1 for item in frame.book_id}
-        for uid, frame in train.groupby("user_id")
+        user_map[int(frame.user_id.iloc[0])]: set((frame.book_id.to_numpy(dtype=np.int32) - 1).tolist())
+        for _, frame in train.groupby("user_id")
     }
     test = ratings[~train_mask]
     truth = {
-        user_map[int(uid)]: {int(item) - 1 for item in frame[frame.rating >= 4].book_id}
-        - seen.get(user_map[int(uid)], set())
-        for uid, frame in test.groupby("user_id")
+        user_map[int(frame.user_id.iloc[0])]: set(
+            (frame.loc[frame.rating >= 4, "book_id"].to_numpy(dtype=np.int32) - 1).tolist()
+        )
+        - seen.get(user_map[int(frame.user_id.iloc[0])], set())
+        for _, frame in test.groupby("user_id")
     }
     return matrix, seen, {uid: items for uid, items in truth.items() if items}
