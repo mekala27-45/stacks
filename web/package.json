@@ -7,20 +7,25 @@
     "dev": "next dev --port 3010",
     "build": "next build",
     "typecheck": "tsc --noEmit",
-    "test": "node --experimental-strip-types --test tests/*.test.ts"
+    "test": "node --experimental-strip-types --test tests/*.test.ts",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@duckdb/duckdb-wasm": "^1.29.0",
+    "lucide-react": "^0.468.0",
     "next": "15.5.25",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0",
-    "lucide-react": "^0.468.0",
-    "@duckdb/duckdb-wasm": "^1.29.0"
+    "react-dom": "^19.2.0"
   },
   "devDependencies": {
-    "typescript": "^5.9.0",
+    "@cloudflare/workers-types": "^5.20260927.1",
+    "@playwright/test": "^1.63.0",
     "@types/node": "^24.0.0",
     "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0"
+    "@types/react-dom": "^19.0.0",
+    "esbuild": "^0.28.2",
+    "typescript": "^5.9.0",
+    "wrangler": "^4.141.0"
   },
   "overrides": {
     "postcss": "8.5.28"

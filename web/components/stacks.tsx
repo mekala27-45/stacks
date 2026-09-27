@@ -27,6 +27,8 @@ import {
   Table2,
 } from "lucide-react";
 import { recommend, csv } from "@/lib/engine";
+import { useLiveSession } from "@/lib/live-session";
+import { LiveEvidence } from "./live-evidence";
 import {
   EvidenceModules,
   ProtocolComparison,
@@ -148,6 +150,14 @@ export default function Stacks({ page }: { page: string }) {
   const sessionId = useRef(""),
     signature = useRef(""),
     shelfRef = useRef<Recommendation[]>([]);
+  const live = useLiveSession(bundle?.catalog, reader, ready);
+  useEffect(() => {
+    if (live.mode !== "live") return;
+    setShelf(live.shelf);
+    shelfRef.current = live.shelf;
+    if (live.info?.history) setHistory(live.info.history.map(Number));
+    if (live.info?.genre) setGenre(live.info.genre);
+  }, [live.mode, live.shelf, live.info]);
   useEffect(() => {
     let active = true;
     setDark(localStorage.getItem("stacks-theme") === "dark");
@@ -195,7 +205,14 @@ export default function Stacks({ page }: { page: string }) {
   }, [dark]);
   useEffect(() => {
     if (!bundle || !ready) return;
-    const nextSignature = JSON.stringify([history, reader, genre, diverse]);
+    if (live.mode === "live") return;
+    const nextSignature = JSON.stringify([
+      history,
+      reader,
+      genre,
+      diverse,
+      live.mode,
+    ]);
     if (signature.current === nextSignature) return;
     signature.current = nextSignature;
     if (page !== "shelf") return;
@@ -226,7 +243,7 @@ export default function Stacks({ page }: { page: string }) {
         })),
       ].slice(-3000),
     );
-  }, [bundle, history, reader, genre, diverse, ready, page]);
+  }, [bundle, history, reader, genre, diverse, ready, page, live.mode]);
   useEffect(() => {
     if (!ready) return;
     sessionStorage.setItem(
@@ -280,8 +297,32 @@ export default function Stacks({ page }: { page: string }) {
       previous?.focus();
     };
   }, [selected, trace]);
-  function feedback(book: Book, event: "click" | "save") {
+  async function feedback(book: Book, event: "click" | "save") {
     const item = shelf.find((item) => item.id === book.id);
+    if (live.mode === "live") {
+      if (!item) {
+        if (event === "save") {
+          setSaved((old) => (old.includes(book.id) ? old : [...old, book.id]));
+          setNotice(
+            "Added to your saved shelf. This catalog browse is not a recommendation impression.",
+          );
+        } else
+          setNotice(
+            "Choose a recommendation from your current shelf to update the live session.",
+          );
+        return;
+      }
+      try {
+        await live.feedback(item.impression_id, event);
+      } catch (error) {
+        setNotice(
+          error instanceof Error
+            ? error.message
+            : "Your feedback could not be saved.",
+        );
+        return;
+      }
+    }
     if (item)
       setExposures((rows) =>
         rows.map((row) =>
@@ -309,6 +350,10 @@ export default function Stacks({ page }: { page: string }) {
     }
   }
   function switchReader(value: string) {
+    if (reader === value) {
+      sessionStorage.removeItem("stacks-live-session");
+      live.retry();
+    }
     setReader(value);
     setHistory(
       value === "visitor"
@@ -383,7 +428,12 @@ export default function Stacks({ page }: { page: string }) {
       <div className="edition-bar">
         <span>AN INDEPENDENT RECOMMENDATION BOOKSHOP</span>
         <span>
-          <span className="mode-dot" /> PUBLIC DATA · BROWSER SESSION
+          <span className="mode-dot" /> PUBLIC DATA ·{" "}
+          {live.mode === "live"
+            ? "LIVE SESSION"
+            : live.mode === "connecting"
+              ? "CONNECTING"
+              : "STATIC FALLBACK"}
         </span>
       </div>
       <main
@@ -563,7 +613,21 @@ export default function Stacks({ page }: { page: string }) {
                     <button
                       key={g}
                       className={genre === g ? "active" : ""}
-                      onClick={() => setGenre(g)}
+                      onClick={async () => {
+                        if (live.mode === "live") {
+                          try {
+                            await live.preferences(g);
+                          } catch (error) {
+                            setNotice(
+                              error instanceof Error
+                                ? error.message
+                                : "Preference could not be saved.",
+                            );
+                            return;
+                          }
+                        }
+                        setGenre(g);
+                      }}
                     >
                       {g}
                     </button>
@@ -573,15 +637,29 @@ export default function Stacks({ page }: { page: string }) {
                   <SlidersHorizontal size={14} />
                   <input
                     type="checkbox"
-                    checked={diverse}
+                    hidden={live.mode === "live"}
+                    checked={
+                      live.mode === "live"
+                        ? live.info?.arm === "diverse"
+                        : diverse
+                    }
+                    disabled={live.mode === "live"}
                     onChange={(e) => setDiverse(e.target.checked)}
                   />
-                  Room for discovery
+                  {live.mode === "live"
+                    ? `Assigned ${live.info?.arm ?? "model"} arm`
+                    : "Room for discovery"}
                 </label>
               </div>
             )}
             {displayed.length ? (
-              <div className="book-grid">
+              <div
+                className="book-grid"
+                data-testid="recommendation-shelf"
+                data-revision={
+                  live.mode === "live" ? live.info?.revision : "local"
+                }
+              >
                 {displayed.map((book, index) => {
                   const rec = shelf.find((r) => r.id === book.id);
                   return (
@@ -668,23 +746,42 @@ export default function Stacks({ page }: { page: string }) {
             <div className="local-note">
               <Info size={14} />
               <p>
-                Your session stays in this browser tab. The public demo uses
-                precomputed item similarities and logs impressions locally; it
-                is not connected to a hosted API.
+                {live.mode === "live"
+                  ? `Live ${live.info?.model_version} recommendations. Feedback and selection probabilities are saved by the API; shelf revisions arrive over a server stream. ${live.reason}`
+                  : live.mode === "connecting"
+                    ? "Connecting to the model service. The static collection is available while the session starts."
+                    : `Static fallback: the model service could not be reached. This tab uses a separate local session blend. ${live.reason}`}
               </p>
+              {live.mode === "fallback" && (
+                <button className="text-button" onClick={live.retry}>
+                  Reconnect
+                </button>
+              )}
               <button
                 className="text-button"
-                disabled={!exposures.length}
-                onClick={() =>
-                  download(
-                    "stacks-session.csv",
-                    csv(exposures as unknown as Record<string, unknown>[]),
-                    "text/csv",
-                  )
-                }
+                disabled={live.mode !== "live" && !exposures.length}
+                onClick={async () => {
+                  try {
+                    download(
+                      "stacks-session.csv",
+                      csv(
+                        live.mode === "live"
+                          ? await live.logs()
+                          : (exposures as unknown as Record<string, unknown>[]),
+                      ),
+                      "text/csv",
+                    );
+                  } catch (error) {
+                    setNotice(
+                      error instanceof Error ? error.message : "Export failed.",
+                    );
+                  }
+                }}
               >
                 <Download size={14} />
-                Export {exposures.length} impressions
+                {live.mode === "live"
+                  ? "Export persisted impressions"
+                  : `Export ${exposures.length} local impressions`}
               </button>
             </div>
           </>
@@ -695,6 +792,7 @@ export default function Stacks({ page }: { page: string }) {
             exposures={exposures}
             shelf={shelf}
             showTrace={setTrace}
+            live={live}
           />
         )}
       </main>
@@ -829,6 +927,43 @@ export default function Stacks({ page }: { page: string }) {
 }
 
 function Trace({ item }: { item: Recommendation }) {
+  if (item.trace) {
+    const trace = item.trace;
+    return (
+      <>
+        <div className="eyebrow">FROM EVALUATED MODEL TO LIVE SHELF</div>
+        <h2 id="dialog-title">Why this book?</h2>
+        <p className="trace-book-name">
+          {item.title} <span>by {item.author}</span>
+        </p>
+        <div className="trace-timeline">
+          {["retrieval", "ranking", "reranking", "exploration", "shadow"].map(
+            (stage, index) => (
+              <div className="trace-step" key={stage}>
+                <span className="step-number">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <div>
+                  <span className="overline">{stage}</span>
+                  <pre className="trace-json">
+                    {JSON.stringify(trace[stage] ?? {}, null, 2)}
+                  </pre>
+                </div>
+              </div>
+            ),
+          )}
+        </div>
+        <div className="data-note">
+          <Code2 size={17} />
+          <p>
+            {item.model_version} · position {item.position} · conditional
+            propensity {number(item.propensity, 4)}. This trace is returned with
+            the persisted impression.
+          </p>
+        </div>
+      </>
+    );
+  }
   return (
     <>
       <div className="eyebrow">FROM CANDIDATE TO SHELF</div>
@@ -961,12 +1096,14 @@ function Research({
   exposures,
   shelf,
   showTrace,
+  live,
 }: {
   page: string;
   bundle: Bundle;
   exposures: Exposure[];
   shelf: Recommendation[];
   showTrace: (r: Recommendation) => void;
+  live: ReturnType<typeof useLiveSession>;
 }) {
   const e = bundle.evidence as Record<string, unknown>;
   const metrics = rowsOf(e.metrics),
@@ -1186,8 +1323,9 @@ function Research({
           caption="Bias, variance, and interval coverage across independent seeded logs. A deliberately misspecified reward model makes the assumptions visible."
         />
         <OpeEvidence ope={ope} />
+        <LiveEvidence live={live} />
         <SectionTitle
-          title="The browser session"
+          title="The static fallback session"
           caption="Local demonstration logs are position-conditional. They are not pooled across visitors and do not establish causal product lift."
         />
         <div className="stat-grid three">
@@ -1252,6 +1390,13 @@ function Research({
                 <span>NDCG @ 10</span>
                 <b>{interval(m.ndcg)}</b>
               </div>
+              <a
+                className="text-button"
+                href={`${basePath}/downloads/cards/${String(m.model)}.md`}
+                download
+              >
+                Read model card <Download size={14} />
+              </a>
             </div>
           ))}
         </div>
@@ -1264,9 +1409,9 @@ function Research({
           <div>
             <b>No production model is promoted by this website.</b>
             <p>
-              The browser shelf serves its disclosed session blend. Offline
-              superiority, load-test latency, and a deployed production service
-              are separate claims.
+              The live shelf serves the frozen evaluated model artifacts. When
+              the API is unavailable, the browser uses its disclosed fallback.
+              Offline superiority and production impact are separate claims.
             </p>
           </div>
         </div>
@@ -1293,7 +1438,8 @@ function Research({
         <Pushback>
           There is no measured production drift without production traffic.
           Monitoring endpoints and persistence tests are included in the
-          runnable API; the public website is an explicitly local demonstration.
+          runnable API. The live service persists demonstration observations;
+          the local fallback is labeled separately.
         </Pushback>
       </>
     );

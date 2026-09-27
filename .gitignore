@@ -19,3 +19,8 @@ out/
 .cache/
 data/raw/
 artifacts/
+dist/
+.wrangler/
+.sites-runtime/
+test-results/
+playwright-report/

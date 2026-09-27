@@ -21,6 +21,8 @@ export type Recommendation = Book & {
   source: string;
   affinity: number;
   collaborative: number;
+  trace?: Record<string, unknown>;
+  model_version?: string;
 };
 export type Exposure = {
   impression_id: string;

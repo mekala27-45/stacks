@@ -12,6 +12,34 @@
   --sans: var(--font-work), Arial, sans-serif;
   --shadow: 0 14px 38px #38241412;
 }
+.trace-json {
+  max-width: 100%;
+  max-height: 17rem;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font: 0.75rem/1.6 var(--mono);
+  background: var(--panel);
+  padding: 1rem;
+  border: 1px solid var(--line);
+}
+.live-evidence .stat strong {
+  display: block;
+  font: 1.6rem var(--serif);
+  margin: 0.75rem 0;
+  overflow-wrap: anywhere;
+}
+.live-evidence {
+  margin: 2rem 0;
+}
+.coverage-note {
+  display: block;
+  white-space: normal;
+  max-width: 19rem;
+  font: 0.72rem/1.5 var(--sans);
+  color: var(--muted);
+  margin-top: 0.4rem;
+}
 :root[data-theme="dark"] {
   --paper: #171412;
   --panel: #211d19;

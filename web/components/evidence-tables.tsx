@@ -53,6 +53,13 @@ function Table({
               {columns.map(([key], j) => (
                 <td key={key} className={j === 0 ? "row-label" : "numeric"}>
                   {value(r[key], key)}
+                  {key === "coverage" && (
+                    <small className="coverage-note">
+                      Observed distinct share; resampling repeats readers and
+                      usually covers fewer books. Range is not a confidence
+                      interval.
+                    </small>
+                  )}
                 </td>
               ))}
             </tr>
@@ -106,6 +113,18 @@ export function EvidenceModules({ evidence: e }: { evidence: Row }) {
           ["ndcg", "NDCG @ 10 · 95% CI"],
         ]}
       />
+      {e.cold_reader_diagnostics && (
+        <div className="data-note">
+          <Info size={18} />
+          <p>
+            {String(
+              obj(e.cold_reader_diagnostics).detail ??
+                obj(e.cold_reader_diagnostics).explanation ??
+                "Slice composition changes the difficulty of the ranking task; see the report for diagnostic counts.",
+            )}
+          </p>
+        </div>
+      )}
       <Title
         title="What makes it onto the shelf"
         caption="Novelty, diversity, and calibration are user means with bootstrap intervals. Coverage is observed distinct catalog share; its bootstrap range describes resampling variability, not a population confidence interval."
@@ -351,11 +370,13 @@ export function OpeEvidence({ ope }: { ope: Row }) {
           <Table
             data={rows(obd.rows).filter((r) => r.policy === policy)}
             columns={[
+              ["campaign", "Campaign"],
               ["estimator", "Estimator"],
               ["position", "Position"],
               ["sample_size", "Rows"],
               ["estimate", "Estimate · 95% CI"],
               ["effective_sample_size", "Effective sample size"],
+              ["bts_reference", "BTS on-policy reward · 95% CI"],
             ]}
           />
         </>

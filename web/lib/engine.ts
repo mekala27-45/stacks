@@ -1,6 +1,7 @@
 import type { Book, Recommendation, Similarity } from "./types.ts";
 
-const primaryAuthor = (book: Book) => book.author.split(",")[0].trim().toLowerCase();
+const primaryAuthor = (book: Book) =>
+  book.author.split(",")[0].trim().toLowerCase();
 
 export function recommend(
   catalog: Book[],
@@ -51,7 +52,11 @@ export function recommend(
     let best = -1,
       bestScore = -Infinity;
     pool.forEach((book, index) => {
-      if (selected.filter((b) => primaryAuthor(b) === primaryAuthor(book)).length >= 2) return;
+      if (
+        selected.filter((b) => primaryAuthor(b) === primaryAuthor(book))
+          .length >= 2
+      )
+        return;
       const repetition = selected.length
         ? selected.filter((b) => b.genre === book.genre).length /
           selected.length
@@ -67,7 +72,9 @@ export function recommend(
   }
   const explorationPool = pool
     .filter(
-      (book) => selected.filter((b) => primaryAuthor(b) === primaryAuthor(book)).length < 2,
+      (book) =>
+        selected.filter((b) => primaryAuthor(b) === primaryAuthor(book))
+          .length < 2,
     )
     .slice(0, 20);
   const explored = explorationPool.length
@@ -109,7 +116,8 @@ export function recommend(
 export function csv(rows: Record<string, unknown>[]): string {
   if (!rows.length) return "";
   const keys = Object.keys(rows[0]);
-  const escape = (v: unknown) => `"${String(v ?? "").replaceAll('"', '""')}"`;
+  const escape = (v: unknown) =>
+    `"${(v !== null && typeof v === "object" ? JSON.stringify(v) : String(v ?? "")).replaceAll('"', '""')}"`;
   return [
     keys.map(escape).join(","),
     ...rows.map((row) => keys.map((k) => escape(row[k])).join(",")),
