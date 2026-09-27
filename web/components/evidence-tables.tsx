@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Info, Table2 } from "lucide-react";
 type Row = Record<string, unknown>;
 const rows = (v: unknown): Row[] => (Array.isArray(v) ? v : []);
@@ -25,6 +25,9 @@ function value(v: unknown, key: string) {
       "sample_size",
       "impressions",
       "feedback",
+      "ef_search",
+      "requests",
+      "concurrency",
     ].includes(key)
       ? v.toLocaleString()
       : num(v);
@@ -84,6 +87,7 @@ function Title({ title, caption }: { title: string; caption: string }) {
 }
 export function EvidenceModules({ evidence: e }: { evidence: Row }) {
   const rerank = obj(e.reranking);
+  const ann = obj(e.pgvector);
   return (
     <>
       <Title
@@ -157,6 +161,74 @@ export function EvidenceModules({ evidence: e }: { evidence: Row }) {
           />
         </>
       )}
+      {ann.status === "measured_local_postgres" && rows(ann.rows).length > 0 && (
+        <>
+          <Title
+            title="Approximate search, measured against exact search"
+            caption={String(ann.detail)}
+          />
+          <p className="chart-caption">
+            {Number(ann.items).toLocaleString()} books · {String(ann.queries)} queries
+            {" "}· {String(ann.dimensions)} dimensions · pgvector {String(ann.pgvector_version)}.
+            {" "}Recall compares the same top 200 neighbors with training items excluded.
+          </p>
+          <Table
+            data={[
+              { method: "Exact SQL", ef_search: "—", recall_at_200: "Reference", ...obj(ann.exact) },
+              ...rows(ann.rows).map((row) => ({ method: "HNSW", ...row })),
+            ]}
+            columns={[
+              ["method", "Search"],
+              ["ef_search", "ef_search"],
+              ["recall_at_200", "Recall @ 200 · 95% CI"],
+              ["p50_ms", "p50 · ms"],
+              ["p99_ms", "p99 · ms"],
+            ]}
+          />
+        </>
+      )}
+      <HostedLatency />
+    </>
+  );
+}
+function HostedLatency() {
+  const [latency, setLatency] = useState<Row | null>(null);
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch(`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/data/latency.json`, {
+      signal: controller.signal,
+      cache: "no-store",
+    })
+      .then(async (response) => response.ok ? obj(await response.json()) : null)
+      .then((data) => {
+        if (!data || data.status !== "measured" || typeof data.url !== "string") return;
+        const endpoint = new URL(data.url);
+        if (endpoint.protocol !== "https:" || ["localhost", "127.0.0.1", "[::1]"].includes(endpoint.hostname)) return;
+        if (typeof data.requests !== "number" || !Number.isFinite(data.p50_ms) || !Number.isFinite(data.p99_ms)) return;
+        setLatency(data);
+      })
+      .catch(() => { /* Optional measured artifact: omit the panel until published. */ });
+    return () => controller.abort();
+  }, []);
+  if (!latency) return null;
+  return (
+    <>
+      <Title title="Hosted API latency" caption={String(latency.operation)} />
+      <Table
+        data={[{ ...latency, label: "Persisted shelf", p50: latency.p50 ?? latency.p50_ms, p99: latency.p99 ?? latency.p99_ms }]}
+        columns={[
+          ["label", "Operation"],
+          ["requests", "Timed requests"],
+          ["concurrency", "Concurrency"],
+          ["p50", "p50 · ms · resampling range"],
+          ["p99", "p99 · ms · resampling range"],
+        ]}
+      />
+      <p className="chart-caption">
+        Measured {String(latency.measured_at)} at {String(latency.url)} after
+        {" "}{String(latency.warmup_requests)} warm-up requests. Model: {String(latency.model_version)}.
+        {" "}{String(latency.detail)}
+      </p>
     </>
   );
 }
