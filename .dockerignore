@@ -1,0 +1,17 @@
+.git
+.venv*
+.runtime
+.cache
+.pytest_cache
+__pycache__
+*.pyc
+*.db
+*.db-wal
+*.db-shm
+.env
+node_modules
+web/node_modules
+web/.next
+web/out
+data/raw
+artifacts
