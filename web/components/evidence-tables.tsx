@@ -174,7 +174,7 @@ export function EvidenceModules({ evidence: e }: { evidence: Row }) {
           </p>
           <Table
             data={[
-              { method: "Exact SQL", ef_search: "—", recall_at_200: "Reference", ...obj(ann.exact) },
+              { method: "Exact SQL", ef_search: "Not applicable", recall_at_200: "Reference", ...obj(ann.exact) },
               ...rows(ann.rows).map((row) => ({ method: "HNSW", ...row })),
             ]}
             columns={[
