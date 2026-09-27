@@ -1,0 +1,7 @@
+# Serving checksums cover exact bytes, including the existing profile JSON.
+# Do not let a checkout's core.autocrlf setting rewrite these artifacts.
+/web/public/data/edge-profiles.json -text
+*.f32 -text
+*.u32 -text
+*.npz -text
+*.parquet -text
