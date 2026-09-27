@@ -10,6 +10,78 @@ function estimate(value: unknown): string {
   const row = value as Row;
   return `${number(row.mean ?? row.estimate ?? row.value)} [${number(row.low ?? row.lower)}, ${number(row.high ?? row.upper)}]`;
 }
+export function LiveMonitoring({
+  live,
+}: {
+  live: ReturnType<typeof useLiveSession>;
+}) {
+  const { mode, monitoring, loadMonitoring } = live;
+  useEffect(() => {
+    if (mode === "live") void loadMonitoring();
+  }, [mode, loadMonitoring]);
+  if (mode !== "live" || !monitoring) return null;
+  const positions = Array.isArray(monitoring.by_position)
+    ? (monitoring.by_position as Row[])
+    : [];
+  const shadow = monitoring.shadow as Row | undefined;
+  return (
+    <section aria-label="Persisted API monitoring">
+      <div className="section-title">
+        <h2>Persisted service observations</h2>
+        <p>
+          {String(monitoring.window ?? "Durable demonstration impressions")}.
+          Position click rates are observational.
+        </p>
+      </div>
+      <div className="stat-grid three">
+        <div className="stat">
+          <span className="overline">IMPRESSIONS</span>
+          <strong>{String(monitoring.impressions ?? "Unavailable")}</strong>
+          <p>Read back from the API database</p>
+        </div>
+        <div className="stat">
+          <span className="overline">DISTINCT BOOKS</span>
+          <strong>{String(monitoring.coverage_items ?? "Unavailable")}</strong>
+          <p>Observed serving coverage count</p>
+        </div>
+        <div className="stat">
+          <span className="overline">SHADOW DISAGREEMENT</span>
+          <strong>{number(shadow?.mean_set_disagreement)}</strong>
+          <p>
+            {String(shadow?.measured_shelves ?? 0)} scored shelves; alternative
+            model was not served
+          </p>
+        </div>
+      </div>
+      <div className="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Position</th>
+              <th>Matured impressions</th>
+              <th>Clicks</th>
+              <th>Observed click rate</th>
+            </tr>
+          </thead>
+          <tbody>
+            {positions.map((row) => (
+              <tr key={String(row.position)}>
+                <td>{String(row.position)}</td>
+                <td>{String(row.matured_impressions)}</td>
+                <td>{String(row.clicks)}</td>
+                <td>{number(row.click_rate)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p className="subtle">
+        A shadow prediction is not an experiment result. The service makes no
+        claim of online lift.
+      </p>
+    </section>
+  );
+}
 
 export function LiveEvidence({
   live,
@@ -69,18 +141,18 @@ export function LiveEvidence({
             <div className="stat">
               <span className="overline">MATURED OBSERVATIONS</span>
               <strong>
-                {number(ope?.matured ?? ope?.matured_rows ?? ope?.n)}
+                {String(ope?.matured ?? ope?.matured_rows ?? ope?.n ?? "Loading")}
               </strong>
               <p>Completed reward windows</p>
             </div>
             <div className="stat">
               <span className="overline">PENDING</span>
-              <strong>{number(ope?.pending ?? ope?.pending_rows)}</strong>
+              <strong>{String(ope?.pending ?? ope?.pending_rows ?? "Loading")}</strong>
               <p>Not counted as zero rewards early</p>
             </div>
             <div className="stat">
               <span className="overline">STATUS</span>
-              <strong>{String(ope?.status ?? "Loading")}</strong>
+              <strong>{ope?.status === "measured" ? "Estimate available" : ope?.status === "awaiting_mature_feedback" ? "Waiting for reward windows" : "Loading"}</strong>
               <p>
                 {String(
                   ope?.interval_method ??

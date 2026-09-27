@@ -28,7 +28,7 @@ import {
 } from "lucide-react";
 import { recommend, csv } from "@/lib/engine";
 import { useLiveSession } from "@/lib/live-session";
-import { LiveEvidence } from "./live-evidence";
+import { LiveEvidence, LiveMonitoring } from "./live-evidence";
 import {
   EvidenceModules,
   ProtocolComparison,
@@ -275,7 +275,7 @@ export default function Stacks({ page }: { page: string }) {
       if (e.key === "Tab") {
         const targets = [
           ...document.querySelectorAll<HTMLElement>(
-            ".dialog button, .dialog a",
+            ".dialog button, .dialog a, .dialog summary",
           ),
         ].filter((el) => !el.hasAttribute("disabled"));
         if (!targets.length) return;
@@ -786,14 +786,34 @@ export default function Stacks({ page }: { page: string }) {
             </div>
           </>
         ) : (
-          <Research
-            page={page}
-            bundle={bundle}
-            exposures={exposures}
-            shelf={shelf}
-            showTrace={setTrace}
-            live={live}
-          />
+          <>
+            {["evaluation", "inflation", "models", "report"].includes(page) && (
+              <div className="population-note">
+                <b>THIS EVIDENCE RUN</b>{" "}
+                {bundle.catalog.length.toLocaleString()} eligible books ·{" "}
+                {Number(
+                  (bundle.evidence.dataset as Record<string, unknown>)
+                    ?.source_rows ?? 0,
+                ).toLocaleString()}{" "}
+                source ratings ·{" "}
+                {Number(
+                  (bundle.evidence.dataset as Record<string, unknown>)
+                    ?.evaluated_users ?? 0,
+                ).toLocaleString()}{" "}
+                headline readers. Slice and shortcut cohorts are labeled
+                separately. Training uses source order, which is a proxy without
+                timestamps.
+              </div>
+            )}
+            <Research
+              page={page}
+              bundle={bundle}
+              exposures={exposures}
+              shelf={shelf}
+              showTrace={setTrace}
+              live={live}
+            />
+          </>
         )}
       </main>
       <footer>
@@ -929,6 +949,44 @@ export default function Stacks({ page }: { page: string }) {
 function Trace({ item }: { item: Recommendation }) {
   if (item.trace) {
     const trace = item.trace;
+    const part = (name: string) =>
+      (trace[name] ?? {}) as Record<string, unknown>;
+    const retrieval = part("retrieval"),
+      ranking = part("ranking"),
+      reranking = part("reranking"),
+      exploration = part("exploration"),
+      shadow = part("shadow");
+    const features = (ranking.features ?? {}) as Record<string, unknown>;
+    const rules = (reranking.rules ?? {}) as Record<string, unknown>;
+    const summaries: Record<string, [string, string]> = {
+      retrieval: [
+        "Start with the evaluated catalog",
+        `${String(retrieval.candidate_count ?? 200)} leading eligible candidates from frozen model artifacts. Books already in the training or session history are excluded.`,
+      ],
+      ranking: [
+        String(ranking.scoring_mode ?? "Evaluated model scores").replaceAll(
+          "-",
+          " ",
+        ),
+        `Model score ${number(item.score)}. ALS ${number(features.als)}; item cosine ${number(features.item_cosine)}; blend ${number(features.blend)}. The stored trace includes the exact weights.`,
+      ],
+      reranking: [
+        "Keep the shelf within its rules",
+        `At most ${String(rules.author_cap ?? 2)} books per primary author. Genre: ${String(rules.genre ?? "All books")}. This serving path keeps the evaluated score order; diversity and calibration experiments are reported separately.`,
+      ],
+      exploration: [
+        item.exploration
+          ? "Leave room for a randomized choice"
+          : "Place the ranked choice",
+        item.exploration
+          ? `Position ${item.position} is sampled uniformly from ${Array.isArray(exploration.candidate_pool) ? exploration.candidate_pool.length : "the logged"} eligible books. Conditional probability ${number(item.propensity, 4)}. Reward: a click within ${String(exploration.reward_horizon_seconds ?? 60)} seconds.`
+          : `Position ${item.position} is deterministic, with conditional probability 1. This position cannot support evaluation of other actions.`,
+      ],
+      shadow: [
+        "Score an alternative without serving it",
+        `${String(shadow.model_version ?? "Alternative model")}. Top-set disagreement ${number(shadow.set_disagreement)}. A shadow prediction is not observed reader feedback.`,
+      ],
+    };
     return (
       <>
         <div className="eyebrow">FROM EVALUATED MODEL TO LIVE SHELF</div>
@@ -945,9 +1003,14 @@ function Trace({ item }: { item: Recommendation }) {
                 </span>
                 <div>
                   <span className="overline">{stage}</span>
-                  <pre className="trace-json">
-                    {JSON.stringify(trace[stage] ?? {}, null, 2)}
-                  </pre>
+                  <h3>{summaries[stage][0]}</h3>
+                  <p>{summaries[stage][1]}</p>
+                  <details>
+                    <summary>Inspect stored {stage} trace</summary>
+                    <pre className="trace-json">
+                      {JSON.stringify(trace[stage] ?? {}, null, 2)}
+                    </pre>
+                  </details>
                 </div>
               </div>
             ),
@@ -1416,6 +1479,7 @@ function Research({
           </div>
         </div>
         <CapabilityTable modules={rowsOf(e.modules)} />
+        <LiveMonitoring live={live} />
         <SectionTitle
           title="Session monitoring"
           caption="Counts describe this browser tab. Click rates are not comparable until rewards have a defined observation window."

@@ -113,13 +113,13 @@ export function EvidenceModules({ evidence: e }: { evidence: Row }) {
           ["ndcg", "NDCG @ 10 · 95% CI"],
         ]}
       />
-      {e.cold_reader_diagnostics && (
+      {e.cold_reader_analysis && (
         <div className="data-note">
           <Info size={18} />
           <p>
             {String(
-              obj(e.cold_reader_diagnostics).detail ??
-                obj(e.cold_reader_diagnostics).explanation ??
+              obj(e.cold_reader_analysis).detail ??
+                obj(e.cold_reader_analysis).explanation ??
                 "Slice composition changes the difficulty of the ranking task; see the report for diagnostic counts.",
             )}
           </p>
@@ -265,8 +265,12 @@ export function OpeEvidence({ ope }: { ope: Row }) {
         (misspecified ? "misspecified constant" : "oracle") &&
       String(row.sample_size) === sampleSize,
   );
-  const [policy, setPolicy] = useState("Uniform sanity check");
   const policies = [...new Set(rows(obd.rows).map((r) => String(r.policy)))];
+  const [policy, setPolicy] = useState(
+    policies.includes("Official prior BTS approximation")
+      ? "Official prior BTS approximation"
+      : (policies[0] ?? "Uniform sanity check"),
+  );
   return (
     <>
       <div className="ope-controls">

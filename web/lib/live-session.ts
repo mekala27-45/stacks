@@ -54,6 +54,7 @@ export function useLiveSession(
   const [shelf, setShelf] = useState<Recommendation[]>([]);
   const [info, setInfo] = useState<LiveShelf | null>(null);
   const [ope, setOpe] = useState<Row | null>(null);
+  const [monitoring, setMonitoring] = useState<Row | null>(null);
   const [reason, setReason] = useState("");
   const [generation, setGeneration] = useState(0);
   const connection = useRef<{
@@ -66,6 +67,7 @@ export function useLiveSession(
     if (!catalog || !enabled) return;
     let active = true;
     let stream: EventSource | null = null;
+    let disconnectTimer: ReturnType<typeof setTimeout> | undefined;
     let lastRevision = -1;
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 12000);
@@ -148,8 +150,20 @@ export function useLiveSession(
           setReason(
             "Reconnecting to the recommendation stream. Your last shelf is retained.",
           );
+        if (!disconnectTimer)
+          disconnectTimer = setTimeout(() => {
+            if (!active) return;
+            stream?.close();
+            connection.current = null;
+            setMode("fallback");
+            setReason(
+              "The live stream disconnected. Reconnect to resume the persisted session.",
+            );
+          }, 15000);
       };
       stream.onopen = () => {
+        clearTimeout(disconnectTimer);
+        disconnectTimer = undefined;
         if (active) setReason("");
       };
     };
@@ -168,6 +182,7 @@ export function useLiveSession(
     return () => {
       active = false;
       clearTimeout(timeout);
+      clearTimeout(disconnectTimer);
       controller.abort();
       stream?.close();
       connection.current = null;
@@ -200,11 +215,27 @@ export function useLiveSession(
   const loadOpe = useCallback(async () => {
     const live = connection.current;
     if (!live) return;
-    const response = await fetch(
-      `${live.base}/v1/session/${encodeURIComponent(live.token)}/ope`,
-      { signal: AbortSignal.timeout(15000) },
-    );
-    if (response.ok) setOpe(await response.json());
+    try {
+      const response = await fetch(
+        `${live.base}/v1/session/${encodeURIComponent(live.token)}/ope`,
+        { signal: AbortSignal.timeout(15000) },
+      );
+      if (response.ok) setOpe(await response.json());
+    } catch {
+      setReason("The latest observation summary could not be loaded.");
+    }
+  }, []);
+  const loadMonitoring = useCallback(async () => {
+    const live = connection.current;
+    if (!live) return;
+    try {
+      const response = await fetch(`${live.base}/v1/monitoring`, {
+        signal: AbortSignal.timeout(15000),
+      });
+      if (response.ok) setMonitoring(await response.json());
+    } catch {
+      setReason("The latest service observations could not be loaded.");
+    }
   }, []);
   const preferences = useCallback(async (genre: string) => {
     const live = connection.current;
@@ -251,6 +282,8 @@ export function useLiveSession(
     feedback,
     preferences,
     loadOpe,
+    monitoring,
+    loadMonitoring,
     logs,
     retry: () => setGeneration((value) => value + 1),
   };

@@ -17,6 +17,7 @@ node_modules/
 out/
 *.tsbuildinfo
 .cache/
+.runtime/
 data/raw/
 artifacts/
 dist/
