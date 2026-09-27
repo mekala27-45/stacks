@@ -4,16 +4,56 @@ version = "0.1.0"
 description = "A bookstore recommender with reproducible evaluation and honest uncertainty."
 requires-python = ">=3.12"
 dependencies = [
-  "numpy>=2.0,<3", "scipy>=1.14,<2", "pandas>=2.2,<3", "pyarrow>=19,<22",
-  "fastapi>=0.115,<1", "uvicorn>=0.34,<1", "sqlalchemy>=2.0,<3",
-  "pydantic>=2.10,<3", "httpx>=0.28,<1", "psycopg[binary]>=3.2,<4",
-  "duckdb>=1.2,<2", "jinja2>=3.1,<4"
+  "numpy>=2.0,<3",
+  "scipy>=1.14,<2",
+  "pandas>=2.2,<3",
+  "pyarrow>=19,<22",
+  "fastapi>=0.115,<1",
+  "uvicorn>=0.34,<1",
+  "sqlalchemy>=2.0,<3",
+  "pydantic>=2.10,<3",
+  "httpx>=0.28,<1",
+  "psycopg[binary]>=3.2,<4",
+  "duckdb>=1.2,<2",
+  "jinja2>=3.1,<4",
+  "lightgbm>=4.6,<5",
+  "scikit-learn>=1.6,<2",
 ]
 [dependency-groups]
-dev = ["pytest>=8,<10", "pytest-cov>=6,<8", "ruff>=0.12,<1", "hypothesis>=6,<7"]
+dev = [
+    "pytest>=8,<10",
+    "pytest-cov>=6,<8",
+    "ruff>=0.12,<1",
+    "hypothesis>=6,<7",
+    "mypy>=2.3.1",
+    "pandas-stubs>=3.0.5.260914",
+    "scipy-stubs>=1.18.1.1",
+    "nbformat>=5.11.1",
+    "nbclient>=0.11.0",
+    "ipykernel>=7.3.0",
+]
 [tool.pytest.ini_options]
 pythonpath = ["."]
 testpaths = ["tests"]
 [tool.ruff]
 line-length = 110
 target-version = "py312"
+extend-exclude = [".venv312", "notebooks"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+explicit_package_bases = true
+files = ["packages", "scripts"]
+
+[[tool.mypy.overrides]]
+module = ["sklearn.*"]
+ignore_missing_imports = true
+
+[tool.coverage.run]
+source = ["packages"]
+branch = true
+
+[tool.coverage.report]
+fail_under = 80
+show_missing = true
