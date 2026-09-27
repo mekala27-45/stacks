@@ -4,25 +4,30 @@
 > These are demonstration recommendations on a public dataset; no real reader's identity is present and no recommendation is personalized to a real person.
 
 This report uses **pinned public CSV -> parquet -> NumPy/SciPy exact scoring** evidence generated at
-**2026-09-27T02:34:43.912426+00:00**. The experiment compares models on the same recorded
+**2026-09-27T03:48:44.051606+00:00**. The experiment compares models on the same recorded
 catalog and protocol. The [complete results](https://github.com/mekala27-45/stacks/blob/main/RESULTS.md) include confidence
 intervals, paired comparisons and diagnostic shortcuts.
 
 ## Decision
 
-The observed NDCG leader is **als**.
-The recorded corrected comparisons do not establish a winner.
-This conclusion applies to the evaluated subset and source-order proxy. It is
+The observed NDCG leader is **session_cosine**.
+The recorded multiple-comparison-corrected selection is **session_cosine**.
+This conclusion applies to the eligible reader sample and source-order proxy. It is
 not an online sales or engagement result, and does not activate a serving model.
 
 ## Reference comparison
 
 | Model | NDCG with interval | Popularity NDCG with interval | Retrieval recall with interval |
 | --- | --- | --- | --- |
-| Popularity | 0.0469 [0.0340, 0.0593] | 0.0469 [0.0340, 0.0593] | 0.5427 [0.5073, 0.5746] |
-| Item cosine | 0.0664 [0.0521, 0.0809] | 0.0469 [0.0340, 0.0593] | 0.6230 [0.5878, 0.6545] |
-| Implicit ALS | 0.0736 [0.0596, 0.0882] | 0.0469 [0.0340, 0.0593] | 0.6744 [0.6436, 0.7059] |
-| Fixed blend | 0.0735 [0.0586, 0.0885] | 0.0469 [0.0340, 0.0593] | 0.6574 [0.6236, 0.6891] |
+| Popularity | 0.0406 [0.0373, 0.0441] | 0.0406 [0.0373, 0.0441] | 0.1298 [0.1249, 0.1346] |
+| Item cosine | 0.0541 [0.0507, 0.0579] | 0.0406 [0.0373, 0.0441] | 0.2585 [0.2517, 0.2654] |
+| Implicit ALS | 0.0546 [0.0513, 0.0579] | 0.0406 [0.0373, 0.0441] | 0.2607 [0.2543, 0.2672] |
+| Fixed blend | 0.0538 [0.0504, 0.0576] | 0.0406 [0.0373, 0.0441] | 0.2707 [0.2641, 0.2774] |
+| Content TF-IDF | 0.0411 [0.0381, 0.0442] | 0.0406 [0.0373, 0.0441] | 0.1399 [0.1348, 0.1451] |
+| LambdaMART | 0.0440 [0.0415, 0.0466] | 0.0406 [0.0373, 0.0441] | 0.2154 [0.2097, 0.2214] |
+| Two-tower neural | 0.0019 [0.0014, 0.0024] | 0.0406 [0.0373, 0.0441] | 0.0162 [0.0146, 0.0181] |
+| Session cosine | 0.0900 [0.0855, 0.0947] | 0.0406 [0.0373, 0.0441] | 0.2900 [0.2830, 0.2967] |
+| Elman recurrent | 0.0232 [0.0212, 0.0252] | 0.0406 [0.0373, 0.0441] | 0.1041 [0.0995, 0.1086] |
 
 Popularity remains visible regardless of which model has the largest score.
 Retrieval recall and final-list NDCG answer different questions. See the
@@ -34,8 +39,8 @@ The simulator status is **measured**.
 The independent reference status is **passed_source_reference**:
 Local IPS, SNIPS, DM and DR point estimates agree with unmodified arithmetic methods extracted from pinned Open Bandit Pipeline source on the same seeded simulator fixtures. This is a source-level crosscheck, not an installed OBP package or confidence-interval crosscheck.
 
-The real logged-data status is **measured_alternative_target**:
-Real random-policy logs, held-out chronological second half. Target and smoothed action reward model fit only the first half. BTS observed reward is descriptive, not target-policy ground truth. Row bootstrap does not model repeated-reader dependence or model-fit uncertainty; action-only DM therefore has a conditional zero-width interval. The learned target has low effective sample size, so no improvement is established. Per-position propensities must not be multiplied into a claimed joint-slate propensity.
+The real logged-data status is **measured_six_file_bts_benchmark**:
+All six random/BTS samples. Official campaign beta priors define the BTS target through beta draws ranked into three positions. Random logs after a shared cutoff provide OPE; BTS logs after the same cutoff provide an empirical on-policy benchmark with Wilson intervals. Logged BTS propensities vary within item/slot, so the frozen-prior approximation is not proven identical to the deployed per-impression policy. Differences include target mismatch and sampling error, not pure estimator error. Row bootstrap is conditional on the fitted reward model and Monte Carlo target, ignores repeated-reader dependence, and is not joint-slate inference.
 
 The demo-log status is **not_estimated**:
 No meaningful online feedback sample is available at build time; no causal or online benefit claim is made.
@@ -48,14 +53,15 @@ different questions.
 ## Limitations and next evidence
 
 - goodbooks has no interaction timestamps; source-order holdout is not verified temporal evaluation.
-- The first 300,000 source records and 1,000 popular catalog items form a bounded, biased demonstration subset.
+- All source ratings and all10000 catalog items are ingested; headline metrics use a seeded sample of at most5000 eligible readers, not every reader.
 - Only readers with at least five positive training items enter headline evaluation; cold readers are separate.
-- Snapshot genres and average ratings are descriptive metadata. Their historical availability cannot be verified.
-- The fixed blend is evaluated directly over the full catalog; a trained two-stage LambdaMART pipeline is not implemented.
+- Snapshot titles, authors and tags power the content baseline; their historical availability cannot be verified. Average ratings are descriptive metadata only.
+- LambdaMART trains on a candidate union from an earlier source-order window and scores the full unseen catalog; training negatives have a different distribution from full-catalog inference.
 - Coverage.mean is observed distinct catalog coverage; low/high show a separate conditional user-resampling range, not a confidence interval. The observed point can exceed this range because resampling cannot invent unseen items. expected_resampled_coverage records the average resampled value.
 - The random-split comparison uses a different eligible cohort, so it is not an isolated estimate of temporal leakage.
 - Simulator reward models are oracle or deliberately misspecified. This is estimator validation, not reward-model learning.
-- Contextual BTS target-policy truth, online impact, neural models, approximate indexing, and historical point-in-time metadata remain unmeasured.
+- Contextual BTS target-policy truth, online impact, and historical point-in-time metadata remain unmeasured.
+- Two-tower and recurrent models use explicit NumPy training and finite sampled training pairs/sequences. Their losses are optimization diagnostics; held-out results and both shortcuts are reported even when these neural models lose.
 
 Before a commercial experiment, provision and verify the API/database, confirm
 the actual action probabilities and outcome windows, and fix experiment and

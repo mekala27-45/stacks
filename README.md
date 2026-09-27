@@ -13,21 +13,26 @@ read the evidence behind model and off-policy estimates.
 
 ## What was measured
 
-The **pinned public CSV -> parquet -> NumPy/SciPy exact scoring** backend evaluated 1,000
-books and 500 readers using
+The **pinned public CSV -> parquet -> NumPy/SciPy exact scoring** backend evaluated 10,000
+books and 5,000 readers using
 **Global source-order holdout, full catalog**. The source has no rating timestamps, so row order is
-a temporal proxy. These results apply to the recorded subset and its evaluated
-catalog; they are not a dated global backtest of the full source dataset.
+a temporal proxy. These results apply to the recorded eligible reader sample
+and its evaluated catalog; they are not a date-verified backtest.
 
 | Model | NDCG at ten with interval | Recall at two hundred with interval |
 | --- | --- | --- |
-| Popularity | 0.0469 [0.0340, 0.0593] | 0.5427 [0.5073, 0.5746] |
-| Item cosine | 0.0664 [0.0521, 0.0809] | 0.6230 [0.5878, 0.6545] |
-| Implicit ALS | 0.0736 [0.0596, 0.0882] | 0.6744 [0.6436, 0.7059] |
-| Fixed blend | 0.0735 [0.0586, 0.0885] | 0.6574 [0.6236, 0.6891] |
+| Popularity | 0.0406 [0.0373, 0.0441] | 0.1298 [0.1249, 0.1346] |
+| Item cosine | 0.0541 [0.0507, 0.0579] | 0.2585 [0.2517, 0.2654] |
+| Implicit ALS | 0.0546 [0.0513, 0.0579] | 0.2607 [0.2543, 0.2672] |
+| Fixed blend | 0.0538 [0.0504, 0.0576] | 0.2707 [0.2641, 0.2774] |
+| Content TF-IDF | 0.0411 [0.0381, 0.0442] | 0.1399 [0.1348, 0.1451] |
+| LambdaMART | 0.0440 [0.0415, 0.0466] | 0.2154 [0.2097, 0.2214] |
+| Two-tower neural | 0.0019 [0.0014, 0.0024] | 0.0162 [0.0146, 0.0181] |
+| Session cosine | 0.0900 [0.0855, 0.0947] | 0.2900 [0.2830, 0.2967] |
+| Elman recurrent | 0.0232 [0.0212, 0.0252] | 0.1041 [0.0995, 0.1086] |
 
-Observed leader: **als**.
-Corrected selection: **no corrected winner established**.
+Observed leader: **session_cosine**.
+Corrected selection: **session_cosine**.
 The full report includes paired comparisons, shortcut diagnostics and limitations.
 
 ## Run locally
@@ -61,18 +66,31 @@ as a server exposure log.
 | Module | Recorded status | Evidence or limit |
 | --- | --- | --- |
 | Popularity / cosine / implicit ALS / blend | measured | Train-only scorers with exact full-catalog offline evaluation and persisted factors. |
-| Two-tower model and LambdaMART | not_implemented | The shipped ranking blend is fixed and does not claim learned learning-to-rank weights. |
-| pgvector / approximate nearest neighbors | not_implemented | Exact NumPy scoring is used. No approximate recall result is claimed. |
-| Content and session path | available | Interactive fallback uses stored cosine neighbors and tag overlap; no neural weights or independent content offline result. |
+| LambdaMART learned ranker | measured | Learned over a retrieval candidate union using an earlier source-order window. Evaluated against all baselines over the complete unseen catalog. |
+| pgvector / approximate nearest neighbors | measured_local_postgres | Exact SQL and HNSW measured on the frozen two-tower embeddings in local PostgreSQL, with the same training-seen filters. This is separate from the hosted D1 serving path. |
+| Content TF-IDF path | measured | Normalized title, author and tag TF-IDF profiles score all books including training-cold items. Uses undated metadata; no historical metadata availability claim. |
 | OPE simulator | measured | Local IPS, SNIPS, DM, DR with 200 seeds, two sample sizes and oracle/misspecified reward models. |
-| Real logged-bandit OPE | measured_alternative_target | Real random-policy logs, held-out chronological second half. Target and smoothed action reward model fit only the first half. BTS observed reward is descriptive, not target-policy ground truth. Row bootstrap does not model repeated-reader dependence or model-fit uncertainty; action-only DM therefore has a conditional zero-width interval. The learned target has low effective sample size, so no improvement is established. Per-position propensities must not be multiplied into a claimed joint-slate propensity. |
+| Real logged-bandit OPE | measured_six_file_bts_benchmark | All six random/BTS samples. Official campaign beta priors define the BTS target through beta draws ranked into three positions. Random logs after a shared cutoff provide OPE; BTS logs after the same cutoff provide an empirical on-policy benchmark with Wilson intervals. Logged BTS propensities vary within item/slot, so the frozen-prior approximation is not proven identical to the deployed per-impression policy. Differences include target mismatch and sampling error, not pure estimator error. Row bootstrap is conditional on the fitted reward model and Monte Carlo target, ignores repeated-reader dependence, and is not joint-slate inference. |
 | Verified temporal features | unavailable | Source ratings lack timestamps. Source-order train-only features are tested; metadata is a snapshot. |
+| Two-tower neural retrieval | measured | Independent user-ID and item-ID embeddings32 -> learned projection16 -> ReLU -> L2 normalization |
+| Recurrent session model | measured | 16-dimensional Elman tanh recurrent encoder with learned input/output item embeddings |
 
-The model comparison uses popularity, item cosine, implicit ALS and a score
-blend. Neural two-tower training, LambdaMART, pgvector, and a recurrent session
-model are deferred. A blend is not a learned ranker. Public API provisioning and
-a live online uplift experiment remain outside this completed demonstration.
-See [scope decisions](DECISIONS.md) for differences from the originating brief.
+The measured models and additional experiments are listed above. The earlier
+bounded release is retained under `results/history/`; its scores must not be
+compared directly with the expanded population. A score blend and a learned
+ranker are identified separately. See [scope decisions](DECISIONS.md) for
+differences from the originating brief and the recorded deployment choices.
+
+## Skills demonstrated
+
+| Skill | Inspectable evidence |
+| --- | --- |
+| Ranking evaluation and comparison | [Protocol](docs/evaluation.md), [results](RESULTS.md), paired tests and shortcut diagnostics |
+| Learned and baseline models | [Model cards](report/cards/), recorded training artifacts and candidate-feature contract |
+| Counterfactual policy evaluation | [Six-file OBD benchmark](docs/ope-benchmark.md), simulator truth and pinned source crosscheck |
+| Serving and durable interactions | [Serving contract](docs/serving.md), independent-connection and subprocess tests |
+| Reproducibility and honest reporting | Strict document renderer, executed [notebooks](notebooks/), population labels |
+| Release verification | [CI workflow](.github/workflows/ci.yml), lint, strict types, branch coverage, browser tests and semantic palette checks |
 
 ## Reproduce and change it
 
@@ -81,8 +99,10 @@ against pinned upstream arithmetic methods. This is an explicitly scoped source
 reference check; it does not certify the full OBP package on this Python version.
 
 `uv run python scripts/build_evidence.py` downloads the declared sources and
-rebuilds the canonical manifest and browser artifacts. Then run
-`uv run python scripts/render_reports.py` and the checks above. This is a model
+rebuilds the core manifest and browser artifacts. Then run
+`uv run python scripts/build_neural_evidence.py`,
+`uv run python scripts/render_reports.py`,
+`uv run python scripts/build_notebooks.py` and the checks above. This is a model
 and evidence rebuild, not a live database reset. Review the
 [evaluation protocol](docs/evaluation.md), [runbook](docs/runbook.md),
 [architecture](ARCHITECTURE.md), and [contribution guide](CONTRIBUTING.md).

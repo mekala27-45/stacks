@@ -30,7 +30,13 @@ evaluated candidate catalog after the protocol's exclusions.
 
 ## Model measurements
 
-All bracketed values are the manifest's recorded uncertainty intervals.
+Brackets show the manifest's recorded intervals. Coverage is explicitly labeled
+as an observed distinct count with a reader-resampling range, not a confidence
+interval. Model rows use the headline population above; separate experiments
+state their own populations.
+{% if e.protocol.get("diversity_definition") %}
+Diversity definition: {{ e.protocol.diversity_definition }}
+{% endif %}
 
 | Model | NDCG | Recall | Retrieval recall | Hit rate |
 | --- | --- | --- | --- | --- |
@@ -58,6 +64,57 @@ comparison. The q-value is adjusted within the declared family.
 Observed leader: **{{ e.winner.observed }}**.
 Corrected winner: **{{ e.winner.corrected if e.winner.corrected else "not established" }}**.
 This is offline measurement, not serving activation or online uplift.
+
+{% if e.get("ranker_training") %}
+## Learned ranker training
+
+{{ e.ranker_training.detail }}
+Training groups: {{ e.ranker_training.training_groups | number(0) }};
+candidate rows: {{ e.ranker_training.candidate_rows | number(0) }};
+relevant candidates: {{ e.ranker_training.relevant_candidates | number(0) }};
+trees: {{ e.ranker_training.trees | number(0) }}.
+Features: {{ e.ranker_training.features | join(", ") }}.
+{% endif %}
+
+{% if e.get("neural_training") %}
+## Neural training and the retained weak result
+
+Evaluation cohort: {{ e.neural_training.cohort }}.
+
+| Model | Architecture | Fixed training-batch loss before | Loss after |
+| --- | --- | --- | --- |
+{% for key in ["two_tower", "recurrent"] %}
+| {{ key }} | {{ e.neural_training[key].architecture }} | {{ e.neural_training[key].fixed_training_batch_loss_before | number }} | {{ e.neural_training[key].fixed_training_batch_loss_after | number }} |
+{% endfor %}
+
+Training loss is a fit diagnostic. The headline table measures generalization.
+{% if e.neural_training.get("geometry") %}
+{{ e.neural_training.geometry.detail }}
+Mean active item channels: {{ e.neural_training.geometry.item_mean_active_channels | number(2) }};
+stable rank: {{ e.neural_training.geometry.stable_rank | number(2) }};
+nominal batch chance loss: {{ e.neural_training.geometry.nominal_batch_chance_cross_entropy | number }}.
+{% endif %}
+{% endif %}
+
+{% if e.get("pgvector", {}).get("rows") %}
+## Local approximate retrieval experiment
+
+{{ e.pgvector.detail }}
+Population: {{ e.pgvector.queries | number(0) }} queries,
+{{ e.pgvector["items"] | number(0) }} items,
+{{ e.pgvector.dimensions }} dimensions.
+Exact p50/p99: {{ e.pgvector.exact.p50_ms | number(2) }}/{{ e.pgvector.exact.p99_ms | number(2) }} ms.
+
+| HNSW ef_search | Recall at 200 with query-bootstrap interval | Local p50 ms | Local p99 ms |
+| --- | --- | --- | --- |
+{% for row in e.pgvector.rows %}
+| {{ row.ef_search }} | {{ row.recall_at_200 | estimate }} | {{ row.p50_ms | number(2) }} | {{ row.p99_ms | number(2) }} |
+{% endfor %}
+
+No observed recall loss in this query sample does not prove loss-free retrieval
+on other embeddings or catalogs. Query plans and the pinned image digest are
+retained in the raw benchmark artifact. These are not hosted API latencies.
+{% endif %}
 
 ## Shortcut diagnostics
 
@@ -117,17 +174,20 @@ upstream validators, or uncertainty-interval equality.
 
 {{ e.ope.open_bandit.detail }}
 
-| Target policy | Position | Held-out rows | Estimator | Policy value with interval | Observed logging reward with interval | Effective sample size |
-| --- | --- | --- | --- | --- | --- | --- |
+| Campaign | Target policy | Position | Held-out random rows | Estimator | OPE with interval | Empirical BTS reward with interval | OPE minus BTS with interval | Effective sample size |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
 {% for row in e.ope.open_bandit.rows %}
-| {{ row.policy }} | {{ row.position }} | {{ row.sample_size | number(0) }} | {{ row.estimator }} | {{ row.estimate | estimate(6) }} | {{ row.observed_logging | estimate(6) }} | {{ row.effective_sample_size | number(2) }} |
+| {{ row.campaign }} | {{ row.policy }} | {{ row.position }} | {{ row.sample_size | number(0) }} | {{ row.estimator }} | {{ row.estimate | estimate(6) }} | {{ row.bts_reference | estimate(6) }} | {{ row.difference_from_bts | estimate(6) }} | {{ row.effective_sample_size | number(2) }} |
 {% endfor %}
 
-The concentrated training-CTR target has weak effective support; these values do
-not establish a policy improvement. Direct-method intervals condition on a fixed
-action-only reward model and may collapse to a point. They exclude uncertainty
-from reward-model training. The row bootstrap ignores repeated-reader dependence.
-Observed BTS reward is descriptive context, not this target policy's truth.
+The BTS target follows the official published prior-based benchmark. Logged
+propensities vary within item and position, so this frozen prior approximates
+the actual logged policy. Differences can reflect this mismatch as well as
+sampling and estimator error. The empirical BTS reward is not exact simulator
+truth. Direct-method intervals condition on a fixed action-only reward model
+and may collapse to a point; uncertainty from fitting that model and estimating
+the target by Monte Carlo is excluded. The bootstrap ignores repeated readers.
+See [the benchmark construction](docs/ope-benchmark.md).
 {% endif %}
 
 {% if e.get("cold_slices") %}
@@ -141,6 +201,27 @@ Observed BTS reward is descriptive context, not this target policy's truth.
 
 These are separate cohorts. A zero observed score does not establish a universal
 failure rate beyond the measured cohort and catalog.
+{% endif %}
+
+{% if e.get("cold_reader_analysis", {}).get("cohorts") %}
+## Why cold and warm scores differ
+
+{{ e.cold_reader_analysis.explanation }}
+
+| Cohort | Readers | Training positives | Holdout positives | Mean target training popularity | Popularity NDCG | Single-positive holdout share |
+| --- | --- | --- | --- | --- | --- | --- |
+{% for row in e.cold_reader_analysis.cohorts %}
+| {{ row.cohort }} | {{ row.users | number(0) }} | {{ row.training_positives | estimate(2) }} | {{ row.holdout_positives | estimate(2) }} | {{ row.target_training_popularity | estimate(2) }} | {{ row.popularity_ndcg | estimate }} | {{ row.single_holdout_positive_share | estimate }} |
+{% endfor %}
+
+The measured positive counts and popularity replace speculation about the
+cohort difference. They are descriptive diagnostics, not a causal decomposition.
+
+| Cohort | Holdout-positive stratum | Readers | Popularity NDCG with interval |
+| --- | --- | --- | --- |
+{% for row in e.cold_reader_analysis.strata %}
+| {{ row.cohort }} | {{ row.holdout_positive_count }} | {{ row.users | number(0) }} | {{ row.popularity_ndcg | estimate }} |
+{% endfor %}
 {% endif %}
 
 {% if e.get("reranking", {}).get("rows") %}

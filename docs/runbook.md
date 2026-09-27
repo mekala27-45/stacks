@@ -9,8 +9,11 @@ Install Python through uv and Node.js, then run from the repository root:
 
 ```sh
 uv sync --frozen
-uv run pytest
+uv run ruff check .
+uv run mypy
+uv run pytest --cov=packages --cov-branch --cov-fail-under=80
 uv run python scripts/render_reports.py --check
+uv run python scripts/check_notebooks.py
 ```
 
 The default check uses committed evidence. It must not need a data-host account
@@ -20,13 +23,15 @@ altered prose, and obsolete generated cards fail the check.
 
 ## Rebuild scientific evidence
 
-Read [the fixed evaluation protocol](evaluation.md) before changing any split,
+Read [the evaluation protocol](evaluation.md) before changing any split,
 feature or candidate rule. Then run:
 
 ```sh
 uv run python scripts/crosscheck_obp.py
 uv run python scripts/build_evidence.py
+uv run python scripts/build_neural_evidence.py
 uv run python scripts/render_reports.py
+uv run python scripts/build_notebooks.py
 uv run pytest
 uv run python scripts/render_reports.py --check
 ```
@@ -36,6 +41,15 @@ Its manifest records the chosen backend and selection. Network availability,
 source hashes, package versions and the seed affect reproducibility. A fixture
 or reduced sample must retain its own label; never relabel it as full-source
 evidence. Changing source or protocol requires reviewing regenerated results.
+
+The core pipeline trains retrieval and LambdaMART; the second command adds the
+learned two-tower, recurrent and recent-history comparison. Optional local
+PostgreSQL benchmarking uses `scripts/benchmark_pgvector.py`; pass a local
+database URL through `STACKS_VECTOR_DATABASE_URL` and inspect `--help`.
+After a new benchmark, `uv run python scripts/build_neural_evidence.py
+--diagnostics-only` attaches it only when its frozen-artifact hash matches.
+Rebuild the reports and notebooks after that attachment. The four notebooks
+record the manifest digest and retain executed failure investigations.
 
 On a Windows machine where compiled scientific libraries cannot run, use the
 Linux pipeline container. Do not change operating-system security settings:
@@ -78,10 +92,12 @@ string selects an existing destination; it does not provision a managed service.
 
 ## GitHub Pages release
 
-The canonical public application is
+The GitHub Pages application is
 [mekala27-45.github.io/stacks](https://mekala27-45.github.io/stacks/).
 Configure repository Pages to use GitHub Actions. `Validate stacks` verifies
-Python behavior, generated evidence, TypeScript and the static build.
+Python behavior, strict types, lint, branch coverage, text and palette gates,
+executed notebooks, edge behavior, browser flows, generated evidence and the
+static build.
 `Publish bookstore` runs after successful validation, checks out that exact
 revision and verifies it again before uploading `web/out`. Manual publication
 also runs the same checks. The base path is `/stacks`.
@@ -93,10 +109,13 @@ API mode are accurate. Fetch the deployed evidence JSON independently and
 compare it with the committed artifact. A successful workflow alone does not
 prove that every browser interaction works.
 
-Public API and managed PostgreSQL hosting are unprovisioned. A future API
-deployment requires an authorized host, account configuration, a durable
-database and verification from a separate client. Do not describe a static
-browser session as durable server logging.
+The portable `packages/edge` Worker supports the selected free Sites hosting
+and durable D1 storage. The FastAPI reference remains independently runnable.
+Publication status must be verified with live health, a new session, feedback,
+resume and a separate database read. The parent deployment record supplies the
+actual public URL after those checks. Managed PostgreSQL is optional and is
+not required for the free deployment. Do not describe static browser state as
+a durable server exposure log.
 
 ## Failure and recovery
 

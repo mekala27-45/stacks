@@ -1,59 +1,45 @@
-# Decisions and scope
+# Decisions
 
-These are demonstration recommendations on a public dataset; no real reader's
-identity is present and no recommendation is personalized to a real person.
+These records describe choices made while implementing and correcting the repository on 2026-09-27. They are not a reconstructed multi-day development history. The supplied brief is a scope reference; delivered modules and remaining limitations are recorded in the generated README and results. Commit history follows actual changes without a manufactured commit quota.
 
-## A completed demonstration within the supplied brief
+## 01. Preserve source order without inventing dates
 
-The supplied Day 10 brief describes a larger research and infrastructure program.
-This repository implements a bounded, inspectable platform. It does not claim
-every instruction embedded in that document was fulfilled. The repository
-history records meaningful changes; no artificial commit-count quota is used.
+**Date: 2026-09-27.** Goodbooks supplies no interaction timestamps. Retain its source-row ordering and label the split a proxy. This permits reproducible exclusion boundaries but cannot establish dated historical feature availability. See [the protocol](docs/evaluation.md).
 
-| Area | Delivered design | Limit or deferred work |
-| --- | --- | --- |
-| Recommendation models | Popularity, item cosine, implicit ALS, score blend | No neural two-tower or LambdaMART claim |
-| Evaluation population | Documented bounded catalog and source-order split | No full-dataset or dated global temporal claim |
-| Ranking protocols | Full evaluated-catalog ranking with comparison diagnostics | Full means the evaluated catalog, not all books in the source |
-| Off-policy estimation | Repository estimators, simulation and recorded reference checks | Scope and exact measured coverage come from the manifest |
-| Bookstore | Static Next.js deployment and typographic covers | Browser state is not a server-side experiment log |
-| Durable interactions | Independently runnable relational API | Public API and managed PostgreSQL hosting unprovisioned |
-| Promotion | Explicit evidence eligibility checks | Eligibility is separate from policy activation |
-| Retrieval infrastructure | Local exact scoring | pgvector and approximate-index benchmarking deferred |
-| Documents | Manifest-driven Jinja rendering and whole-file drift checks | Only supported, recorded claims are generated |
+## 02. Expand the bounded release to the complete source
 
-## Source-order proxy
+**Date: 2026-09-27. Reversal.** The initial implementation selected 1,000 books and 300,000 rows for short CPU runs. The audit established that this did not answer the full-source scope. The final pipeline reads every source interaction and all 10,000 books while sampling eligible evaluation readers explicitly. The original evidence is preserved in [bounded history](results/history/bounded-v0.1.0.json), not silently replaced with a broader claim.
 
-The Goodbooks maintainer describes ratings as time-sorted but supplies no event
-timestamps. Fabricating dates would conceal that constraint. We preserve row
-order and label the split as a proxy. Metadata collected over the full dataset
-is not evidence that a feature was available at a particular historical date.
+## 03. Train the ranker behind a separate label boundary
 
-## Bounded compute
+**Date: 2026-09-27.** The fixed score blend remains a baseline, and LambdaMART is a separate trained model. Prefix retrieval features and the next partition's labels train the ranker before the final holdout. Training candidate selection introduces a distribution limit when scoring the full catalog; this is recorded rather than hidden by evaluating only easy negatives.
 
-A bounded catalog allows repeatable CPU evaluation and comparison of full
-candidate ranking with sampled-negative diagnostics. Selection rules and cohort
-counts belong in the manifest. Conclusions apply to that selection and do not
-establish the same ordering of models on all source interactions.
+## 04. Require paired evidence before naming a winner
 
-## Two execution modes
+**Date: 2026-09-27.** Preserve popularity in every comparison, pair reader resamples and adjust the complete pairwise family. The earlier ALS/blend difference did not establish a corrected winner. A point estimate or a richer architecture is insufficient to justify promotion. Offline eligibility does not activate a served policy.
 
-GitHub Pages provides a public, inspectable application without provider secrets.
-The FastAPI service makes persistence and request boundaries independently
-testable. No browser bundle may contain a database connection string or a
-server write credential. Public API status must change only after an actual
-deployment and end-to-end verification.
+## 05. Correct the catalog-coverage interval interpretation
 
-## Source and output licenses
+**Date: 2026-09-27. Reversal.** The initial generic interval display made aggregate coverage look like an ordinary confidence interval. Distinct-item coverage is the observed union of recommendation lists; resampling those lists usually loses rare items. The published point now retains that observed value and the adjacent bracket explicitly says reader-resampling range, not confidence interval. The average resampled value is a separate field.
 
-Original code uses the MIT license. Goodbooks data and derived data retain
-CC BY-SA 4.0 and attribution. Open Bandit reference code and its repository
-sample retain upstream notices. Third-party rights are not replaced by the
-application's top-level license. Book-cover URLs are not used as image assets.
+## 06. Replace the narrow Open Bandit target with the official benchmark
 
-## Generated evidence
+**Date: 2026-09-27. Reversal.** The first real-log check used only the all campaign and a custom CTR policy. That did not reproduce the requested BTS comparison. The replacement reads all three campaigns under both policies and reconstructs the official prior-based BernoulliTS target. Within-item propensity variation rejects an exact-policy interpretation. Empirical BTS reward and difference intervals are therefore accompanied by a target-mismatch limitation. [Construction and sources](docs/ope-benchmark.md).
 
-Templates are source code; rendered reports are reviewable artifacts. Rebuild
-the artifacts after changing evidence, then use `--check` to compare exact
-content. A failed or empty evidence run cannot be repaired by editing a number
-in a generated file.
+## 07. Keep an executable independent arithmetic check
+
+**Date: 2026-09-27.** The pinned OBP package requires an older Python stack. Rather than claim installed-package compatibility on Python 3.12, extract hash-verified, unmodified estimator arithmetic ASTs and compare the same seeded fixtures. This verifies point estimates only, not upstream validation, dependencies or bootstrap behavior. The scope is retained in the result artifact.
+
+## 08. Use free hosting with an explicit serving contract
+
+**Date: 2026-09-27.** The user's free-hosting constraint rules out depending on paid API infrastructure. The architecture provides a portable Worker and D1 store alongside a locally runnable FastAPI reference. GitHub Pages remains a static deployment option. Successful publication and independent persistence checks determine public status; provider configuration alone is not deployment evidence. Both runtimes serve versioned evaluated artifacts, not a substitute scoring formula.
+
+## 09. Keep licenses attached to their actual material
+
+**Date: 2026-09-27.** Original application code deliberately uses MIT. Goodbooks and derived data retain CC BY-SA 4.0 and attribution. Open Bandit retains its source notice and the dataset paper's licensing statement. MIT does not override these rights. Typographic book covers avoid importing remote cover images. This choice differs from a blanket Apache preference in the brief and is explicit.
+
+## 10. Make evidence and quality gates executable
+
+**Date: 2026-09-27.** Reports and cards render from a canonical manifest with complete-file drift checks. Four executed notebooks retain failed assumptions and publication checks. CI applies strict typing, lint, branch coverage, authored-text gates, semantic text contrast, API persistence, edge parity and browser flows. The coverage floor applies to Python application packages; browser and Worker behavior have separate tests. Missing evidence fails a gate rather than becoming a zero or a success.
+
+These are demonstration recommendations on a public dataset; no real reader's identity is present and no recommendation is personalized to a real person.

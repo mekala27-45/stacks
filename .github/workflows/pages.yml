@@ -33,10 +33,18 @@ jobs:
       - run: uv python install 3.12
       - run: uv sync --frozen
       - name: Validate the exact revision being published
-        run: uv run pytest && uv run python scripts/render_reports.py --check
+        run: |
+          uv run ruff check .
+          uv run mypy
+          uv run python scripts/check_no_em_dash.py
+          uv run python scripts/check_vocabulary.py
+          uv run python scripts/validate_palette.py
+          uv run pytest --cov=packages --cov-branch --cov-report=term-missing --cov-fail-under=80
+          uv run python scripts/render_reports.py --check
+          uv run python scripts/check_notebooks.py
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
           cache: npm
           cache-dependency-path: web/package-lock.json
       - uses: actions/configure-pages@v5
@@ -46,6 +54,16 @@ jobs:
         working-directory: web
       - run: npm test
         working-directory: web
+      - run: node --test packages/edge/test-worker.mjs
+        if: github.event_name == 'workflow_dispatch'
+      - run: npx playwright install --with-deps chromium
+        if: github.event_name == 'workflow_dispatch'
+        working-directory: web
+      - run: npm run test:e2e
+        if: github.event_name == 'workflow_dispatch'
+        working-directory: web
+        env:
+          NEXT_PUBLIC_BASE_PATH: ''
       - run: npm run build
         working-directory: web
         env:

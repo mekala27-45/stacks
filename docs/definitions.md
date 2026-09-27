@@ -5,7 +5,7 @@ identity is present and no recommendation is personalized to a real person.
 
 | Term | Meaning in this repository |
 | --- | --- |
-| Evaluated catalog | The bounded set of books selected by the recorded pipeline protocol |
+| Evaluated catalog | All 10,000 Goodbooks IDs in the current run; eligible reader metrics remain sampled |
 | Full ranking | Ranking all eligible books in that evaluated catalog after training-history exclusions |
 | Source-order split | Partitioning interactions by source CSV order; a proxy with no verifiable event dates |
 | Sampled negatives | A diagnostic that compares held-out positives against a smaller sampled candidate set |
@@ -13,9 +13,15 @@ identity is present and no recommendation is personalized to a real person.
 | Item cosine | Similarity from item interaction vectors, with training-derived histories |
 | ALS | Alternating least squares factorization with implicit-feedback confidence weighting |
 | Blend | An explicit combination of component scores; not a trained learning-to-rank model |
+| LambdaMART | A learned tree ranker fitted to an earlier label partition and retrieval-score features |
+| Content model | TF-IDF similarity using undated title, author, genre and tag metadata |
+| Session cosine | A recent-history similarity rule using source-row order as a session proxy |
+| Two-tower | Separate learned reader and item encoders trained with sampled softmax negatives |
+| Recurrent session model | A learned recurrent state fitted to next-item labels in proxy-ordered histories |
 | Retrieval recall | Fraction of relevant held-out items included in the stated candidate cutoff |
 | NDCG | Discounted ranking gain divided by the ideal gain for that user's held-out relevance |
 | Catalog coverage | Share of the evaluated catalog appearing in the measured recommendation lists |
+| Coverage resampling range | Range from resampling fixed reader lists; not a confidence interval for their observed union |
 | Novelty | A training-popularity-derived diagnostic; not evidence of reader satisfaction |
 | Long tail | Books outside the protocol's training-popularity head, using its stated cutoff |
 | Paired bootstrap | Resampling the same users for model comparisons to preserve pairing |
@@ -28,6 +34,7 @@ identity is present and no recommendation is personalized to a real person.
 | Effective sample size | Squared sum of weights divided by sum of squared weights |
 | Simulator truth | Target-policy value computed directly from the simulation's known reward mechanism |
 | Open Bandit sample | Real fashion recommendation logs; they do not measure the bookstore's user response |
+| Official prior BTS approximation | Published BernoulliTS priors and ranking rule; not verified identical to each logged policy state |
 | Browser mode | Exploration using static assets and local browser state |
 | API mode | Requests handled by a running service with persistent relational interaction records |
 | Promotion eligibility | Evaluation of all required evidence gates, separate from serving activation |

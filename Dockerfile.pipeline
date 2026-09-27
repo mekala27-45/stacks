@@ -7,4 +7,4 @@ ENV PYTHONUNBUFFERED=1
 COPY pyproject.toml uv.lock ./
 RUN uv sync --frozen
 COPY . .
-CMD ["/bin/sh", "-c", "uv run python scripts/crosscheck_obp.py && uv run python scripts/build_evidence.py && uv run python scripts/render_reports.py"]
+CMD ["/bin/sh", "-c", "uv run python scripts/crosscheck_obp.py && uv run python scripts/build_evidence.py && uv run python scripts/build_neural_evidence.py && uv run python scripts/render_reports.py && uv run python scripts/build_notebooks.py"]

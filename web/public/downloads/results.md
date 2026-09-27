@@ -3,24 +3,24 @@
 
 > These are demonstration recommendations on a public dataset; no real reader's identity is present and no recommendation is personalized to a real person.
 
-Generated from the canonical manifest at **2026-09-27T02:34:43.912426+00:00**.
-Source backend: **pinned public CSV -> parquet -> NumPy/SciPy exact scoring**. Dataset: goodbooks-10k bounded subset.
+Generated from the canonical manifest at **2026-09-27T03:48:44.051606+00:00**.
+Source backend: **pinned public CSV -> parquet -> NumPy/SciPy exact scoring**. Dataset: goodbooks-10k complete catalog and ratings.
 Source revision: `6dd165b555a7b47b2dd36743a425776e641ff50c`.
 
 ## Data and protocol
 
 | Field | Recorded value |
 | --- | --- |
-| Catalog | 1,000 |
-| Source rows read | 300,000 |
-| Selected interactions | 170,264 |
-| Training interactions | 137,192 |
-| Test interactions | 33,072 |
-| Evaluated readers | 500 |
+| Catalog | 10,000 |
+| Source rows read | 5,976,479 |
+| Selected interactions | 5,976,479 |
+| Training interactions | 4,781,183 |
+| Test interactions | 1,195,296 |
+| Evaluated readers | 5,000 |
 | Protocol | Global source-order holdout, full catalog |
 | Split | 80/20 source-file order; timestamps unavailable |
-| Candidate count | 1,000 |
-| Source-row cutoff | 240,000 |
+| Candidate count | 10,000 |
+| Source-row cutoff | 4,781,183 |
 | Bootstrap draws | 1,000 |
 | Confidence | 0.95 |
 | Seed | 20260926 |
@@ -30,21 +30,35 @@ evaluated candidate catalog after the protocol's exclusions.
 
 ## Model measurements
 
-All bracketed values are the manifest's recorded uncertainty intervals.
+Brackets show the manifest's recorded intervals. Coverage is explicitly labeled
+as an observed distinct count with a reader-resampling range, not a confidence
+interval. Model rows use the headline population above; separate experiments
+state their own populations.
+Diversity definition: Symmetric sparse collaborative pair dissimilarity: one minus the average of both directed top100-pruned cosine edges for each unordered pair. Missing pruned edges count as zero. This is not complete unpruned cosine dissimilarity.
 
 | Model | NDCG | Recall | Retrieval recall | Hit rate |
 | --- | --- | --- | --- | --- |
-| Popularity | 0.0469 [0.0340, 0.0593] | 0.0566 [0.0414, 0.0717] | 0.5427 [0.5073, 0.5746] | 0.1500 [0.1180, 0.1800] |
-| Item cosine | 0.0664 [0.0521, 0.0809] | 0.0805 [0.0638, 0.0987] | 0.6230 [0.5878, 0.6545] | 0.2160 [0.1800, 0.2520] |
-| Implicit ALS | 0.0736 [0.0596, 0.0882] | 0.1006 [0.0814, 0.1215] | 0.6744 [0.6436, 0.7059] | 0.2580 [0.2200, 0.3020] |
-| Fixed blend | 0.0735 [0.0586, 0.0885] | 0.0872 [0.0702, 0.1067] | 0.6574 [0.6236, 0.6891] | 0.2360 [0.2000, 0.2760] |
+| Popularity | 0.0406 [0.0373, 0.0441] | 0.0182 [0.0165, 0.0201] | 0.1298 [0.1249, 0.1346] | 0.1540 [0.1442, 0.1644] |
+| Item cosine | 0.0541 [0.0507, 0.0579] | 0.0261 [0.0238, 0.0283] | 0.2585 [0.2517, 0.2654] | 0.2380 [0.2264, 0.2508] |
+| Implicit ALS | 0.0546 [0.0513, 0.0579] | 0.0277 [0.0256, 0.0299] | 0.2607 [0.2543, 0.2672] | 0.2760 [0.2644, 0.2884] |
+| Fixed blend | 0.0538 [0.0504, 0.0576] | 0.0262 [0.0240, 0.0287] | 0.2707 [0.2641, 0.2774] | 0.2434 [0.2312, 0.2560] |
+| Content TF-IDF | 0.0411 [0.0381, 0.0442] | 0.0216 [0.0197, 0.0236] | 0.1399 [0.1348, 0.1451] | 0.2052 [0.1938, 0.2174] |
+| LambdaMART | 0.0440 [0.0415, 0.0466] | 0.0248 [0.0228, 0.0270] | 0.2154 [0.2097, 0.2214] | 0.2658 [0.2542, 0.2784] |
+| Two-tower neural | 0.0019 [0.0014, 0.0024] | 0.0011 [0.0006, 0.0016] | 0.0162 [0.0146, 0.0181] | 0.0156 [0.0122, 0.0192] |
+| Session cosine | 0.0900 [0.0855, 0.0947] | 0.0482 [0.0453, 0.0514] | 0.2900 [0.2830, 0.2967] | 0.3652 [0.3520, 0.3786] |
+| Elman recurrent | 0.0232 [0.0212, 0.0252] | 0.0116 [0.0103, 0.0128] | 0.1041 [0.0995, 0.1086] | 0.1420 [0.1326, 0.1514] |
 
 | Model | Coverage | Novelty | Long-tail share | Diversity | Calibration divergence |
 | --- | --- | --- | --- | --- | --- |
-| Popularity | 0.0420 [0.0360, 0.0420] | 6.7960 [6.7751, 6.8171] | 0.0000 [0.0000, 0.0000] | 0.5360 [0.5260, 0.5461] | 0.2404 [0.2315, 0.2500] |
-| Item cosine | 0.1750 [0.1330, 0.1610] | 7.1530 [7.1142, 7.1977] | 0.0238 [0.0158, 0.0328] | 0.6395 [0.6314, 0.6475] | 0.1545 [0.1473, 0.1624] |
-| Implicit ALS | 0.4250 [0.3790, 0.4040] | 8.3540 [8.3038, 8.4069] | 0.1576 [0.1408, 0.1744] | 0.8132 [0.8078, 0.8185] | 0.0983 [0.0928, 0.1035] |
-| Fixed blend | 0.2090 [0.1660, 0.1930] | 7.2839 [7.2458, 7.3252] | 0.0228 [0.0154, 0.0316] | 0.6723 [0.6639, 0.6800] | 0.1343 [0.1278, 0.1416] |
+| Popularity | 0.0047 [0.0044, 0.0047] (observed coverage; bracket is a reader-resampling range, not a confidence interval) | 8.1957 [8.1914, 8.1998] | 0.0000 [0.0000, 0.0000] | 0.5465 [0.5435, 0.5494] | 0.2850 [0.2808, 0.2891] |
+| Item cosine | 0.2349 [0.1928, 0.2047] (observed coverage; bracket is a reader-resampling range, not a confidence interval) | 9.6690 [9.6250, 9.7165] | 0.0784 [0.0726, 0.0844] | 0.7127 [0.7103, 0.7151] | 0.1135 [0.1117, 0.1153] |
+| Implicit ALS | 0.1149 [0.1042, 0.1085] (observed coverage; bracket is a reader-resampling range, not a confidence interval) | 9.8388 [9.8126, 9.8630] | 0.0013 [0.0009, 0.0019] | 0.7797 [0.7769, 0.7825] | 0.0979 [0.0962, 0.0995] |
+| Fixed blend | 0.1804 [0.1475, 0.1575] (observed coverage; bracket is a reader-resampling range, not a confidence interval) | 9.3786 [9.3421, 9.4183] | 0.0417 [0.0380, 0.0460] | 0.7101 [0.7076, 0.7126] | 0.1148 [0.1129, 0.1167] |
+| Content TF-IDF | 0.3703 [0.3142, 0.3249] (observed coverage; bracket is a reader-resampling range, not a confidence interval) | 14.0233 [13.9954, 14.0515] | 0.6610 [0.6556, 0.6664] | 0.9336 [0.9314, 0.9356] | 0.0961 [0.0945, 0.0976] |
+| LambdaMART | 0.2721 [0.2263, 0.2366] (observed coverage; bracket is a reader-resampling range, not a confidence interval) | 13.9622 [13.9097, 14.0177] | 0.6092 [0.6018, 0.6171] | 0.9529 [0.9517, 0.9542] | 0.1290 [0.1271, 0.1309] |
+| Two-tower neural | 0.0469 [0.0412, 0.0441] (observed coverage; bracket is a reader-resampling range, not a confidence interval) | 16.7521 [16.7325, 16.7712] | 0.9966 [0.9960, 0.9972] | 0.9998 [0.9998, 0.9998] | 0.2415 [0.2386, 0.2443] |
+| Session cosine | 0.4884 [0.4045, 0.4213] (observed coverage; bracket is a reader-resampling range, not a confidence interval) | 10.9430 [10.8925, 10.9994] | 0.1979 [0.1898, 0.2062] | 0.7618 [0.7588, 0.7650] | 0.1474 [0.1450, 0.1499] |
+| Elman recurrent | 0.0842 [0.0769, 0.0797] (observed coverage; bracket is a reader-resampling range, not a confidence interval) | 11.8838 [11.8617, 11.9066] | 0.0881 [0.0849, 0.0914] | 0.8949 [0.8926, 0.8969] | 0.2154 [0.2123, 0.2186] |
 
 ## Paired model comparisons
 
@@ -53,16 +67,88 @@ comparison. The q-value is adjusted within the declared family.
 
 | Left | Right | NDCG difference | p-value | BH q-value | Significant |
 | --- | --- | --- | --- | --- | --- |
-| popularity | item_cosine | -0.0195 [-0.0310, -0.0090] | 0.000600 | 0.001800 | True |
-| popularity | als | -0.0267 [-0.0446, -0.0093] | 0.003200 | 0.006400 | True |
-| popularity | blend | -0.0266 [-0.0394, -0.0143] | 0.000200 | 0.001200 | True |
-| item_cosine | als | -0.0072 [-0.0215, 0.0063] | 0.328200 | 0.393840 | False |
-| item_cosine | blend | -0.0071 [-0.0126, -0.0019] | 0.011200 | 0.016800 | True |
-| als | blend | 0.0001 [-0.0122, 0.0129] | 0.989600 | 0.989600 | False |
+| popularity | item_cosine | -0.0135 [-0.0170, -0.0099] | 0.000200 | 0.000240 | True |
+| popularity | als | -0.0139 [-0.0176, -0.0101] | 0.000200 | 0.000240 | True |
+| popularity | blend | -0.0132 [-0.0166, -0.0098] | 0.000200 | 0.000240 | True |
+| popularity | content | -0.0005 [-0.0053, 0.0036] | 0.841600 | 0.841600 | False |
+| popularity | lambdamart | -0.0033 [-0.0075, 0.0007] | 0.104200 | 0.117225 | False |
+| popularity | two_tower | 0.0388 [0.0354, 0.0422] | 0.000200 | 0.000240 | True |
+| popularity | session_cosine | -0.0494 [-0.0541, -0.0445] | 0.000200 | 0.000240 | True |
+| popularity | recurrent | 0.0174 [0.0138, 0.0214] | 0.000200 | 0.000240 | True |
+| item_cosine | als | -0.0005 [-0.0034, 0.0028] | 0.757200 | 0.778834 | False |
+| item_cosine | blend | 0.0003 [-0.0007, 0.0014] | 0.591200 | 0.625976 | False |
+| item_cosine | content | 0.0130 [0.0090, 0.0168] | 0.000200 | 0.000240 | True |
+| item_cosine | lambdamart | 0.0101 [0.0064, 0.0141] | 0.000200 | 0.000240 | True |
+| item_cosine | two_tower | 0.0522 [0.0487, 0.0560] | 0.000200 | 0.000240 | True |
+| item_cosine | session_cosine | -0.0359 [-0.0400, -0.0314] | 0.000200 | 0.000240 | True |
+| item_cosine | recurrent | 0.0309 [0.0270, 0.0349] | 0.000200 | 0.000240 | True |
+| als | blend | 0.0008 [-0.0020, 0.0034] | 0.581200 | 0.625976 | False |
+| als | content | 0.0135 [0.0093, 0.0174] | 0.000200 | 0.000240 | True |
+| als | lambdamart | 0.0106 [0.0071, 0.0144] | 0.000200 | 0.000240 | True |
+| als | two_tower | 0.0527 [0.0495, 0.0561] | 0.000200 | 0.000240 | True |
+| als | session_cosine | -0.0354 [-0.0403, -0.0311] | 0.000200 | 0.000240 | True |
+| als | recurrent | 0.0314 [0.0279, 0.0349] | 0.000200 | 0.000240 | True |
+| blend | content | 0.0127 [0.0087, 0.0165] | 0.000200 | 0.000240 | True |
+| blend | lambdamart | 0.0098 [0.0059, 0.0138] | 0.000200 | 0.000240 | True |
+| blend | two_tower | 0.0519 [0.0486, 0.0558] | 0.000200 | 0.000240 | True |
+| blend | session_cosine | -0.0362 [-0.0406, -0.0317] | 0.000200 | 0.000240 | True |
+| blend | recurrent | 0.0306 [0.0268, 0.0347] | 0.000200 | 0.000240 | True |
+| content | lambdamart | -0.0029 [-0.0061, 0.0004] | 0.073600 | 0.085471 | False |
+| content | two_tower | 0.0392 [0.0362, 0.0424] | 0.000200 | 0.000240 | True |
+| content | session_cosine | -0.0489 [-0.0534, -0.0442] | 0.000200 | 0.000240 | True |
+| content | recurrent | 0.0179 [0.0143, 0.0213] | 0.000200 | 0.000240 | True |
+| lambdamart | two_tower | 0.0421 [0.0396, 0.0449] | 0.000200 | 0.000240 | True |
+| lambdamart | session_cosine | -0.0460 [-0.0505, -0.0417] | 0.000200 | 0.000240 | True |
+| lambdamart | recurrent | 0.0208 [0.0178, 0.0238] | 0.000200 | 0.000240 | True |
+| two_tower | session_cosine | -0.0881 [-0.0928, -0.0836] | 0.000200 | 0.000240 | True |
+| two_tower | recurrent | -0.0213 [-0.0233, -0.0192] | 0.000200 | 0.000240 | True |
+| session_cosine | recurrent | 0.0668 [0.0627, 0.0711] | 0.000200 | 0.000240 | True |
 
-Observed leader: **als**.
-Corrected winner: **not established**.
+Observed leader: **session_cosine**.
+Corrected winner: **session_cosine**.
 This is offline measurement, not serving activation or online uplift.
+
+## Learned ranker training
+
+Candidate union labels come from an earlier held-out source-order window; every feature uses only its prefix training interactions. Snapshot metadata is not a ranker feature. Hyperparameters fixed before final holdout evaluation. Full-catalog inference, including items outside the candidate union, is published without a selection gate.
+Training groups: 2,553;
+candidate rows: 947,402;
+relevant candidates: 17,223;
+trees: 70.
+Features: cosine_normalized, als_normalized, popularity_normalized, blend_score, log_popularity, log_history_count, cosine_raw, als_raw, training_cold_item.
+
+## Neural training and the retained weak result
+
+Evaluation cohort: Same held-out reader IDs, positives, seen-item filters and full10000-item catalog as every other headline model.
+
+| Model | Architecture | Fixed training-batch loss before | Loss after |
+| --- | --- | --- | --- |
+| two_tower | Independent user-ID and item-ID embeddings32 -> learned projection16 -> ReLU -> L2 normalization | 5.6830 | 4.8627 |
+| recurrent | 16-dimensional Elman tanh recurrent encoder with learned input/output item embeddings | 4.1679 | 3.3730 |
+
+Training loss is a fit diagnostic. The headline table measures generalization.
+Exact descriptive geometry of the frozen arrays, not confidence intervals. Training-cold item vectors are deliberately zeroed. Low held-out accuracy and training loss near nominal batch chance show weak learning in this finite training budget; the nominal log128 reference ignores duplicate-item masking. Nonzero singular values and active channels do not support a claim of global dead-ReLU collapse. Local ANN recall on these weak embeddings must not be generalized to other models or catalogs.
+Mean active item channels: 6.98;
+stable rank: 2.85;
+nominal batch chance loss: 4.8520.
+
+## Local approximate retrieval experiment
+
+Local Docker PostgreSQL benchmark with frozen two-tower embeddings. Exact SQL and HNSW use identical training-seen exclusions. Latencies include the local client round trip, are warm sequential requests, and do not describe the hosted D1 API. Recall intervals resample queries.
+Population: 200 queries,
+10,000 items,
+16 dimensions.
+Exact p50/p99: 4.37/5.88 ms.
+
+| HNSW ef_search | Recall at 200 with query-bootstrap interval | Local p50 ms | Local p99 ms |
+| --- | --- | --- | --- |
+| 200 | 1.0000 [1.0000, 1.0000] | 4.07 | 5.70 |
+| 400 | 1.0000 [1.0000, 1.0000] | 3.95 | 5.21 |
+| 800 | 1.0000 [1.0000, 1.0000] | 3.91 | 5.75 |
+
+No observed recall loss in this query sample does not prove loss-free retrieval
+on other embeddings or catalogs. Query plans and the pinned image digest are
+retained in the raw benchmark artifact. These are not hosted API latencies.
 
 ## Shortcut diagnostics
 
@@ -73,19 +159,29 @@ assumed: a shortcut need not increase every model's score.
 
 | Model | Reference full-ranking NDCG | Shortcut NDCG | Recorded delta |
 | --- | --- | --- | --- |
-| Popularity | 0.0469 [0.0340, 0.0593] | 0.1536 [0.1361, 0.1727] | 0.1067 [0.0860, 0.1287] |
-| Item cosine | 0.0664 [0.0521, 0.0809] | 0.2772 [0.2551, 0.2998] | 0.2108 [0.1837, 0.2383] |
-| Implicit ALS | 0.0736 [0.0596, 0.0882] | 0.2458 [0.2233, 0.2673] | 0.1722 [0.1478, 0.1999] |
-| Fixed blend | 0.0735 [0.0586, 0.0885] | 0.2863 [0.2643, 0.3079] | 0.2127 [0.1859, 0.2393] |
+| Popularity | 0.0406 [0.0373, 0.0441] | 0.0909 [0.0870, 0.0947] | 0.0503 [0.0452, 0.0552] |
+| Item cosine | 0.0541 [0.0507, 0.0579] | 0.2705 [0.2643, 0.2766] | 0.2164 [0.2090, 0.2235] |
+| Implicit ALS | 0.0546 [0.0513, 0.0579] | 0.1907 [0.1855, 0.1958] | 0.1361 [0.1300, 0.1422] |
+| Fixed blend | 0.0538 [0.0504, 0.0576] | 0.2539 [0.2480, 0.2598] | 0.2001 [0.1927, 0.2066] |
+| Content TF-IDF | 0.0411 [0.0381, 0.0442] | 0.1463 [0.1413, 0.1515] | 0.1053 [0.0994, 0.1113] |
+| LambdaMART | 0.0440 [0.0415, 0.0466] | 0.2991 [0.2925, 0.3054] | 0.2551 [0.2477, 0.2620] |
+| Two-tower neural | 0.0019 [0.0014, 0.0024] | 0.0004 [0.0002, 0.0006] | -0.0015 [-0.0020, -0.0010] |
+| Session cosine | 0.0900 [0.0855, 0.0947] | 0.1739 [0.1689, 0.1784] | 0.0839 [0.0773, 0.0899] |
+| Elman recurrent | 0.0232 [0.0212, 0.0252] | 0.0233 [0.0215, 0.0251] | 0.0001 [-0.0025, 0.0029] |
 
 ### Sampled candidate comparison
 
 | Model | Reference full-ranking NDCG | Shortcut NDCG | Recorded delta |
 | --- | --- | --- | --- |
-| Popularity | 0.0469 [0.0340, 0.0593] | 0.2297 [0.2063, 0.2507] | 0.1828 [0.1647, 0.1992] |
-| Item cosine | 0.0664 [0.0521, 0.0809] | 0.2732 [0.2468, 0.2983] | 0.2067 [0.1887, 0.2246] |
-| Implicit ALS | 0.0736 [0.0596, 0.0882] | 0.3109 [0.2849, 0.3368] | 0.2373 [0.2168, 0.2562] |
-| Fixed blend | 0.0735 [0.0586, 0.0885] | 0.3012 [0.2758, 0.3263] | 0.2277 [0.2087, 0.2468] |
+| Popularity | 0.0406 [0.0373, 0.0441] | 0.4002 [0.3919, 0.4083] | 0.3596 [0.3521, 0.3668] |
+| Item cosine | 0.0541 [0.0507, 0.0579] | 0.5706 [0.5625, 0.5785] | 0.5165 [0.5091, 0.5244] |
+| Implicit ALS | 0.0546 [0.0513, 0.0579] | 0.5689 [0.5609, 0.5772] | 0.5143 [0.5072, 0.5219] |
+| Fixed blend | 0.0538 [0.0504, 0.0576] | 0.5785 [0.5706, 0.5868] | 0.5248 [0.5172, 0.5323] |
+| Content TF-IDF | 0.0411 [0.0381, 0.0442] | 0.4211 [0.4123, 0.4297] | 0.3801 [0.3723, 0.3876] |
+| LambdaMART | 0.0440 [0.0415, 0.0466] | 0.4625 [0.4534, 0.4713] | 0.4186 [0.4103, 0.4264] |
+| Two-tower neural | 0.0019 [0.0014, 0.0024] | 0.1138 [0.1098, 0.1176] | 0.1119 [0.1082, 0.1157] |
+| Session cosine | 0.0900 [0.0855, 0.0947] | 0.5944 [0.5863, 0.6032] | 0.5045 [0.4973, 0.5121] |
+| Elman recurrent | 0.0232 [0.0212, 0.0252] | 0.3299 [0.3221, 0.3379] | 0.3067 [0.2995, 0.3140] |
 
 ## Off-policy evidence
 
@@ -93,7 +189,7 @@ assumed: a shortcut need not increase every model's score.
 | --- | --- | --- |
 | simulator | measured | See the recorded measurements below. |
 | crosscheck | passed_source_reference | Local IPS, SNIPS, DM and DR point estimates agree with unmodified arithmetic methods extracted from pinned Open Bandit Pipeline source on the same seeded simulator fixtures. This is a source-level crosscheck, not an installed OBP package or confidence-interval crosscheck. |
-| open_bandit | measured_alternative_target | Real random-policy logs, held-out chronological second half. Target and smoothed action reward model fit only the first half. BTS observed reward is descriptive, not target-policy ground truth. Row bootstrap does not model repeated-reader dependence or model-fit uncertainty; action-only DM therefore has a conditional zero-width interval. The learned target has low effective sample size, so no improvement is established. Per-position propensities must not be multiplied into a claimed joint-slate propensity. |
+| open_bandit | measured_six_file_bts_benchmark | All six random/BTS samples. Official campaign beta priors define the BTS target through beta draws ranked into three positions. Random logs after a shared cutoff provide OPE; BTS logs after the same cutoff provide an empirical on-policy benchmark with Wilson intervals. Logged BTS propensities vary within item/slot, so the frozen-prior approximation is not proven identical to the deployed per-impression policy. Differences include target mismatch and sampling error, not pure estimator error. Row bootstrap is conditional on the fitted reward model and Monte Carlo target, ignores repeated-reader dependence, and is not joint-slate inference. |
 | demo_logs | not_estimated | No meaningful online feedback sample is available at build time; no causal or online benefit claim is made. |
 
 ### Simulator estimates
@@ -150,56 +246,137 @@ upstream validators, or uncertainty-interval equality.
 
 ### Real Open Bandit logs
 
-Real random-policy logs, held-out chronological second half. Target and smoothed action reward model fit only the first half. BTS observed reward is descriptive, not target-policy ground truth. Row bootstrap does not model repeated-reader dependence or model-fit uncertainty; action-only DM therefore has a conditional zero-width interval. The learned target has low effective sample size, so no improvement is established. Per-position propensities must not be multiplied into a claimed joint-slate propensity.
+All six random/BTS samples. Official campaign beta priors define the BTS target through beta draws ranked into three positions. Random logs after a shared cutoff provide OPE; BTS logs after the same cutoff provide an empirical on-policy benchmark with Wilson intervals. Logged BTS propensities vary within item/slot, so the frozen-prior approximation is not proven identical to the deployed per-impression policy. Differences include target mismatch and sampling error, not pure estimator error. Row bootstrap is conditional on the fitted reward model and Monte Carlo target, ignores repeated-reader dependence, and is not joint-slate inference.
 
-| Target policy | Position | Held-out rows | Estimator | Policy value with interval | Observed logging reward with interval | Effective sample size |
-| --- | --- | --- | --- | --- | --- | --- |
-| Uniform sanity check | 1 | 1,628 | IPS | 0.004300 [0.001843, 0.007371] | 0.004300 [0.001229, 0.007371] | 1,628.00 |
-| Uniform sanity check | 1 | 1,628 | SNIPS | 0.004300 [0.001843, 0.007371] | 0.004300 [0.001229, 0.007371] | 1,628.00 |
-| Uniform sanity check | 1 | 1,628 | DM | 0.003676 [0.003676, 0.003676] | 0.004300 [0.001229, 0.007371] | 1,628.00 |
-| Uniform sanity check | 1 | 1,628 | DR | 0.004061 [0.001326, 0.007308] | 0.004300 [0.001229, 0.007371] | 1,628.00 |
-| Fixed training CTR policy | 1 | 1,628 | IPS | 0.000860 [0.000369, 0.001474] | 0.004300 [0.001229, 0.007371] | 29.40 |
-| Fixed training CTR policy | 1 | 1,628 | SNIPS | 0.000947 [0.000322, 0.001965] | 0.004300 [0.001229, 0.007371] | 29.40 |
-| Fixed training CTR policy | 1 | 1,628 | DM | 0.023388 [0.023388, 0.023388] | 0.004300 [0.001229, 0.007371] | 29.40 |
-| Fixed training CTR policy | 1 | 1,628 | DR | 0.003428 [-0.007073, 0.012065] | 0.004300 [0.001229, 0.007371] | 29.40 |
-| Uniform sanity check | 2 | 1,692 | IPS | 0.004728 [0.001773, 0.008274] | 0.004728 [0.001773, 0.008274] | 1,692.00 |
-| Uniform sanity check | 2 | 1,692 | SNIPS | 0.004728 [0.001773, 0.008274] | 0.004728 [0.001773, 0.008274] | 1,692.00 |
-| Uniform sanity check | 2 | 1,692 | DM | 0.003652 [0.003652, 0.003652] | 0.004728 [0.001773, 0.008274] | 1,692.00 |
-| Uniform sanity check | 2 | 1,692 | DR | 0.004745 [0.001849, 0.008189] | 0.004728 [0.001773, 0.008274] | 1,692.00 |
-| Fixed training CTR policy | 2 | 1,692 | IPS | 0.000946 [0.000355, 0.001655] | 0.004728 [0.001773, 0.008274] | 31.75 |
-| Fixed training CTR policy | 2 | 1,692 | SNIPS | 0.000989 [0.000371, 0.001963] | 0.004728 [0.001773, 0.008274] | 31.75 |
-| Fixed training CTR policy | 2 | 1,692 | DM | 0.026048 [0.026048, 0.026048] | 0.004728 [0.001773, 0.008274] | 31.75 |
-| Fixed training CTR policy | 2 | 1,692 | DR | 0.002326 [-0.008405, 0.012145] | 0.004728 [0.001773, 0.008274] | 31.75 |
-| Uniform sanity check | 3 | 1,680 | IPS | 0.002381 [0.000000, 0.004762] | 0.002381 [0.000595, 0.004777] | 1,680.00 |
-| Uniform sanity check | 3 | 1,680 | SNIPS | 0.002381 [0.000000, 0.004762] | 0.002381 [0.000595, 0.004777] | 1,680.00 |
-| Uniform sanity check | 3 | 1,680 | DM | 0.003885 [0.003885, 0.003885] | 0.002381 [0.000595, 0.004777] | 1,680.00 |
-| Uniform sanity check | 3 | 1,680 | DR | 0.002502 [0.000331, 0.005078] | 0.002381 [0.000595, 0.004777] | 1,680.00 |
-| Fixed training CTR policy | 3 | 1,680 | IPS | 0.000476 [0.000000, 0.000952] | 0.002381 [0.000595, 0.004777] | 25.43 |
-| Fixed training CTR policy | 3 | 1,680 | SNIPS | 0.000685 [0.000000, 0.001631] | 0.002381 [0.000595, 0.004777] | 25.43 |
-| Fixed training CTR policy | 3 | 1,680 | DM | 0.034671 [0.034671, 0.034671] | 0.002381 [0.000595, 0.004777] | 25.43 |
-| Fixed training CTR policy | 3 | 1,680 | DR | 0.013412 [0.002070, 0.023374] | 0.002381 [0.000595, 0.004777] | 25.43 |
+| Campaign | Target policy | Position | Held-out random rows | Estimator | OPE with interval | Empirical BTS reward with interval | OPE minus BTS with interval | Effective sample size |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| all | Uniform sanity check | 1 | 1,628 | IPS | 0.004300 [0.001843, 0.007371] | 0.000589 [0.000104, 0.003328] | 0.003711 [0.000690, 0.007396] | 1,628.00 |
+| all | Uniform sanity check | 1 | 1,628 | SNIPS | 0.004300 [0.001843, 0.007371] | 0.000589 [0.000104, 0.003328] | 0.003711 [0.000690, 0.007396] | 1,628.00 |
+| all | Uniform sanity check | 1 | 1,628 | DM | 0.003676 [0.003676, 0.003676] | 0.000589 [0.000104, 0.003328] | 0.003087 [0.001909, 0.003676] | 1,628.00 |
+| all | Uniform sanity check | 1 | 1,628 | DR | 0.004061 [0.001326, 0.007308] | 0.000589 [0.000104, 0.003328] | 0.003472 [0.000542, 0.007275] | 1,628.00 |
+| all | Official prior BTS approximation | 1 | 1,628 | IPS | 0.002516 [0.000435, 0.005723] | 0.000589 [0.000104, 0.003328] | 0.001928 [-0.000591, 0.005495] | 340.02 |
+| all | Official prior BTS approximation | 1 | 1,628 | SNIPS | 0.002827 [0.000485, 0.006442] | 0.000589 [0.000104, 0.003328] | 0.002238 [-0.000447, 0.006265] | 340.02 |
+| all | Official prior BTS approximation | 1 | 1,628 | DM | 0.002439 [0.002439, 0.002439] | 0.000589 [0.000104, 0.003328] | 0.001850 [0.000672, 0.002439] | 340.02 |
+| all | Official prior BTS approximation | 1 | 1,628 | DR | 0.002644 [0.000547, 0.005772] | 0.000589 [0.000104, 0.003328] | 0.002055 [-0.000430, 0.005544] | 340.02 |
+| all | Uniform sanity check | 2 | 1,692 | IPS | 0.004728 [0.001773, 0.008274] | 0.005386 [0.002836, 0.010205] | -0.000658 [-0.005431, 0.004115] | 1,692.00 |
+| all | Uniform sanity check | 2 | 1,692 | SNIPS | 0.004728 [0.001773, 0.008274] | 0.005386 [0.002836, 0.010205] | -0.000658 [-0.005431, 0.004115] | 1,692.00 |
+| all | Uniform sanity check | 2 | 1,692 | DM | 0.003652 [0.003652, 0.003652] | 0.005386 [0.002836, 0.010205] | -0.001734 [-0.005340, 0.001258] | 1,692.00 |
+| all | Uniform sanity check | 2 | 1,692 | DR | 0.004745 [0.001849, 0.008189] | 0.005386 [0.002836, 0.010205] | -0.000641 [-0.005480, 0.004178] | 1,692.00 |
+| all | Official prior BTS approximation | 2 | 1,692 | IPS | 0.015844 [0.001077, 0.041786] | 0.005386 [0.002836, 0.010205] | 0.010458 [-0.005398, 0.036322] | 222.11 |
+| all | Official prior BTS approximation | 2 | 1,692 | SNIPS | 0.016030 [0.001097, 0.042701] | 0.005386 [0.002836, 0.010205] | 0.010644 [-0.005324, 0.037374] | 222.11 |
+| all | Official prior BTS approximation | 2 | 1,692 | DM | 0.003105 [0.003105, 0.003105] | 0.005386 [0.002836, 0.010205] | -0.002281 [-0.005886, 0.000712] | 222.11 |
+| all | Official prior BTS approximation | 2 | 1,692 | DR | 0.015843 [0.001053, 0.041941] | 0.005386 [0.002836, 0.010205] | 0.010457 [-0.005395, 0.036353] | 222.11 |
+| all | Uniform sanity check | 3 | 1,680 | IPS | 0.002381 [0.000000, 0.004762] | 0.004389 [0.002128, 0.009031] | -0.002008 [-0.005751, 0.001763] | 1,680.00 |
+| all | Uniform sanity check | 3 | 1,680 | SNIPS | 0.002381 [0.000000, 0.004762] | 0.004389 [0.002128, 0.009031] | -0.002008 [-0.005751, 0.001763] | 1,680.00 |
+| all | Uniform sanity check | 3 | 1,680 | DM | 0.003885 [0.003885, 0.003885] | 0.004389 [0.002128, 0.009031] | -0.000504 [-0.003639, 0.002631] | 1,680.00 |
+| all | Uniform sanity check | 3 | 1,680 | DR | 0.002502 [0.000331, 0.005078] | 0.004389 [0.002128, 0.009031] | -0.001886 [-0.005884, 0.002017] | 1,680.00 |
+| all | Official prior BTS approximation | 3 | 1,680 | IPS | 0.000433 [0.000000, 0.001004] | 0.004389 [0.002128, 0.009031] | -0.003956 [-0.007369, -0.000865] | 281.69 |
+| all | Official prior BTS approximation | 3 | 1,680 | SNIPS | 0.000462 [0.000000, 0.001034] | 0.004389 [0.002128, 0.009031] | -0.003927 [-0.007357, -0.000845] | 281.69 |
+| all | Official prior BTS approximation | 3 | 1,680 | DM | 0.004163 [0.004163, 0.004163] | 0.004389 [0.002128, 0.009031] | -0.000226 [-0.003360, 0.002909] | 281.69 |
+| all | Official prior BTS approximation | 3 | 1,680 | DR | 0.001170 [0.000379, 0.001965] | 0.004389 [0.002128, 0.009031] | -0.003219 [-0.006727, -0.000239] | 281.69 |
+| men | Uniform sanity check | 1 | 1,625 | IPS | 0.003692 [0.001231, 0.006769] | 0.004394 [0.002130, 0.009043] | -0.000702 [-0.005059, 0.003630] | 1,625.00 |
+| men | Uniform sanity check | 1 | 1,625 | SNIPS | 0.003692 [0.001231, 0.006769] | 0.004394 [0.002130, 0.009043] | -0.000702 [-0.005059, 0.003630] | 1,625.00 |
+| men | Uniform sanity check | 1 | 1,625 | DM | 0.002752 [0.002752, 0.002752] | 0.004394 [0.002130, 0.009043] | -0.001643 [-0.004781, 0.001496] | 1,625.00 |
+| men | Uniform sanity check | 1 | 1,625 | DR | 0.003688 [0.001115, 0.007021] | 0.004394 [0.002130, 0.009043] | -0.000706 [-0.005039, 0.003579] | 1,625.00 |
+| men | Official prior BTS approximation | 1 | 1,625 | IPS | 0.001820 [0.000369, 0.003917] | 0.004394 [0.002130, 0.009043] | -0.002574 [-0.006296, 0.000786] | 362.52 |
+| men | Official prior BTS approximation | 1 | 1,625 | SNIPS | 0.001768 [0.000356, 0.003830] | 0.004394 [0.002130, 0.009043] | -0.002626 [-0.006338, 0.000690] | 362.52 |
+| men | Official prior BTS approximation | 1 | 1,625 | DM | 0.003689 [0.003689, 0.003689] | 0.004394 [0.002130, 0.009043] | -0.000705 [-0.003844, 0.002434] | 362.52 |
+| men | Official prior BTS approximation | 1 | 1,625 | DR | 0.002291 [0.000707, 0.004515] | 0.004394 [0.002130, 0.009043] | -0.002103 [-0.005976, 0.001265] | 362.52 |
+| men | Uniform sanity check | 2 | 1,735 | IPS | 0.006916 [0.003458, 0.010951] | 0.006993 [0.003909, 0.012479] | -0.000077 [-0.005503, 0.005984] | 1,735.00 |
+| men | Uniform sanity check | 2 | 1,735 | SNIPS | 0.006916 [0.003458, 0.010951] | 0.006993 [0.003909, 0.012479] | -0.000077 [-0.005503, 0.005984] | 1,735.00 |
+| men | Uniform sanity check | 2 | 1,735 | DM | 0.005391 [0.005391, 0.005391] | 0.006993 [0.003909, 0.012479] | -0.001602 [-0.005416, 0.002212] | 1,735.00 |
+| men | Uniform sanity check | 2 | 1,735 | DR | 0.006820 [0.003244, 0.011086] | 0.006993 [0.003909, 0.012479] | -0.000173 [-0.005532, 0.005996] | 1,735.00 |
+| men | Official prior BTS approximation | 2 | 1,735 | IPS | 0.005799 [0.002300, 0.010269] | 0.006993 [0.003909, 0.012479] | -0.001194 [-0.006406, 0.004821] | 366.44 |
+| men | Official prior BTS approximation | 2 | 1,735 | SNIPS | 0.006027 [0.002380, 0.010872] | 0.006993 [0.003909, 0.012479] | -0.000966 [-0.006264, 0.005167] | 366.44 |
+| men | Official prior BTS approximation | 2 | 1,735 | DM | 0.003227 [0.003227, 0.003227] | 0.006993 [0.003909, 0.012479] | -0.003766 [-0.007580, 0.000049] | 366.44 |
+| men | Official prior BTS approximation | 2 | 1,735 | DR | 0.006021 [0.002545, 0.010469] | 0.006993 [0.003909, 0.012479] | -0.000972 [-0.006212, 0.005005] | 366.44 |
+| men | Uniform sanity check | 3 | 1,640 | IPS | 0.004878 [0.001829, 0.008537] | 0.004884 [0.002477, 0.009608] | -0.000006 [-0.004279, 0.004266] | 1,640.00 |
+| men | Uniform sanity check | 3 | 1,640 | SNIPS | 0.004878 [0.001829, 0.008537] | 0.004884 [0.002477, 0.009608] | -0.000006 [-0.004279, 0.004266] | 1,640.00 |
+| men | Uniform sanity check | 3 | 1,640 | DM | 0.003571 [0.003571, 0.003571] | 0.004884 [0.002477, 0.009608] | -0.001313 [-0.004976, 0.001740] | 1,640.00 |
+| men | Uniform sanity check | 3 | 1,640 | DR | 0.004896 [0.001765, 0.008600] | 0.004884 [0.002477, 0.009608] | 0.000012 [-0.004356, 0.004440] | 1,640.00 |
+| men | Official prior BTS approximation | 3 | 1,640 | IPS | 0.005815 [0.000449, 0.015745] | 0.004884 [0.002477, 0.009608] | 0.000931 [-0.005967, 0.010688] | 525.68 |
+| men | Official prior BTS approximation | 3 | 1,640 | SNIPS | 0.005728 [0.000466, 0.015635] | 0.004884 [0.002477, 0.009608] | 0.000844 [-0.005921, 0.010730] | 525.68 |
+| men | Official prior BTS approximation | 3 | 1,640 | DM | 0.005948 [0.005948, 0.005948] | 0.004884 [0.002477, 0.009608] | 0.001064 [-0.002599, 0.004117] | 525.68 |
+| men | Official prior BTS approximation | 3 | 1,640 | DR | 0.005739 [0.000326, 0.015707] | 0.004884 [0.002477, 0.009608] | 0.000855 [-0.006074, 0.011074] | 525.68 |
+| women | Uniform sanity check | 1 | 1,648 | IPS | 0.006675 [0.003034, 0.010922] | 0.006277 [0.003413, 0.011517] | 0.000397 [-0.005127, 0.005839] | 1,648.00 |
+| women | Uniform sanity check | 1 | 1,648 | SNIPS | 0.006675 [0.003034, 0.010922] | 0.006277 [0.003413, 0.011517] | 0.000397 [-0.005127, 0.005839] | 1,648.00 |
+| women | Uniform sanity check | 1 | 1,648 | DM | 0.002641 [0.002641, 0.002641] | 0.006277 [0.003413, 0.011517] | -0.003636 [-0.007403, 0.000130] | 1,648.00 |
+| women | Uniform sanity check | 1 | 1,648 | DR | 0.006507 [0.002808, 0.010863] | 0.006277 [0.003413, 0.011517] | 0.000230 [-0.005118, 0.005657] | 1,648.00 |
+| women | Official prior BTS approximation | 1 | 1,648 | IPS | 0.010796 [0.002060, 0.025577] | 0.006277 [0.003413, 0.011517] | 0.004519 [-0.005567, 0.019279] | 316.36 |
+| women | Official prior BTS approximation | 1 | 1,648 | SNIPS | 0.010617 [0.002035, 0.025128] | 0.006277 [0.003413, 0.011517] | 0.004339 [-0.005674, 0.019438] | 316.36 |
+| women | Official prior BTS approximation | 1 | 1,648 | DM | 0.004194 [0.004194, 0.004194] | 0.006277 [0.003413, 0.011517] | -0.002084 [-0.005850, 0.001683] | 316.36 |
+| women | Official prior BTS approximation | 1 | 1,648 | DR | 0.010480 [0.001650, 0.025129] | 0.006277 [0.003413, 0.011517] | 0.004202 [-0.006018, 0.019274] | 316.36 |
+| women | Uniform sanity check | 2 | 1,709 | IPS | 0.006437 [0.002926, 0.010532] | 0.004745 [0.002406, 0.009335] | 0.001692 [-0.003652, 0.006405] | 1,709.00 |
+| women | Uniform sanity check | 2 | 1,709 | SNIPS | 0.006437 [0.002926, 0.010532] | 0.004745 [0.002406, 0.009335] | 0.001692 [-0.003652, 0.006405] | 1,709.00 |
+| women | Uniform sanity check | 2 | 1,709 | DM | 0.002525 [0.002525, 0.002525] | 0.004745 [0.002406, 0.009335] | -0.002220 [-0.006372, 0.000746] | 1,709.00 |
+| women | Uniform sanity check | 2 | 1,709 | DR | 0.006561 [0.003022, 0.010652] | 0.004745 [0.002406, 0.009335] | 0.001816 [-0.003657, 0.006598] | 1,709.00 |
+| women | Official prior BTS approximation | 2 | 1,709 | IPS | 0.008607 [0.000997, 0.019214] | 0.004745 [0.002406, 0.009335] | 0.003862 [-0.004946, 0.014813] | 288.44 |
+| women | Official prior BTS approximation | 2 | 1,709 | SNIPS | 0.009367 [0.001135, 0.021204] | 0.004745 [0.002406, 0.009335] | 0.004622 [-0.004774, 0.017063] | 288.44 |
+| women | Official prior BTS approximation | 2 | 1,709 | DM | 0.001759 [0.001759, 0.001759] | 0.004745 [0.002406, 0.009335] | -0.002986 [-0.007138, -0.000020] | 288.44 |
+| women | Official prior BTS approximation | 2 | 1,709 | DR | 0.008776 [0.001273, 0.019398] | 0.004745 [0.002406, 0.009335] | 0.004031 [-0.004791, 0.015001] | 288.44 |
+| women | Uniform sanity check | 3 | 1,643 | IPS | 0.005478 [0.002435, 0.009130] | 0.004177 [0.002025, 0.008596] | 0.001301 [-0.003508, 0.006099] | 1,643.00 |
+| women | Uniform sanity check | 3 | 1,643 | SNIPS | 0.005478 [0.002435, 0.009130] | 0.004177 [0.002025, 0.008596] | 0.001301 [-0.003508, 0.006099] | 1,643.00 |
+| women | Uniform sanity check | 3 | 1,643 | DM | 0.003669 [0.003669, 0.003669] | 0.004177 [0.002025, 0.008596] | -0.000507 [-0.004087, 0.002476] | 1,643.00 |
+| women | Uniform sanity check | 3 | 1,643 | DR | 0.005654 [0.002474, 0.009453] | 0.004177 [0.002025, 0.008596] | 0.001477 [-0.003323, 0.006098] | 1,643.00 |
+| women | Official prior BTS approximation | 3 | 1,643 | IPS | 0.005262 [0.000361, 0.011433] | 0.004177 [0.002025, 0.008596] | 0.001086 [-0.004908, 0.008115] | 358.82 |
+| women | Official prior BTS approximation | 3 | 1,643 | SNIPS | 0.005361 [0.000385, 0.011586] | 0.004177 [0.002025, 0.008596] | 0.001184 [-0.004910, 0.008426] | 358.82 |
+| women | Official prior BTS approximation | 3 | 1,643 | DM | 0.007753 [0.007753, 0.007753] | 0.004177 [0.002025, 0.008596] | 0.003577 [-0.000003, 0.006560] | 358.82 |
+| women | Official prior BTS approximation | 3 | 1,643 | DR | 0.005472 [0.000258, 0.011819] | 0.004177 [0.002025, 0.008596] | 0.001295 [-0.004853, 0.008469] | 358.82 |
 
-The concentrated training-CTR target has weak effective support; these values do
-not establish a policy improvement. Direct-method intervals condition on a fixed
-action-only reward model and may collapse to a point. They exclude uncertainty
-from reward-model training. The row bootstrap ignores repeated-reader dependence.
-Observed BTS reward is descriptive context, not this target policy's truth.
+The BTS target follows the official published prior-based benchmark. Logged
+propensities vary within item and position, so this frozen prior approximates
+the actual logged policy. Differences can reflect this mismatch as well as
+sampling and estimator error. The empirical BTS reward is not exact simulator
+truth. Direct-method intervals condition on a fixed action-only reward model
+and may collapse to a point; uncertainty from fitting that model and estimating
+the target by Monte Carlo is excluded. The bootstrap ignores repeated readers.
+See [the benchmark construction](docs/ope-benchmark.md).
 
 ## Cold-start slices
 
 | Slice | Readers | Model | NDCG with interval | Recall with interval | Retrieval recall with interval |
 | --- | --- | --- | --- | --- | --- |
-| Cold readers (0-4 positive training items) | 200 | Popularity | 0.1993 [0.1599, 0.2422] | 0.0858 [0.0667, 0.1077] | 0.5793 [0.5391, 0.6198] |
-| Cold readers (0-4 positive training items) | 200 | Item cosine | 0.2033 [0.1657, 0.2455] | 0.0883 [0.0677, 0.1106] | 0.5965 [0.5548, 0.6379] |
-| Cold readers (0-4 positive training items) | 200 | Implicit ALS | 0.2104 [0.1710, 0.2520] | 0.0976 [0.0753, 0.1213] | 0.6009 [0.5595, 0.6375] |
-| Cold readers (0-4 positive training items) | 200 | Fixed blend | 0.2039 [0.1664, 0.2463] | 0.0935 [0.0725, 0.1167] | 0.6019 [0.5593, 0.6422] |
-| Cold item positives | 14 | Popularity | 0.0000 [0.0000, 0.0000] | 0.0000 [0.0000, 0.0000] | 0.0000 [0.0000, 0.0000] |
-| Cold item positives | 14 | Item cosine | 0.0000 [0.0000, 0.0000] | 0.0000 [0.0000, 0.0000] | 0.0000 [0.0000, 0.0000] |
-| Cold item positives | 14 | Implicit ALS | 0.0000 [0.0000, 0.0000] | 0.0000 [0.0000, 0.0000] | 0.0000 [0.0000, 0.0000] |
-| Cold item positives | 14 | Fixed blend | 0.0000 [0.0000, 0.0000] | 0.0000 [0.0000, 0.0000] | 0.0000 [0.0000, 0.0000] |
+| Cold readers (0-4 positive training items) | 1,000 | Popularity | 0.2619 [0.2453, 0.2787] | 0.0336 [0.0312, 0.0359] | 0.2252 [0.2167, 0.2338] |
+| Cold readers (0-4 positive training items) | 1,000 | Item cosine | 0.2648 [0.2480, 0.2817] | 0.0339 [0.0316, 0.0361] | 0.2314 [0.2229, 0.2398] |
+| Cold readers (0-4 positive training items) | 1,000 | Implicit ALS | 0.2628 [0.2457, 0.2792] | 0.0337 [0.0313, 0.0360] | 0.2309 [0.2219, 0.2398] |
+| Cold readers (0-4 positive training items) | 1,000 | Fixed blend | 0.2667 [0.2498, 0.2837] | 0.0340 [0.0317, 0.0362] | 0.2328 [0.2240, 0.2416] |
+| Cold readers (0-4 positive training items) | 1,000 | Content TF-IDF | 0.2572 [0.2403, 0.2738] | 0.0328 [0.0304, 0.0349] | 0.2178 [0.2089, 0.2261] |
+| Cold readers (0-4 positive training items) | 1,000 | LambdaMART | 0.0561 [0.0496, 0.0632] | 0.0064 [0.0056, 0.0073] | 0.0498 [0.0454, 0.0544] |
+| Cold item positives | 2,369 | Popularity | 0.0000 [0.0000, 0.0000] | 0.0000 [0.0000, 0.0000] | 0.0000 [0.0000, 0.0000] |
+| Cold item positives | 2,369 | Item cosine | 0.0000 [0.0000, 0.0000] | 0.0000 [0.0000, 0.0000] | 0.0000 [0.0000, 0.0000] |
+| Cold item positives | 2,369 | Implicit ALS | 0.0000 [0.0000, 0.0000] | 0.0000 [0.0000, 0.0000] | 0.0000 [0.0000, 0.0000] |
+| Cold item positives | 2,369 | Fixed blend | 0.0000 [0.0000, 0.0000] | 0.0000 [0.0000, 0.0000] | 0.0000 [0.0000, 0.0000] |
+| Cold item positives | 2,369 | Content TF-IDF | 0.0187 [0.0156, 0.0218] | 0.0299 [0.0242, 0.0355] | 0.1534 [0.1418, 0.1658] |
+| Cold item positives | 2,369 | LambdaMART | 0.0000 [0.0000, 0.0000] | 0.0000 [0.0000, 0.0000] | 0.3092 [0.2915, 0.3235] |
+| Cold readers (0-4 positive training items) | 1,000 | Two-tower neural | 0.2450 [0.2275, 0.2611] | 0.0312 [0.0288, 0.0333] | 0.2116 [0.2025, 0.2204] |
+| Cold readers (0-4 positive training items) | 1,000 | Session cosine | 0.2650 [0.2483, 0.2818] | 0.0339 [0.0316, 0.0361] | 0.2315 [0.2229, 0.2399] |
+| Cold readers (0-4 positive training items) | 1,000 | Elman recurrent | 0.2513 [0.2341, 0.2677] | 0.0319 [0.0296, 0.0341] | 0.2186 [0.2094, 0.2271] |
+| Cold item positives | 2,369 | Two-tower neural | 0.0000 [0.0000, 0.0000] | 0.0000 [0.0000, 0.0000] | 0.0000 [0.0000, 0.0000] |
+| Cold item positives | 2,369 | Session cosine | 0.0000 [0.0000, 0.0000] | 0.0000 [0.0000, 0.0000] | 0.0000 [0.0000, 0.0000] |
+| Cold item positives | 2,369 | Elman recurrent | 0.0000 [0.0000, 0.0000] | 0.0000 [0.0000, 0.0000] | 0.0000 [0.0000, 0.0000] |
 
 These are separate cohorts. A zero observed score does not establish a universal
 failure rate beyond the measured cohort and catalog.
+
+## Why cold and warm scores differ
+
+Cold and warm readers are different held-out cohorts. NDCG normalizes by the number of relevant holdout items up to10, while target-book popularity and the unseen candidate sets also differ. Compare the measured positive counts, target popularity, and within-count strata here; a higher cold score does not show that lacking history improves a reader's recommendations.
+
+| Cohort | Readers | Training positives | Holdout positives | Mean target training popularity | Popularity NDCG | Single-positive holdout share |
+| --- | --- | --- | --- | --- | --- | --- |
+| Warm: at least5 training positives | 5,000 | 58.42 [57.70, 59.09] | 17.13 [16.65, 17.62] | 1075.84 [1045.03, 1104.51] | 0.0406 [0.0373, 0.0441] | 0.0866 [0.0792, 0.0942] |
+| Cold: 0-4 training positives | 1,000 | 0.19 [0.14, 0.23] | 74.45 [72.79, 76.11] | 1843.80 [1785.67, 1902.74] | 0.2619 [0.2453, 0.2787] | 0.0000 [0.0000, 0.0000] |
+
+The measured positive counts and popularity replace speculation about the
+cohort difference. They are descriptive diagnostics, not a causal decomposition.
+
+| Cohort | Holdout-positive stratum | Readers | Popularity NDCG with interval |
+| --- | --- | --- | --- |
+| Warm: at least5 training positives | 1 | 433 | 0.0022 [0.0000, 0.0050] |
+| Warm: at least5 training positives | 2-5 | 1,016 | 0.0107 [0.0072, 0.0148] |
+| Warm: at least5 training positives | 6+ | 3,551 | 0.0538 [0.0496, 0.0585] |
+| Cold: 0-4 training positives | 2-5 | 2 | 0.0000 [0.0000, 0.0000] |
+| Cold: 0-4 training positives | 6+ | 998 | 0.2625 [0.2453, 0.2796] |
 
 ## Reranking stages
 
@@ -208,11 +385,11 @@ Measured readers: 100.
 
 | Stage | NDCG with interval | Recall with interval | Tag diversity with interval | Genre divergence with interval | Long-tail share with interval |
 | --- | --- | --- | --- | --- | --- |
-| Popularity baseline | 0.0400 [0.0196, 0.0666] | 0.0616 [0.0309, 0.1013] | 0.5394 [0.5218, 0.5574] | 0.3313 [0.3044, 0.3595] | 0.0000 [0.0000, 0.0000] |
-| Blend before author rules | 0.0898 [0.0584, 0.1261] | 0.1067 [0.0679, 0.1491] | 0.5834 [0.5636, 0.6026] | 0.1921 [0.1739, 0.2098] | 0.0340 [0.0150, 0.0620] |
-| Author rules | 0.0942 [0.0630, 0.1302] | 0.1123 [0.0736, 0.1538] | 0.6239 [0.6064, 0.6388] | 0.1689 [0.1540, 0.1839] | 0.0230 [0.0110, 0.0380] |
-| MMR diversity | 0.0887 [0.0592, 0.1224] | 0.1164 [0.0763, 0.1616] | 0.7329 [0.7250, 0.7403] | 0.1557 [0.1439, 0.1675] | 0.0220 [0.0110, 0.0350] |
-| Genre calibration | 0.0875 [0.0570, 0.1229] | 0.1068 [0.0678, 0.1491] | 0.6649 [0.6509, 0.6767] | 0.0593 [0.0523, 0.0659] | 0.0300 [0.0160, 0.0470] |
+| Popularity baseline | 0.0476 [0.0246, 0.0763] | 0.0185 [0.0096, 0.0295] | 0.5325 [0.5133, 0.5516] | 0.3657 [0.3306, 0.3981] | 0.0000 [0.0000, 0.0000] |
+| Blend before author rules | 0.0598 [0.0362, 0.0884] | 0.0263 [0.0159, 0.0380] | 0.5455 [0.5134, 0.5769] | 0.1454 [0.1302, 0.1610] | 0.0590 [0.0330, 0.0920] |
+| Author rules | 0.0617 [0.0378, 0.0909] | 0.0276 [0.0170, 0.0392] | 0.5789 [0.5478, 0.6074] | 0.1362 [0.1225, 0.1506] | 0.0420 [0.0240, 0.0630] |
+| MMR diversity | 0.0581 [0.0354, 0.0861] | 0.0240 [0.0136, 0.0376] | 0.6974 [0.6760, 0.7181] | 0.1102 [0.0991, 0.1209] | 0.0390 [0.0220, 0.0570] |
+| Genre calibration | 0.0568 [0.0357, 0.0842] | 0.0234 [0.0150, 0.0330] | 0.6382 [0.6118, 0.6630] | 0.0573 [0.0510, 0.0638] | 0.0440 [0.0270, 0.0630] |
 
 Stage diagnostics concern the stated offline cohort. Exploration in the serving
 policy can change the final displayed list; these are not a live outcome test.
@@ -220,14 +397,15 @@ policy can change the final displayed list; these are not a live outcome test.
 ## Limitations
 
 - goodbooks has no interaction timestamps; source-order holdout is not verified temporal evaluation.
-- The first 300,000 source records and 1,000 popular catalog items form a bounded, biased demonstration subset.
+- All source ratings and all10000 catalog items are ingested; headline metrics use a seeded sample of at most5000 eligible readers, not every reader.
 - Only readers with at least five positive training items enter headline evaluation; cold readers are separate.
-- Snapshot genres and average ratings are descriptive metadata. Their historical availability cannot be verified.
-- The fixed blend is evaluated directly over the full catalog; a trained two-stage LambdaMART pipeline is not implemented.
+- Snapshot titles, authors and tags power the content baseline; their historical availability cannot be verified. Average ratings are descriptive metadata only.
+- LambdaMART trains on a candidate union from an earlier source-order window and scores the full unseen catalog; training negatives have a different distribution from full-catalog inference.
 - Coverage.mean is observed distinct catalog coverage; low/high show a separate conditional user-resampling range, not a confidence interval. The observed point can exceed this range because resampling cannot invent unseen items. expected_resampled_coverage records the average resampled value.
 - The random-split comparison uses a different eligible cohort, so it is not an isolated estimate of temporal leakage.
 - Simulator reward models are oracle or deliberately misspecified. This is estimator validation, not reward-model learning.
-- Contextual BTS target-policy truth, online impact, neural models, approximate indexing, and historical point-in-time metadata remain unmeasured.
+- Contextual BTS target-policy truth, online impact, and historical point-in-time metadata remain unmeasured.
+- Two-tower and recurrent models use explicit NumPy training and finite sampled training pairs/sequences. Their losses are optimization diagnostics; held-out results and both shortcuts are reported even when these neural models lose.
 
 Public deployment scope: GitHub Pages static application. The API is runnable
 locally; public API hosting and managed PostgreSQL are unprovisioned.

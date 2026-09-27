@@ -82,8 +82,11 @@ def validate_manifest(manifest: Any) -> dict[str, Any]:
     return manifest
 
 
-def interval(value: dict[str, float], digits: int = 4) -> str:
-    return f"{value['mean']:.{digits}f} [{value['low']:.{digits}f}, {value['high']:.{digits}f}]"
+def interval(value: dict[str, Any], digits: int = 4) -> str:
+    formatted = f"{value['mean']:.{digits}f} [{value['low']:.{digits}f}, {value['high']:.{digits}f}]"
+    if "interval_kind" in value:
+        formatted += " (observed coverage; bracket is a reader-resampling range, not a confidence interval)"
+    return formatted
 
 
 def number(value: float, digits: int = 4) -> str:

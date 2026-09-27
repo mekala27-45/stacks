@@ -10,7 +10,7 @@ Generated at **{{ e.generated_at }}**.
 ## Intended use
 
 Inspect training-derived recommendation behavior in a fictional bookstore.
-Results concern the recorded subset and source-order proxy. Do not interpret
+Results concern the recorded eligible reader sample and source-order proxy. Do not interpret
 them as dated global backtesting, a real person's preferences, or online uplift.
 
 ## Measured comparison
@@ -22,6 +22,21 @@ them as dated global backtesting, a real person's preferences, or online uplift.
 {% endfor %}
 
 ## Serving and limits
+
+{% if model.model == "lambdamart" and e.get("ranker_training") %}
+Training: {{ e.ranker_training.detail }}
+Features: {{ e.ranker_training.features | join(", ") }}.
+{% endif %}
+{% if model.model in ["two_tower", "recurrent"] and e.get("neural_training", {}).get(model.model) %}
+Architecture: {{ e.neural_training[model.model].architecture }}.
+Objective: {{ e.neural_training[model.model].objective }}.
+Training limitation: {{ e.neural_training[model.model].detail }}
+{% endif %}
+{% if model.model == "session_cosine" and e.get("neural_training") %}
+Definition: {{ e.neural_training.session_cosine.detail }}.
+History length: {{ e.neural_training.session_cosine.history_length }};
+decay: {{ e.neural_training.session_cosine.decay }}.
+{% endif %}
 
 An offline evaluated model is not automatically a served policy. The API's
 documented policy and experiment arm determine its actual recommendations.

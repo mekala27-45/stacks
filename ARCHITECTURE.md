@@ -1,64 +1,42 @@
 # Architecture
 
-Stacks is a bookstore demonstration with an offline measurement pipeline, a
-static review application, and an independently runnable recommendation API.
-These are demonstration recommendations on a public dataset; no real reader's
-identity is present and no recommendation is personalized to a real person.
+Stacks combines a reproducible offline measurement pipeline, a Next.js review application and two implementations of a durable recommendation service. These are demonstration recommendations on a public dataset; no real reader's identity is present and no recommendation is personalized to a real person.
 
 ```mermaid
 flowchart LR
-  S[Public source files and checksums] --> P[Reproducible Python pipeline]
+  S[Public sources with pinned provenance] --> P[Core and neural evidence pipelines]
   P --> M[Canonical evidence manifest]
-  P --> B[Catalog and model artifacts]
-  M --> J[Strict Jinja report renderer]
-  J --> D[README, results, report, model cards]
-  B --> W[Static Next.js bookstore]
-  M --> W
-  B --> A[Local FastAPI recommendation service]
-  A --> L[Relational exposures and delayed feedback]
-  C[Integrity, behavior and report checks] --> G[GitHub Actions Pages deployment]
-  W --> G
+  P --> B[Versioned evaluated model artifacts]
+  M --> J[Strict Jinja renderer and executed notebooks]
+  J --> D[README, results, reports and model cards]
+  B --> W[Next.js bookstore]
+  B --> A[FastAPI reference service]
+  B --> E[Portable Worker service]
+  A --> L[SQLite or PostgreSQL interaction records]
+  E --> Q[D1 interaction records]
+  W --> A
+  W --> E
+  C[Typing, behavior, evidence and browser gates] --> G[GitHub Actions]
 ```
 
 ## Measurement boundary
 
-The canonical manifest records the backend, input provenance, evaluated catalog,
-protocols, and measured model and estimator results. Generated reports are whole
-files rendered from this manifest. CI regenerates each expected file in memory
-and fails on missing, empty, extra, or changed generated reports. Hand-editing a
-metric in Markdown therefore cannot make it through the claim gate.
+The pipeline reads the complete Goodbooks ratings file and ten-thousand-book catalog. Reader-level comparisons sample explicitly eligible populations. The canonical manifest records those counts, protocols, model results and estimator evidence. Generated documents are complete files: CI rejects missing, empty, stale or modified reports rather than scanning only selected numeric claims.
 
-Goodbooks exposes source row ordering but no event timestamps. The implemented
-split uses that order as a proxy and evaluates a bounded catalog. This does not
-establish a calendar-time backtest or a result on the entire source dataset.
-See [the evaluation protocol](docs/evaluation.md) for exclusions, uncertainty,
-candidate ranking, and diagnostic comparisons.
+Goodbooks provides row order without event timestamps. A source-order holdout cannot establish a dated historical backtest. The learned ranker uses an earlier label partition; undated snapshot text is identified separately. See [the protocol](docs/evaluation.md) for model features, exclusions, uncertainty, cohorts and comparison families.
+
+Exact full-catalog scoring makes candidate errors inspectable. A local pgvector experiment additionally measures approximate recall against exact SQL with matching exclusions. Its latency and retrieval result concern its frozen embeddings and query sample, not the public serving workload.
 
 ## Serving boundary
 
-GitHub Pages serves static files. Browser exploration can use the committed
-catalog and browser state, but a static page cannot commit an exposure to the
-server database. Durable serving is a separate FastAPI process with its own
-database. The application must identify which mode produced its results.
-Public API hosting is unprovisioned; local API behavior is documented and tested
-separately from the hosted website.
+The browser can explore static artifacts offline. Durable mode calls a service that persists an exposure before acknowledging it. The FastAPI reference uses SQLAlchemy with SQLite or PostgreSQL. The portable Worker uses the same exported model evidence and a D1 binding. Neither may replace the evaluated scorer with an unrelated convenience formula. Artifact hashes and cross-runtime ranking fixtures make that contract testable.
 
-Exposure propensities describe the implemented logging policy and action unit.
-They are not invented probabilities for a deterministic ranked slate. Impression
-and feedback timestamps remain distinct. See [logging](docs/logging.md) and
-[serving](docs/serving.md) for the request contract and persistence checks.
+GitHub Pages remains a static host. The free Sites deployment uses a Worker and D1 for API requests. See [the runbook](docs/runbook.md) and [serving contract](docs/serving.md) for the verified deployment status; a local test does not establish public availability. Browser bundles contain no database connection string or administrative credential.
 
-## Scope and replacement paths
+Exposure probabilities describe the actual action unit and logging policy. Full slates and supported exploratory actions are distinguished. Feedback is joined to exposures, and observation windows distinguish pending outcomes from negatives. Resume tokens reconnect to durable session state. See [logging](docs/logging.md) for probability, horizon and replay semantics.
 
-Popularity, item cosine, alternating least squares, and a score blend form the
-model comparison. A blend is not a learned LambdaMART ranker. Exact scoring of
-the evaluated catalog makes candidate omissions inspectable; an approximate
-pgvector index and recall-loss experiment are not delivered. Neural two-tower
-training, external text-model weights, and a recurrent session model remain
-future work.
+## Selection boundary
 
-The registry evaluates promotion eligibility separately from serving activation.
-Missing or invalid evidence must fail eligibility. Offline evidence alone is
-insufficient to claim a commercial uplift or automatically change a deployed
-policy. A real experiment requires a running logging service, supported action
-probabilities, and completed outcomes.
+The model comparison includes baseline, text, learned tree, neural and recent-history approaches. The measured result, including weak learned models, remains in the report. A larger model is not presumed better.
+
+The registry evaluates evidence eligibility separately from activation. Missing or invalid evidence fails eligibility. Local candidate audits and recorded API latency are operational measurements, not commercial uplift. A supported target, completed outcome horizon and running logger are prerequisites for live off-policy evidence. Offline superiority alone never changes a deployed policy.

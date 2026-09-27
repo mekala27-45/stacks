@@ -5,43 +5,45 @@
 
 Identifier: `blend`. Evidence backend: **pinned public CSV -> parquet -> NumPy/SciPy exact scoring**.
 Evaluation protocol: **Global source-order holdout, full catalog**.
-Generated at **2026-09-27T02:34:43.912426+00:00**.
+Generated at **2026-09-27T03:48:44.051606+00:00**.
 
 ## Intended use
 
 Inspect training-derived recommendation behavior in a fictional bookstore.
-Results concern the recorded subset and source-order proxy. Do not interpret
+Results concern the recorded eligible reader sample and source-order proxy. Do not interpret
 them as dated global backtesting, a real person's preferences, or online uplift.
 
 ## Measured comparison
 
 | Measurement | This model | Popularity baseline |
 | --- | --- | --- |
-| NDCG | 0.0735 [0.0586, 0.0885] | 0.0469 [0.0340, 0.0593] |
-| Recall | 0.0872 [0.0702, 0.1067] | 0.0566 [0.0414, 0.0717] |
-| Retrieval recall | 0.6574 [0.6236, 0.6891] | 0.5427 [0.5073, 0.5746] |
-| Hit rate | 0.2360 [0.2000, 0.2760] | 0.1500 [0.1180, 0.1800] |
-| Coverage | 0.2090 [0.1660, 0.1930] | 0.0420 [0.0360, 0.0420] |
-| Novelty | 7.2839 [7.2458, 7.3252] | 6.7960 [6.7751, 6.8171] |
-| Long-tail share | 0.0228 [0.0154, 0.0316] | 0.0000 [0.0000, 0.0000] |
-| Diversity | 0.6723 [0.6639, 0.6800] | 0.5360 [0.5260, 0.5461] |
-| Calibration divergence | 0.1343 [0.1278, 0.1416] | 0.2404 [0.2315, 0.2500] |
+| NDCG | 0.0538 [0.0504, 0.0576] | 0.0406 [0.0373, 0.0441] |
+| Recall | 0.0262 [0.0240, 0.0287] | 0.0182 [0.0165, 0.0201] |
+| Retrieval recall | 0.2707 [0.2641, 0.2774] | 0.1298 [0.1249, 0.1346] |
+| Hit rate | 0.2434 [0.2312, 0.2560] | 0.1540 [0.1442, 0.1644] |
+| Coverage | 0.1804 [0.1475, 0.1575] (observed coverage; bracket is a reader-resampling range, not a confidence interval) | 0.0047 [0.0044, 0.0047] (observed coverage; bracket is a reader-resampling range, not a confidence interval) |
+| Novelty | 9.3786 [9.3421, 9.4183] | 8.1957 [8.1914, 8.1998] |
+| Long-tail share | 0.0417 [0.0380, 0.0460] | 0.0000 [0.0000, 0.0000] |
+| Diversity | 0.7101 [0.7076, 0.7126] | 0.5465 [0.5435, 0.5494] |
+| Calibration divergence | 0.1148 [0.1129, 0.1167] | 0.2850 [0.2808, 0.2891] |
 
 ## Serving and limits
+
 
 An offline evaluated model is not automatically a served policy. The API's
 documented policy and experiment arm determine its actual recommendations.
 Promotion eligibility and policy activation are separate operations.
 
 - goodbooks has no interaction timestamps; source-order holdout is not verified temporal evaluation.
-- The first 300,000 source records and 1,000 popular catalog items form a bounded, biased demonstration subset.
+- All source ratings and all10000 catalog items are ingested; headline metrics use a seeded sample of at most5000 eligible readers, not every reader.
 - Only readers with at least five positive training items enter headline evaluation; cold readers are separate.
-- Snapshot genres and average ratings are descriptive metadata. Their historical availability cannot be verified.
-- The fixed blend is evaluated directly over the full catalog; a trained two-stage LambdaMART pipeline is not implemented.
+- Snapshot titles, authors and tags power the content baseline; their historical availability cannot be verified. Average ratings are descriptive metadata only.
+- LambdaMART trains on a candidate union from an earlier source-order window and scores the full unseen catalog; training negatives have a different distribution from full-catalog inference.
 - Coverage.mean is observed distinct catalog coverage; low/high show a separate conditional user-resampling range, not a confidence interval. The observed point can exceed this range because resampling cannot invent unseen items. expected_resampled_coverage records the average resampled value.
 - The random-split comparison uses a different eligible cohort, so it is not an isolated estimate of temporal leakage.
 - Simulator reward models are oracle or deliberately misspecified. This is estimator validation, not reward-model learning.
-- Contextual BTS target-policy truth, online impact, neural models, approximate indexing, and historical point-in-time metadata remain unmeasured.
+- Contextual BTS target-policy truth, online impact, and historical point-in-time metadata remain unmeasured.
+- Two-tower and recurrent models use explicit NumPy training and finite sampled training pairs/sequences. Their losses are optimization diagnostics; held-out results and both shortcuts are reported even when these neural models lose.
 
 Data attribution: [Goodbooks-10k](https://github.com/zygmuntz/goodbooks-10k),
 Zygmunt Zając, CC BY-SA 4.0. Source revision:

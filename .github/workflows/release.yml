@@ -18,8 +18,11 @@ jobs:
           version: '0.8.22'
       - run: uv python install 3.12
       - run: uv sync --frozen
-      - run: uv run pytest
+      - run: uv run ruff check .
+      - run: uv run mypy
+      - run: uv run pytest --cov=packages --cov-branch --cov-fail-under=80
       - run: uv run python scripts/render_reports.py --check
+      - run: uv run python scripts/check_notebooks.py
       - name: Archive reviewable release evidence
         uses: actions/upload-artifact@v4
         with:
@@ -31,6 +34,6 @@ jobs:
             README.md
             RESULTS.md
             docs/
+            notebooks/
             web/public/data/
             web/public/downloads/
-

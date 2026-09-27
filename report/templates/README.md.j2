@@ -16,8 +16,8 @@ read the evidence behind model and off-policy estimates.
 The **{{ e.dataset.backend }}** backend evaluated {{ e.dataset.catalog_size | number(0) }}
 books and {{ e.dataset.evaluated_users | number(0) }} readers using
 **{{ e.protocol.name }}**. The source has no rating timestamps, so row order is
-a temporal proxy. These results apply to the recorded subset and its evaluated
-catalog; they are not a dated global backtest of the full source dataset.
+a temporal proxy. These results apply to the recorded eligible reader sample
+and its evaluated catalog; they are not a date-verified backtest.
 
 | Model | NDCG at ten with interval | Recall at two hundred with interval |
 | --- | --- | --- |
@@ -63,11 +63,22 @@ as a server exposure log.
 | {{ module.name }} | {{ module.status }} | {{ module.detail }} |
 {% endfor %}
 
-The model comparison uses popularity, item cosine, implicit ALS and a score
-blend. Neural two-tower training, LambdaMART, pgvector, and a recurrent session
-model are deferred. A blend is not a learned ranker. Public API provisioning and
-a live online uplift experiment remain outside this completed demonstration.
-See [scope decisions](DECISIONS.md) for differences from the originating brief.
+The measured models and additional experiments are listed above. The earlier
+bounded release is retained under `results/history/`; its scores must not be
+compared directly with the expanded population. A score blend and a learned
+ranker are identified separately. See [scope decisions](DECISIONS.md) for
+differences from the originating brief and the recorded deployment choices.
+
+## Skills demonstrated
+
+| Skill | Inspectable evidence |
+| --- | --- |
+| Ranking evaluation and comparison | [Protocol](docs/evaluation.md), [results](RESULTS.md), paired tests and shortcut diagnostics |
+| Learned and baseline models | [Model cards](report/cards/), recorded training artifacts and candidate-feature contract |
+| Counterfactual policy evaluation | [Six-file OBD benchmark](docs/ope-benchmark.md), simulator truth and pinned source crosscheck |
+| Serving and durable interactions | [Serving contract](docs/serving.md), independent-connection and subprocess tests |
+| Reproducibility and honest reporting | Strict document renderer, executed [notebooks](notebooks/), population labels |
+| Release verification | [CI workflow](.github/workflows/ci.yml), lint, strict types, branch coverage, browser tests and semantic palette checks |
 
 ## Reproduce and change it
 
@@ -76,8 +87,10 @@ against pinned upstream arithmetic methods. This is an explicitly scoped source
 reference check; it does not certify the full OBP package on this Python version.
 
 `uv run python scripts/build_evidence.py` downloads the declared sources and
-rebuilds the canonical manifest and browser artifacts. Then run
-`uv run python scripts/render_reports.py` and the checks above. This is a model
+rebuilds the core manifest and browser artifacts. Then run
+`uv run python scripts/build_neural_evidence.py`,
+`uv run python scripts/render_reports.py`,
+`uv run python scripts/build_notebooks.py` and the checks above. This is a model
 and evidence rebuild, not a live database reset. Review the
 [evaluation protocol](docs/evaluation.md), [runbook](docs/runbook.md),
 [architecture](ARCHITECTURE.md), and [contribution guide](CONTRIBUTING.md).

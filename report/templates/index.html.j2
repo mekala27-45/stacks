@@ -27,7 +27,7 @@
     {{ e.protocol.name }}. The source supplies no rating timestamps, so row ordering is a proxy.</p>
   <h2>Model comparison</h2>
   <div class="table"><table>
-    <thead><tr><th>Model</th><th>NDCG with interval</th><th>Retrieval recall with interval</th><th>Coverage with interval</th></tr></thead>
+    <thead><tr><th>Model</th><th>NDCG with interval</th><th>Retrieval recall with interval</th><th>Observed coverage and resampling range</th></tr></thead>
     <tbody>{% for row in e.metrics %}<tr><td>{{ row.label }}</td><td>{{ row.ndcg | estimate }}</td><td>{{ row.recall200 | estimate }}</td><td>{{ row.coverage | estimate }}</td></tr>{% endfor %}</tbody>
   </table></div>
   <p>Observed leader: <strong>{{ e.winner.observed }}</strong>.
