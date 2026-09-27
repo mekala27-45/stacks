@@ -1,0 +1,224 @@
+{
+  "status": "measured",
+  "evaluated_at": "2026-09-27T03:57:49.173184+00:00",
+  "latency_report": "results/latency-python-local.json",
+  "deployment_activation": false,
+  "decisions": [
+    {
+      "id": "53084981-5480-4fec-b631-1eab37f46ea6",
+      "candidate_version": "als-goodbooks-full-36eeb55d1ddd0268",
+      "gates": [
+        {
+          "name": "corrected_ndcg_improvement",
+          "passed": true,
+          "observed": {
+            "ndcg_lift_ci_low": 0.010113385958495393,
+            "ndcg_q_value": 0.00024000000000000003
+          },
+          "requirement": "Positive paired-bootstrap lift lower bound and BH-adjusted q <= 0.05"
+        },
+        {
+          "name": "recall_at_200",
+          "passed": false,
+          "observed": 0.2606654427702636,
+          "requirement": ">= 0.5 and <= 1"
+        },
+        {
+          "name": "coverage",
+          "passed": true,
+          "observed": 0.1149,
+          "requirement": ">= 0.1 and <= 1"
+        },
+        {
+          "name": "long_tail_share",
+          "passed": false,
+          "observed": 0.0013200000000000002,
+          "requirement": ">= 0.1 and <= 1"
+        },
+        {
+          "name": "calibration_divergence",
+          "passed": true,
+          "observed": 0.0978958389684623,
+          "requirement": ">= 0 and <= 0.25"
+        },
+        {
+          "name": "p99_latency_ms",
+          "passed": true,
+          "observed": 230.7575910142623,
+          "requirement": ">= 0 and <= 500.0"
+        },
+        {
+          "name": "feature_schema",
+          "passed": true,
+          "observed": "catalog-v1",
+          "requirement": "Exactly catalog-v1"
+        }
+      ],
+      "eligible": false,
+      "activated": false,
+      "statement": "These are demonstration recommendations on a public dataset; no real reader's identity is present and no recommendation is personalized to a real person.",
+      "evidence": {
+        "artifact_version": "goodbooks-full-36eeb55d1ddd0268",
+        "accuracy_protocol": {
+          "name": "Global source-order holdout, full catalog",
+          "split": "80/20 source-file order; timestamps unavailable",
+          "cutoff_row": 4781183,
+          "candidate_count": 10000,
+          "bootstrap_draws": 1000,
+          "confidence": 0.95,
+          "seed": 20260926,
+          "positive_threshold": 4,
+          "description": "All unseen catalog items ranked. Training ratings excluded. Paired user bootstrap and Benjamini-Hochberg correction. Source order is a proxy, not a date-validated temporal split."
+        },
+        "latency_backend": "live-api",
+        "latency_url": "http://127.0.0.1:8027",
+        "latency_report": "results\\latency-local.json",
+        "baseline": "popularity"
+      }
+    },
+    {
+      "id": "bd271817-8052-4cd4-81cd-1ab6fa27fc14",
+      "candidate_version": "blend-goodbooks-full-36eeb55d1ddd0268",
+      "gates": [
+        {
+          "name": "corrected_ndcg_improvement",
+          "passed": true,
+          "observed": {
+            "ndcg_lift_ci_low": 0.009832559944471117,
+            "ndcg_q_value": 0.00024000000000000003
+          },
+          "requirement": "Positive paired-bootstrap lift lower bound and BH-adjusted q <= 0.05"
+        },
+        {
+          "name": "recall_at_200",
+          "passed": false,
+          "observed": 0.2706557740087379,
+          "requirement": ">= 0.5 and <= 1"
+        },
+        {
+          "name": "coverage",
+          "passed": true,
+          "observed": 0.1804,
+          "requirement": ">= 0.1 and <= 1"
+        },
+        {
+          "name": "long_tail_share",
+          "passed": false,
+          "observed": 0.04172,
+          "requirement": ">= 0.1 and <= 1"
+        },
+        {
+          "name": "calibration_divergence",
+          "passed": true,
+          "observed": 0.11482899669971268,
+          "requirement": ">= 0 and <= 0.25"
+        },
+        {
+          "name": "p99_latency_ms",
+          "passed": true,
+          "observed": 230.7575910142623,
+          "requirement": ">= 0 and <= 500.0"
+        },
+        {
+          "name": "feature_schema",
+          "passed": true,
+          "observed": "catalog-v1",
+          "requirement": "Exactly catalog-v1"
+        }
+      ],
+      "eligible": false,
+      "activated": false,
+      "statement": "These are demonstration recommendations on a public dataset; no real reader's identity is present and no recommendation is personalized to a real person.",
+      "evidence": {
+        "artifact_version": "goodbooks-full-36eeb55d1ddd0268",
+        "accuracy_protocol": {
+          "name": "Global source-order holdout, full catalog",
+          "split": "80/20 source-file order; timestamps unavailable",
+          "cutoff_row": 4781183,
+          "candidate_count": 10000,
+          "bootstrap_draws": 1000,
+          "confidence": 0.95,
+          "seed": 20260926,
+          "positive_threshold": 4,
+          "description": "All unseen catalog items ranked. Training ratings excluded. Paired user bootstrap and Benjamini-Hochberg correction. Source order is a proxy, not a date-validated temporal split."
+        },
+        "latency_backend": "live-api",
+        "latency_url": "http://127.0.0.1:8027",
+        "latency_report": "results\\latency-local.json",
+        "baseline": "popularity"
+      }
+    },
+    {
+      "id": "f065e5b6-f82f-4594-8ea7-807d0d456487",
+      "candidate_version": "lambdamart-goodbooks-full-36eeb55d1ddd0268",
+      "gates": [
+        {
+          "name": "corrected_ndcg_improvement",
+          "passed": false,
+          "observed": {
+            "ndcg_lift_ci_low": -0.0007289754642434093,
+            "ndcg_q_value": 0.117225
+          },
+          "requirement": "Positive paired-bootstrap lift lower bound and BH-adjusted q <= 0.05"
+        },
+        {
+          "name": "recall_at_200",
+          "passed": false,
+          "observed": 0.21538888699135833,
+          "requirement": ">= 0.5 and <= 1"
+        },
+        {
+          "name": "coverage",
+          "passed": true,
+          "observed": 0.2721,
+          "requirement": ">= 0.1 and <= 1"
+        },
+        {
+          "name": "long_tail_share",
+          "passed": true,
+          "observed": 0.6091799999999999,
+          "requirement": ">= 0.1 and <= 1"
+        },
+        {
+          "name": "calibration_divergence",
+          "passed": true,
+          "observed": 0.12898835579111742,
+          "requirement": ">= 0 and <= 0.25"
+        },
+        {
+          "name": "p99_latency_ms",
+          "passed": true,
+          "observed": 230.7575910142623,
+          "requirement": ">= 0 and <= 500.0"
+        },
+        {
+          "name": "feature_schema",
+          "passed": true,
+          "observed": "catalog-v1",
+          "requirement": "Exactly catalog-v1"
+        }
+      ],
+      "eligible": false,
+      "activated": false,
+      "statement": "These are demonstration recommendations on a public dataset; no real reader's identity is present and no recommendation is personalized to a real person.",
+      "evidence": {
+        "artifact_version": "goodbooks-full-36eeb55d1ddd0268",
+        "accuracy_protocol": {
+          "name": "Global source-order holdout, full catalog",
+          "split": "80/20 source-file order; timestamps unavailable",
+          "cutoff_row": 4781183,
+          "candidate_count": 10000,
+          "bootstrap_draws": 1000,
+          "confidence": 0.95,
+          "seed": 20260926,
+          "positive_threshold": 4,
+          "description": "All unseen catalog items ranked. Training ratings excluded. Paired user bootstrap and Benjamini-Hochberg correction. Source order is a proxy, not a date-validated temporal split."
+        },
+        "latency_backend": "live-api",
+        "latency_url": "http://127.0.0.1:8027",
+        "latency_report": "results\\latency-local.json",
+        "baseline": "popularity"
+      }
+    }
+  ]
+}

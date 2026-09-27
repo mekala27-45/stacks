@@ -2,7 +2,7 @@
 
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, ClassVar
+from typing import Any
 
 from sqlalchemy import (
     JSON,
@@ -38,7 +38,15 @@ class SessionRecord(Base):
     history: Mapped[list[str]] = mapped_column(JSON, default=list)
     revision: Mapped[int] = mapped_column(Integer, default=0)
     latest_shelf: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
-    __mapper_args__: ClassVar[dict[str, Any]] = {"version_id_col": revision, "version_id_generator": False}
+    __mapper_args__ = {"version_id_col": revision, "version_id_generator": False}  # noqa: RUF012
+
+
+class SessionContext(Base):
+    __tablename__ = "session_context"
+    session_hash: Mapped[str] = mapped_column(ForeignKey("sessions.session_hash"), primary_key=True)
+    reader_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    seen: Mapped[list[str]] = mapped_column(JSON, default=list)
+    genre: Mapped[str] = mapped_column(String(80), default="All books")
 
 
 class Impression(Base):

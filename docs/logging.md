@@ -2,7 +2,7 @@
 
 These are demonstration recommendations on a public dataset; no real reader's identity is present and no recommendation is personalized to a real person.
 
-The exposure schema is defined in `packages/api/database.py`. SQLite is the local default. The same SQLAlchemy models accept a PostgreSQL connection URL with the psycopg driver. SQLite persistence is tested through a new engine and through an independent process. PostgreSQL is supported by the implementation but has not been exercised against a provisioned database in this release.
+The reference exposure schema is defined in `packages/api/database.py`. SQLite is the local default; SQLAlchemy also accepts PostgreSQL with psycopg. The portable deployed schema is `packages/edge/schema.sql`, using D1. Reference SQLite persistence is tested through a new engine and through an independent process. Edge tests run the SQL transactions against SQLite, and deployment verification must separately confirm D1 persistence. PostgreSQL support is not a claim that a PostgreSQL project was provisioned.
 
 ## Records
 
@@ -23,16 +23,18 @@ The session token appears in the stream URL because browser EventSource cannot s
 
 ## Assignment and propensities
 
-Assignment hashes the experiment ID with the hashed session into either `baseline` or `diverse`; the arm is stored with every exposure. The baseline arm serves training popularity. The diverse arm serves a popularity and item-cosine blend followed by business rules, MMR, and calibration. Both arms reserve the final shelf position for exploration. This shell does not estimate or claim online lift.
+Assignment hashes the experiment ID with the hashed session into `als` or `blend`; the arm is stored with every exposure. These are the evaluated frozen artifacts. Public reader initialization uses saved factors and complete training exclusions. Later events use explicitly labeled frozen-item-factor fold-in. Both arms reserve the final position for uniform exploration after business rules. The live deterministic prefix preserves scorer order; MMR and calibration remain separate offline diagnostics. This assignment shell does not claim online lift.
 
 The deterministic prefix is fixed before exploration and each prefix impression records conditional probability one. The exploration pool is the first eligible candidates remaining after all prefix items have been removed and the author cap applied. The pool is fixed for that request, stored verbatim with the impression, and the draw is uniform. Its probability is exactly the reciprocal of the pool size. If the pool is empty, no exploration impression is invented. Assignment probability and action propensity are separate quantities.
 
-These are conditional **item probabilities at a position**, not joint slate propensities. Deterministic positions provide support only for the chosen action. Off-policy evaluation of alternative actions must use exploration rows and restrict target-policy support to the logged pool. Do not treat an unobserved click as a mature negative without a feedback window. A click on an earlier shelf remains attached to its original impression and can arrive after subsequent shelves.
+These are conditional **item probabilities at a position**, not joint slate propensities. Deterministic positions provide support only for the chosen action. The own-log endpoint uses exploration rows and the stored target distribution, which mixes the best remaining scored candidate with uniform exploration. Click reward is defined by the immutable horizon in the trace. Pending impressions are censored; late feedback persists but does not change that reward. A click on an earlier shelf remains attached to its original impression and can arrive after subsequent shelves. Saves and ratings do not count as clicks.
 
-The compatible Open Bandit field mapping is `item_id -> action`, `position - 1 -> position`, click event within a stated maturation window `-> reward`, and `propensity -> pscore`. Context includes the hashed session, experiment, model, and the candidate pool. No automatic join that treats missing delayed feedback as zero is supplied.
+Synthetic verification sessions set `traffic_kind` to `load_test`. The flag persists in the shelf and exposure trace and excludes these rows from OPE, position CTR, coverage and shadow monitoring. They remain available in the owning session's export. The default interactive mode does not make a claim that a visitor represents the broader reader population.
+
+The compatible Open Bandit field mapping is `item_id -> action`, `position - 1 -> position`, click within the fixed horizon `-> reward`, and `propensity -> pscore`. Context includes the hashed session, experiment, model, and candidate pool. Only after the horizon ends does a missing click become a zero reward. Support and the target distribution are validated before estimation.
 
 ## Persistence verification
 
-Run `python -m pytest tests/test_api.py tests/test_registry.py`. The tests open a real HTTP API in a subprocess, create a session, read an SSE event, send clicks, and then inspect committed sessions, exposures, and feedback using a separate Python process and database engine. In-process tests verify foreign keys, position and propensity checks, ownership, timestamps, experiment assignment, and SSE replay without duplicate exposure writes.
+Run `python -m pytest tests/test_api.py tests/test_registry.py` and `node --test packages/edge/test-worker.mjs`. The Python tests open a real HTTP API in a subprocess, create a session, read SSE, send clicks, then inspect committed records from a separate process and engine. Edge tests exercise the D1-shaped SQL API, ownership, atomic snapshots, resume, SSE, bounded uploads, horizon censoring, support validation, and all exported reader scoring fixtures. Both verify that replay creates no additional impressions.
 
 For a disposable local reset, stop the API and remove only `.runtime/stacks.db`. This also deletes sessions and registry audits. Never reset a production database with this development procedure.

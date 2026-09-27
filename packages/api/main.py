@@ -28,15 +28,17 @@ from packages.api.database import (
     Feedback,
     Impression,
     RegistryDecision,
+    SessionContext,
     SessionRecord,
     create_database,
     utcnow,
 )
+from packages.api.ope import REWARD_HORIZON_SECONDS, TARGET_POLICY, evaluate_logs
 from packages.registry import evaluate_gates
 from packages.rerank import rerank
 
 STATEMENT = "These are demonstration recommendations on a public dataset; no real reader's identity is present and no recommendation is personalized to a real person."
-EXPERIMENT = "shelf-diversity-v1"
+EXPERIMENT = "evaluated-als-blend-v2"
 LOGGER = logging.getLogger("stacks.api")
 
 
@@ -46,6 +48,12 @@ class StrictModel(BaseModel):
 
 class SessionCreate(StrictModel):
     reader_id: str | None = Field(default=None, max_length=64)
+    genre: str = Field(default="All books", max_length=80)
+    traffic_kind: Literal["interactive", "load_test"] = "interactive"
+
+
+class Preferences(StrictModel):
+    genre: str = Field(max_length=80)
 
 
 class EventRequest(StrictModel):
@@ -75,7 +83,7 @@ def session_hash(token: str, key: str) -> str:
 
 def assign_arm(hashed_session: str) -> str:
     digest = hashlib.sha256(f"{EXPERIMENT}:{hashed_session}".encode()).digest()
-    return "baseline" if int.from_bytes(digest[:8], "big") % 100 < 50 else "diverse"
+    return "als" if int.from_bytes(digest[:8], "big") % 100 < 50 else "blend"
 
 
 def create_app(
@@ -86,16 +94,22 @@ def create_app(
         CORSMiddleware,
         allow_origins=[
             origin.strip()
-            for origin in os.getenv("CORS_ORIGINS", "http://localhost:3010,http://localhost:5173,http://localhost:3000").split(",")
+            for origin in os.getenv(
+                "CORS_ORIGINS", "http://localhost:3010,http://localhost:5173,http://localhost:3000"
+            ).split(",")
             if origin.strip()
         ],
         allow_methods=["GET", "POST"],
         allow_headers=["Content-Type", "X-Admin-Token", "Last-Event-ID"],
     )
-    engine = create_database(database_url or os.getenv("DATABASE_URL", "sqlite:///./.runtime/stacks.db"))
-    key = hash_key or os.getenv("SESSION_HASH_KEY", "stacks-local-development-only")
+    engine = create_database(
+        database_url or os.environ.get("DATABASE_URL") or "sqlite:///./.runtime/stacks.db"
+    )
+    key = hash_key or os.environ.get("SESSION_HASH_KEY") or "stacks-local-development-only"
     directory = Path(
-        data_dir or os.getenv("STACKS_DATA_DIR", str(Path(__file__).resolve().parents[2] / "web/public/data"))
+        data_dir
+        or os.environ.get("STACKS_DATA_DIR")
+        or str(Path(__file__).resolve().parents[2] / "web/public/data")
     )
     application.state.engine = engine
     application.state.data_dir = directory
@@ -106,7 +120,9 @@ def create_app(
 
     @application.exception_handler(StaleDataError)
     async def concurrent_session_change(_: Request, __: StaleDataError) -> JSONResponse:
-        return JSONResponse(status_code=409, content={"detail": "Session changed concurrently; retry this request"})
+        return JSONResponse(
+            status_code=409, content={"detail": "Session changed concurrently; retry this request"}
+        )
 
     @application.exception_handler(IntegrityError)
     async def integrity_conflict(_: Request, __: IntegrityError) -> JSONResponse:
@@ -122,7 +138,9 @@ def create_app(
             async for chunk in request.stream():
                 body.extend(chunk)
                 if len(body) > 32768:
-                    return JSONResponse(status_code=413, content={"detail": "Demo request body limit exceeded"})
+                    return JSONResponse(
+                        status_code=413, content={"detail": "Demo request body limit exceeded"}
+                    )
             request._body = bytes(body)
         return await call_next(request)
 
@@ -170,22 +188,32 @@ def create_app(
             raise HTTPException(404, "Session not found")
         return record
 
-    def create_session(db: Session, reader_id: str | None = None) -> tuple[str, SessionRecord]:
+    def create_session(
+        db: Session, reader_id: str | None = None, genre: str = "All books"
+    ) -> tuple[str, SessionRecord]:
         source = catalog()
         if reader_id is not None and reader_id not in source.readers:
             raise HTTPException(404, "Public sample reader not found")
         if (db.scalar(select(func.count()).select_from(SessionRecord)) or 0) >= 5000:
             raise HTTPException(429, "Demo session storage limit reached")
+        if genre != "All books" and not any(item["genre"] == genre for item in source.items.values()):
+            raise HTTPException(422, "Unknown genre")
         token = secrets.token_urlsafe(32)
         hashed = session_hash(token, key)
         record = SessionRecord(
             session_hash=hashed,
             arm=assign_arm(hashed),
-            history=list(source.readers.get(reader_id or "", [])),
+            history=source.reader_history(reader_id),
             revision=0,
             latest_shelf={},
         )
         db.add(record)
+        db.flush()
+        db.add(
+            SessionContext(
+                session_hash=hashed, reader_id=reader_id, seen=source.reader_seen(reader_id), genre=genre
+            )
+        )
         db.flush()
         return token, record
 
@@ -202,11 +230,19 @@ def create_app(
         if exposure_count + limit > 1000:
             raise HTTPException(429, "This demo session reached its impression storage limit")
         source = catalog()
-        is_baseline = record.arm == "baseline"
-        model = "popularity-v1" if is_baseline else "popularity-cosine-blend-v1"
-        seen = set(record.history)
-        scored = source.score(record.history, baseline=is_baseline)
-        eligible = [item for item in scored if item["id"] not in seen and item.get("available", True)]
+        model_name = "als" if record.arm == "als" else "blend"
+        model = f"{model_name}:{source.artifact_version}"
+        context = db.get(SessionContext, record.session_hash)
+        seen = set(context.seen if context else record.history)
+        genre = context.genre if context else "All books"
+        scored, mode = source.score(record.history, model_name, context.reader_id if context else None)
+        eligible = [
+            item
+            for item in scored
+            if item["id"] not in seen
+            and item.get("available", True)
+            and (genre == "All books" or item["genre"] == genre)
+        ]
         candidates = eligible[:200]
         history = [source.items[item_id] for item_id in record.history if item_id in source.items]
         selected, rerank_trace, ruled = rerank(
@@ -214,15 +250,16 @@ def create_app(
             seen,
             history,
             max(0, limit - 1),
-            0.0 if is_baseline else 0.25,
-            0.0 if is_baseline else 0.2,
+            0.0,
+            0.0,
         )
         selected_ids = {item["id"] for item in selected}
         exploration_pool = [item for item in ruled if item["id"] not in selected_ids][:20]
         exploration = secrets.choice(exploration_pool) if exploration_pool else None
         if exploration is not None:
             selected.append(exploration)
-        shadow = source.score(record.history, baseline=not is_baseline)
+        shadow_name = "blend" if model_name == "als" else "als"
+        shadow, _ = source.score(record.history, shadow_name, context.reader_id if context else None)
         shadow_ids = [item["id"] for item in shadow if item["id"] not in seen][:limit]
         disagreement = 1.0 - len(set(shadow_ids) & {item["id"] for item in selected}) / max(len(selected), 1)
         response_items = []
@@ -232,8 +269,9 @@ def create_app(
             propensity = 1 / len(pool_ids) if exploring else 1.0
             impression_id = str(uuid.uuid4())
             trace = {
+                "traffic_kind": record.latest_shelf.get("traffic_kind", "interactive"),
                 "retrieval": {
-                    "backend": "committed-item-cosine-and-training-popularity",
+                    "backend": "evaluated-artifacts",
                     "candidate_count": len(candidates),
                     "top_candidates": [{"id": row["id"], "score": row["score"]} for row in candidates[:12]],
                 },
@@ -242,10 +280,10 @@ def create_app(
                     "score": item["score"],
                     "features": item["scores"],
                     "source_item_id": item["source_item_id"],
-                    "weights": {
-                        "popularity": 1.0 if is_baseline or not history else 0.3,
-                        "item_cosine": 0.0 if is_baseline or not history else 0.7,
-                    },
+                    "weights": {"item_cosine": 0.55, "als": 0.35, "popularity": 0.10}
+                    if model_name == "blend"
+                    else {"als": 1.0},
+                    "scoring_mode": mode,
                 },
                 "reranking": rerank_trace,
                 "exploration": {
@@ -253,10 +291,16 @@ def create_app(
                     "policy": "uniform" if exploring else "deterministic",
                     "candidate_pool": pool_ids,
                     "propensity": propensity,
+                    "target_policy": TARGET_POLICY,
+                    "target_probabilities": [
+                        0.2 / len(pool_ids) + (0.8 if index == 0 else 0) for index in range(len(pool_ids))
+                    ],
+                    "reward_model": [0.05] * len(pool_ids),
+                    "reward_horizon_seconds": REWARD_HORIZON_SECONDS,
                     "support": "conditional item probability at this position",
                 },
                 "shadow": {
-                    "model_version": "popularity-cosine-blend-v1" if is_baseline else "popularity-v1",
+                    "model_version": f"{shadow_name}:{source.artifact_version}",
                     "top_ids": shadow_ids,
                     "top_scores": [
                         {"id": row["id"], "score": row["score"]} for row in shadow if row["id"] in shadow_ids
@@ -302,6 +346,12 @@ def create_app(
         record.revision += 1
         record.updated_at = utcnow()
         result = {
+            "traffic_kind": record.latest_shelf.get("traffic_kind", "interactive"),
+            "schema_version": "1.1",
+            "artifact_version": source.artifact_version,
+            "scoring_mode": mode,
+            "history": record.history,
+            "genre": genre,
             "revision": record.revision,
             "model_version": model,
             "arm": record.arm,
@@ -341,8 +391,11 @@ def create_app(
             id=str(uuid.uuid4()), impression_id=event.impression_id, event=event.event, rating=event.rating
         )
         db.add(feedback)
+        context = db.get(SessionContext, record.session_hash)
+        if context is not None:
+            context.seen = list(dict.fromkeys([*context.seen, impression.item_id]))
         if event.event != "rating" or (event.rating is not None and event.rating >= 4):
-            record.history = [*record.history, impression.item_id][-200:]
+            record.history = list(dict.fromkeys([*record.history, impression.item_id]))
         db.flush()
         return feedback
 
@@ -367,10 +420,107 @@ def create_app(
     def open_session(body: SessionCreate, request: Request) -> dict[str, Any]:
         limited(request)
         with write_lock, Session(engine) as db:
-            token, record = create_session(db, body.reader_id)
+            token, record = create_session(db, body.reader_id, body.genre)
+            record.latest_shelf = {"traffic_kind": body.traffic_kind}
             shelf = make_shelf(db, record)
             db.commit()
             return {"session_id": token, **shelf}
+
+    @application.get("/v1/session/{token}")
+    def resume_session(token: str, request: Request) -> dict[str, Any]:
+        limited(request, False)
+        with Session(engine) as db:
+            record = get_session(db, token)
+            return {"session_id": token, **record.latest_shelf}
+
+    @application.post("/v1/session/{token}/preferences")
+    def preferences(token: str, body: Preferences, request: Request) -> dict[str, Any]:
+        limited(request)
+        if body.genre != "All books" and not any(
+            item["genre"] == body.genre for item in catalog().items.values()
+        ):
+            raise HTTPException(422, "Unknown genre")
+        with write_lock, Session(engine) as db:
+            record = get_session(db, token)
+            context = db.get(SessionContext, record.session_hash)
+            if context is None:
+                context = SessionContext(
+                    session_hash=record.session_hash, reader_id=None, seen=record.history
+                )
+                db.add(context)
+            context.genre = body.genre
+            db.flush()
+            shelf = make_shelf(db, record)
+            db.commit()
+            return {"session_id": token, **shelf}
+
+    @application.get("/v1/session/{token}/logs")
+    def session_logs(token: str, request: Request) -> dict[str, Any]:
+        limited(request, False)
+        with Session(engine) as db:
+            record = get_session(db, token)
+            impressions = list(
+                db.scalars(select(Impression).where(Impression.session_hash == record.session_hash))
+            )
+            feedback = list(
+                db.scalars(
+                    select(Feedback).join(Impression).where(Impression.session_hash == record.session_hash)
+                )
+            )
+            return {
+                "schema_version": "1.1",
+                "impressions": [
+                    {
+                        "id": row.id,
+                        "item_id": row.item_id,
+                        "position": row.position,
+                        "propensity": row.propensity,
+                        "arm": row.arm,
+                        "model_version": row.model_version,
+                        "impression_at": row.impression_at.isoformat(),
+                        "policy": row.policy,
+                        "candidate_pool": row.candidate_pool,
+                        "trace": row.trace,
+                    }
+                    for row in impressions
+                ],
+                "feedback": [
+                    {
+                        "id": row.id,
+                        "impression_id": row.impression_id,
+                        "event": row.event,
+                        "rating": row.rating,
+                        "feedback_at": row.feedback_at.isoformat(),
+                    }
+                    for row in feedback
+                ],
+                "statement": STATEMENT,
+            }
+
+    @application.get("/v1/session/{token}/ope")
+    def session_ope(token: str, request: Request) -> dict[str, Any]:
+        limited(request, False)
+        with Session(engine) as db:
+            record = get_session(db, token)
+            impressions = list(
+                db.scalars(select(Impression).where(Impression.session_hash == record.session_hash))
+            )
+            feedback = list(
+                db.scalars(
+                    select(Feedback).join(Impression).where(Impression.session_hash == record.session_hash)
+                )
+            )
+            return {**evaluate_logs(impressions, feedback), "statement": STATEMENT}
+
+    @application.get("/v1/ope")
+    def global_ope(request: Request) -> dict[str, Any]:
+        limited(request, False)
+        with Session(engine) as db:
+            impressions = list(
+                db.scalars(select(Impression).order_by(Impression.impression_at.desc()).limit(10000))
+            )
+            feedback = list(db.scalars(select(Feedback).order_by(Feedback.feedback_at.desc()).limit(30000)))
+            return {**evaluate_logs(impressions, feedback), "statement": STATEMENT}
 
     @application.get("/v1/recommend/{user_id}")
     def recommend(
@@ -453,7 +603,7 @@ def create_app(
         source = catalog()
         if item_id not in source.items:
             raise HTTPException(404, "Item not found")
-        rows = sorted(source.similarities.get(item_id, {}).items(), key=lambda row: (-row[1], row[0]))[:limit]
+        rows = sorted(source.neighbors(item_id).items(), key=lambda row: (-row[1], row[0]))[:limit]
         return {
             "items": [
                 {**source.items[identifier], "score": score}
@@ -540,19 +690,148 @@ def create_app(
             db.commit()
         return result
 
+    @application.get("/v1/registry")
+    def registry_read(request: Request) -> dict[str, Any]:
+        limited(request, False)
+        with Session(engine) as db:
+            rows = list(
+                db.scalars(select(RegistryDecision).order_by(RegistryDecision.evaluated_at.desc()).limit(30))
+            )
+            return {
+                "artifact_version": catalog().artifact_version,
+                "decisions": [
+                    {
+                        "id": row.id,
+                        "candidate_version": row.candidate_version,
+                        "evaluated_at": row.evaluated_at.isoformat(),
+                        "eligible": row.eligible,
+                        "gates": row.gates,
+                    }
+                    for row in rows
+                ],
+                "activation_available": False,
+                "statement": STATEMENT,
+            }
+
+    @application.post("/v1/registry/check/{candidate}", status_code=201)
+    def registry_check(
+        candidate: str, request: Request, x_admin_token: Annotated[str | None, Header()] = None
+    ) -> dict[str, Any]:
+        require_admin(x_admin_token)
+        source = catalog()
+        manifest_path = source.artifacts / "manifest.json"
+        evidence = json.loads(manifest_path.read_text(encoding="utf-8")) if manifest_path.exists() else {}
+        row = next((item for item in evidence.get("metrics", []) if item.get("model") == candidate), None)
+        if row is None:
+            raise HTTPException(404, "Candidate has no measured artifact evidence")
+        pair: dict[str, Any] = next(
+            (
+                comparison
+                for comparison in evidence.get("comparisons", [])
+                if {comparison.get("left"), comparison.get("right")} == {"popularity", candidate}
+            ),
+            {},
+        )
+        difference = pair.get("difference", {})
+        lift = (
+            difference.get("low")
+            if pair.get("left") == candidate
+            else -difference["high"]
+            if "high" in difference
+            else None
+        )
+        latency_path = Path(os.environ.get("STACKS_LATENCY_REPORT") or str(source.artifacts / "latency.json"))
+        latency = json.loads(latency_path.read_text(encoding="utf-8")) if latency_path.exists() else {}
+        metrics = {
+            "ndcg_lift_ci_low": lift,
+            "ndcg_q_value": pair.get("q"),
+            "recall_at_200": row["recall200"]["mean"],
+            "coverage": row.get("observed_coverage", row["coverage"]["mean"]),
+            "long_tail_share": row["long_tail_share"]["mean"],
+            "calibration_divergence": row["calibration"]["mean"],
+            "p99_latency_ms": latency.get("p99_ms"),
+            "feature_schema": "catalog-v1",
+        }
+        result = registry_evaluate(
+            RegistryRequest(candidate_version=f"{candidate}-{source.artifact_version}", metrics=metrics),
+            request,
+            x_admin_token,
+        )
+        result["evidence"] = {
+            "artifact_version": source.artifact_version,
+            "accuracy_protocol": evidence.get("protocol", {}),
+            "latency_backend": latency.get("backend"),
+            "latency_url": latency.get("url"),
+            "latency_report": str(latency_path),
+            "baseline": "popularity",
+        }
+        return result
+
     @application.get("/v1/monitoring")
     def monitoring(request: Request, x_admin_token: Annotated[str | None, Header()] = None) -> dict[str, Any]:
         require_admin(x_admin_token)
         limited(request, False)
         with Session(engine) as db:
-            impressions = db.scalar(select(func.count()).select_from(Impression)) or 0
-            feedback = db.scalar(select(func.count()).select_from(Feedback)) or 0
+            exposures = list(
+                db.scalars(select(Impression).order_by(Impression.impression_at.desc()).limit(10000))
+            )
+            events = list(db.scalars(select(Feedback).order_by(Feedback.feedback_at.desc()).limit(30000)))
+            total_exposures = len(exposures)
+            exposures = [row for row in exposures if row.trace.get("traffic_kind") != "load_test"]
+            exposure_ids = {row.id for row in exposures}
+            events = [row for row in events if row.impression_id in exposure_ids]
+            from packages.api.ope import as_utc
+
+            now = utcnow()
+            positions = []
+            for position in sorted({row.position for row in exposures}):
+                mature = [
+                    row
+                    for row in exposures
+                    if row.position == position
+                    and (now - as_utc(row.impression_at)).total_seconds() >= REWARD_HORIZON_SECONDS
+                ]
+                clicks = sum(
+                    any(
+                        event.impression_id == row.id
+                        and event.event == "click"
+                        and 0
+                        <= (as_utc(event.feedback_at) - as_utc(row.impression_at)).total_seconds()
+                        <= REWARD_HORIZON_SECONDS
+                        for event in events
+                    )
+                    for row in mature
+                )
+                positions.append(
+                    {
+                        "position": position,
+                        "matured_impressions": len(mature),
+                        "clicks": clicks,
+                        "click_rate": clicks / len(mature) if mature else None,
+                    }
+                )
+            disagreements = [
+                float(row.trace["shadow"]["set_disagreement"])
+                for row in exposures
+                if row.position == 1 and "shadow" in row.trace
+            ]
             return {
-                "impressions": impressions,
-                "feedback_events": feedback,
+                "impressions": len(exposures),
+                "feedback_events": len(events),
+                "load_test_impressions_excluded": total_exposures - len(exposures),
+                "window": "Interactive traffic within the latest 10000 persisted impressions",
+                "by_position": positions,
+                "coverage_items": len({row.item_id for row in exposures}),
+                "shadow": {
+                    "measured_shelves": len(disagreements),
+                    "mean_set_disagreement": sum(disagreements) / len(disagreements)
+                    if disagreements
+                    else None,
+                },
+                "ope": evaluate_logs(exposures, events),
                 "backend": engine.dialect.name,
                 "online_lift": None,
-                "note": "Counts only. No online effectiveness or causal lift is claimed.",
+                "note": "Position CTR is observational and reflects position bias. No online lift is claimed.",
                 "statement": STATEMENT,
             }
 

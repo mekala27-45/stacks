@@ -4,15 +4,19 @@ import socket
 import subprocess
 import sys
 import time
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 import httpx
+import numpy as np
 import pytest
 from fastapi.testclient import TestClient
+from scipy.sparse import csr_matrix, save_npz
 from sqlalchemy import create_engine, func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from packages.api.catalog import Catalog
 from packages.api.database import Feedback, Impression, SessionRecord
 from packages.api.main import assign_arm, create_app, session_hash
 from packages.rerank import calibration_divergence, diversity, mmr, rerank
@@ -46,6 +50,29 @@ def bundle(tmp_path):
         "readers": [{"id": "1", "history": ["1", "2", "3"]}],
     }.items():
         (tmp_path / f"{name}.json").write_text(json.dumps(content), encoding="utf-8")
+    artifacts = tmp_path / "artifacts"
+    artifacts.mkdir()
+    positive = np.zeros((2, 40), dtype=np.float32)
+    positive[0, :3] = 1
+    positive[1, 3:] = 1
+    matrix = csr_matrix(positive)
+    seen = positive.copy()
+    seen[0, 3] = 1
+    rng = np.random.default_rng(52)
+    np.savez_compressed(
+        artifacts / "model-artifacts.npz",
+        popularity=np.asarray(matrix.sum(axis=0)).ravel(),
+        user_factors=rng.random((2, 3)).astype(np.float32),
+        item_factors=rng.random((40, 3)).astype(np.float32),
+        user_ids=np.array([1, 2]),
+        catalog_ids=np.arange(1, 41),
+    )
+    save_npz(artifacts / "train-positive.npz", matrix)
+    save_npz(artifacts / "train-seen.npz", csr_matrix(seen))
+    cosine = rng.random((40, 40)).astype(np.float32)
+    np.fill_diagonal(cosine, 0)
+    save_npz(artifacts / "cosine.npz", csr_matrix(cosine))
+    save_npz(artifacts / "content-vectors.npz", csr_matrix(rng.random((40, 3))))
     return tmp_path
 
 
@@ -230,6 +257,112 @@ def test_reranking_contracts():
     assert "0" not in {item["id"] for item in result}
     assert trace["calibration"]["after"] <= trace["calibration"]["before"] + 1e-12
     assert calibration_divergence(history, history) == 0
+
+
+def test_served_artifact_scores_match_shared_evaluation_scorer(bundle):
+    source = Catalog(bundle)
+    history = source.reader_history("1")
+    expected = source.bundle.score(source.user_indices["1"])
+    for model in ("als", "blend", "popularity", "item_cosine"):
+        rows, mode = source.score(history, model, "1")
+        assert mode == "evaluated-reader-exact"
+        for row in rows:
+            assert row["score"] == float(expected[model][source.indices[row["id"]]])
+    rows, mode = source.score([*history, "5"], "blend", "1")
+    assert mode == "frozen-item-factor-session-fold-in"
+    assert set(source.reader_seen("1")) == {"1", "2", "3", "4"}
+
+
+def test_resume_preferences_durable_logs_and_load_traffic_exclusion(service):
+    client, _ = service
+    shelf = client.post("/v1/session", json={"reader_id": "1", "traffic_kind": "load_test"}).json()
+    token = shelf["session_id"]
+    assert client.get(f"/v1/session/{token}").json()["revision"] == 1
+    response = client.post(f"/v1/session/{token}/preferences", json={"genre": "fiction"})
+    assert response.status_code == 200
+    assert all(item["genre"] == "fiction" for item in response.json()["items"])
+    logs = client.get(f"/v1/session/{token}/logs").json()
+    assert len(logs["impressions"]) == 20
+    assert all(
+        "session_hash" not in row and row["trace"]["traffic_kind"] == "load_test"
+        for row in logs["impressions"]
+    )
+    ope = client.get(f"/v1/session/{token}/ope").json()
+    assert ope["load_test_excluded"] == 2 and ope["pending"] == 0 and ope["matured"] == 0
+    assert client.get("/v1/ope").json()["load_test_excluded"] == 2
+    assert client.post(f"/v1/session/{token}/preferences", json={"genre": "missing"}).status_code == 422
+
+
+def test_owned_matured_exploration_logs_use_fixed_click_horizon(service):
+    client, url = service
+    shelf = open_session(client)
+    token = shelf["session_id"]
+    item = shelf["items"][-1]
+    assert client.get(f"/v1/session/{token}/ope").json()["pending"] == 1
+    assert (
+        client.post(
+            f"/v1/session/{token}/event", json={"impression_id": item["impression_id"], "event": "click"}
+        ).status_code
+        == 200
+    )
+    independent = create_engine(url)
+    now = datetime.now(UTC)
+    with Session(independent) as db:
+        impression = db.get(Impression, item["impression_id"])
+        impression.impression_at = now - timedelta(seconds=70)
+        feedback = db.scalar(select(Feedback).where(Feedback.impression_id == impression.id))
+        feedback.feedback_at = now - timedelta(seconds=20)
+        db.commit()
+    result = client.get(f"/v1/session/{token}/ope").json()
+    assert result["status"] == "measured" and result["matured"] == 1 and result["pending"] == 1
+    assert result["full_slate_identified"] is False
+    target = item["trace"]["exploration"]["target_probabilities"][
+        item["trace"]["exploration"]["candidate_pool"].index(item["id"])
+    ]
+    assert result["estimates"]["IPS"]["mean"] == pytest.approx(target / item["propensity"])
+    assert result["estimates"]["SNIPS"]["mean"] == 1
+    with Session(independent) as db:
+        feedback = db.scalar(select(Feedback))
+        feedback.feedback_at = now
+        db.commit()
+    late = client.get(f"/v1/session/{token}/ope").json()
+    assert late["late_feedback_ignored"] == 1 and late["estimates"]["IPS"]["mean"] == 0
+    monitoring = client.get("/v1/monitoring", headers={"X-Admin-Token": "test-administrator"}).json()
+    assert monitoring["shadow"]["measured_shelves"] == 2
+    assert len(monitoring["by_position"]) == 10
+    independent.dispose()
+
+
+def test_registry_check_uses_local_evidence_and_measured_latency(service, bundle):
+    client, _ = service
+    metrics = {
+        "model": "als",
+        "recall200": {"mean": 0.8},
+        "coverage": {"mean": 0.5},
+        "long_tail_share": {"mean": 0.4},
+        "calibration": {"mean": 0.1},
+    }
+    (bundle / "artifacts" / "manifest.json").write_text(
+        json.dumps(
+            {
+                "metrics": [metrics],
+                "comparisons": [
+                    {
+                        "left": "als",
+                        "right": "popularity",
+                        "difference": {"low": 0.01, "high": 0.1},
+                        "q": 0.01,
+                    }
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+    (bundle / "artifacts" / "latency.json").write_text(json.dumps({"p99_ms": 100}), encoding="utf-8")
+    response = client.post("/v1/registry/check/als", headers={"X-Admin-Token": "test-administrator"})
+    assert response.status_code == 201, response.text
+    assert response.json()["eligible"] is True and response.json()["activated"] is False
+    assert len(client.get("/v1/registry").json()["decisions"]) == 1
 
 
 def test_out_of_process_api_session_stream_and_database_read(bundle, tmp_path):

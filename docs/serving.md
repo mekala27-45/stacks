@@ -1,52 +1,68 @@
-# Serving the demonstration
+# Serving the evaluated artifacts
 
 These are demonstration recommendations on a public dataset; no real reader's identity is present and no recommendation is personalized to a real person.
 
-The published browser application uses the committed bundle by default. The FastAPI service is executable locally and packaged for deployment, but no remote API or database is provisioned by this repository. Set the frontend's API configuration only after deploying and verifying a backend. Browser-only interactions are not durable API exposures.
+The portable Fetch handler in `packages/edge/worker.ts` serves evaluated ALS and fixed-blend artifacts with durable D1 sessions and exposure logs. GitHub Pages remains the frontend and its committed bundle remains the fallback. The FastAPI implementation is the Python reference service. Deployment verification and the current public URL belong in the release report; the existence of a Fly configuration alone does not establish a deployment.
 
-## Start
+## Artifact parity
 
-Install the locked Python environment with `uv sync`. After generating the data bundle, run:
+Both implementations read the evaluation run's frozen factors, training popularity and sparse item-cosine index. The fixed blend uses the same normalized component weights as evaluation: cosine, ALS and popularity. Initial public-reader requests use the saved user factors and complete positive training history. Every observed training item, including disliked items, is excluded. New visitors start with training popularity. Subsequent positive events use ALS fold-in against frozen item factors; this mode is explicitly labeled and is not presented as an unchanged offline reader prediction.
+
+The edge implementation loads little-endian typed arrays described by `web/public/data/edge-manifest.json`, validates their shapes and values, and verifies the manifest's asset SHA256 hashes. The public-reader artifact contains complete positive history and seen exclusions. The portable parity test checks every exported reader's top recommendations and raw scores against the evaluation-generated fixture. The Python service loads `results/model-artifacts.npz` and the associated sparse matrices through the evaluation package's shared loader.
+
+The live experiment assigns sessions deterministically between evaluated ALS and the fixed blend. Rules remove seen and unavailable items, apply the chosen genre, and cap the primary author. The live deterministic prefix preserves scorer order; MMR and calibration are disabled on this path. Their offline diagnostic remains available separately. The final position is a uniform draw from the remaining eligible pool. Its trace stores the actual support, propensity and target distribution. Shadow scoring records the other evaluated scorer without returning a second shelf.
+
+## Python reference startup
 
 ```sh
+uv sync
 uv run uvicorn packages.api.main:app --host 127.0.0.1 --port 8000 --no-access-log
 ```
 
-The OpenAPI specification is at `/openapi.json` and interactive endpoint documentation is at `/docs`. Health requires both the catalog bundle and a working database. A missing bundle returns a service-unavailable response; there is no fabricated fallback inside the API.
+`DATABASE_URL` defaults to a disposable SQLite database under `.runtime`. PostgreSQL URLs use psycopg. `STACKS_DATA_DIR` defaults to `web/public/data`; `STACKS_ARTIFACT_DIR` defaults to `results`. Set a stable `SESSION_HASH_KEY` before remote operation. `ADMIN_TOKEN` protects administrative writes. `CORS_ORIGINS` is an explicit origin list. Request access logging is disabled because EventSource uses the bearer session token in its URL.
 
-`DATABASE_URL` defaults to `sqlite:///./.runtime/stacks.db`. A PostgreSQL URL is accepted and automatically uses psycopg. `STACKS_DATA_DIR` defaults to `web/public/data`, whose required files are `catalog.json`, `similarity.json`, and `readers.json`. `SESSION_HASH_KEY` must be replaced with a persistent secret before remote deployment. `CORS_ORIGINS` is an explicit comma-separated list. `ADMIN_TOKEN` enables administrative writes and monitoring. The complete environment example is `.env.example`.
+`Dockerfile.api` includes the evaluated artifacts and the OpenMP runtime needed by the learned offline model adapter. `fly.toml` is an optional deployment template; no Fly entitlement or managed PostgreSQL account is inferred from it. The deployed portable path uses D1 instead.
 
-## Endpoints
+## Stable v1 response contract
+
+Shelf responses have `schema_version: "1.1"`, `session_id`, `revision`, `model_version`, `artifact_version`, `scoring_mode`, `arm`, `experiment_id`, `backend`, `history`, `genre`, `traffic_kind`, `latency_ms`, `statement`, and `items`. Item fields include catalog metadata, score, explanation, impression ID, position, propensity, and trace. Version additions preserve the original shelf fields.
 
 | Method | Path | Contract |
 | --- | --- | --- |
-| GET | /health | Database and catalog readiness. |
-| GET | /v1/catalog | Public catalog items and demonstration statement. |
-| POST | /v1/session | Body `{ "reader_id": "public-sample-id" }` or `{}`. Creates an anonymous session and returns its initial logged shelf. |
-| GET | /v1/recommend/{user_id} | Public sample reader ID or `new`. Optional `session_id` continues existing state; optional `limit` bounds the shelf. Returns a logged shelf. |
-| POST | /v1/session/{session_id}/event | Body `{ "impression_id": "...", "event": "click" }`. Also accepts `save` or `rating` with a rating value. Returns the new shelf after one atomic state update. |
-| GET | /v1/session/{session_id}/stream | SSE event `shelf`, ID equal to revision. Uses fresh database reads so workers see committed updates. Supports Last-Event-ID and `once=true` for a bounded snapshot. |
-| GET | /v1/similar/{item_id} | Item cosine neighbors from the committed exact-scoring bundle. No approximate index is available; `exact=false` still identifies the returned backend accurately. |
-| GET | /v1/explain/{impression_id} | Requires owning `session_id` query token. Returns the durable trace, position, propensity, and timestamp. |
-| GET | /v1/experiment/assign | Requires `session_id`. Returns the stored deterministic arm and experiment. |
-| POST | /v1/log | Admin token required. Body includes `session_id` and the same event fields. Persists delayed feedback and publishes updated state. |
-| POST | /v1/registry/evaluate | Admin token required. Body `{ "candidate_version": "...", "metrics": {...} }`. Persists gate decisions; never activates a model. |
-| GET | /v1/monitoring | Admin token required. Returns durable exposure and feedback counts with no online performance claim. |
+| GET | /health | Database and artifact readiness. |
+| GET | /v1/catalog | Public catalog. |
+| POST | /v1/session | Optional `reader_id`, `genre` and `traffic_kind`; returns a logged initial shelf. |
+| GET | /v1/session/{token} | Resume the stored shelf without generating impressions. |
+| POST | /v1/session/{token}/preferences | Body `{ "genre": "All books" }`; returns the next logged revision. |
+| POST | /v1/session/{token}/event | Owning impression ID plus `click`, `save`, or `rating`; ratings require an integer value. Feedback and the next shelf persist atomically. |
+| GET | /v1/session/{token}/stream | SSE `shelf` events with revision IDs. Supports Last-Event-ID and bounded `once=true`. |
+| GET | /v1/session/{token}/logs | Persisted exposure and feedback export without raw tokens or session hashes. |
+| GET | /v1/session/{token}/ope | Conditional randomized-slot estimates on this session's mature logs. |
+| GET | /v1/ope | Same estimates over the bounded global log window. |
+| GET | /v1/explain/{impression_id} | Requires owning `session_id`; returns the stored trace. |
+| GET | /v1/similar/{item_id} | Neighbors from the same stored sparse item-cosine index used by evaluation. |
+| GET | /v1/experiment/assign | Returns the persisted assignment for `session_id`. |
+| GET | /v1/monitoring | Interactive exposure counts, position CTR, coverage, shadow disagreement and OPE. Python requires an admin token; edge returns aggregates publicly. |
+| GET | /v1/registry | Python returns persisted gate decisions; edge describes the reference registry and does not expose activation. |
 
-Every shelf contains `session_id`, `revision`, `model_version`, `arm`, `experiment_id`, `backend`, `latency_ms`, `statement`, and `items`. Every item contains catalog metadata, score, explanation, `impression_id`, position, propensity, and trace. A trace contains the retrieval candidate preview, ranker features and weights, reranking steps, exact exploration support, and scores from a shadow model. The latency field measures shelf construction through generation, and excludes network transport and transaction commit. An external load test is needed for an end-to-end latency claim.
+The Python reference also provides the original recommendation endpoint, administrative feedback ingestion, submitted-evidence gate evaluation, and `POST /v1/registry/check/{candidate}`. The last route reads the measured manifest and latency report and persists the actual gate decisions. An eligible audit does not activate a model. Published rejected candidates remain rejected.
 
-## Model and business rules
+## Reward horizon and identified OPE
 
-`popularity-v1` sorts normalized log training popularity. `popularity-cosine-blend-v1` combines that signal with item-cosine similarities to recent history, with recency decay over ordered item IDs. These are explicit arithmetic models, not a deployed LambdaMART model or neural network. Candidate lookup uses the process-cached published bundle. The trace records component scores and the actual serving weights.
+Only the random final position enters own-log OPE. Its target is a fixed mixture of the best scorer-ranked remaining candidate and uniform exploration over that impression's stored pool. Every target action has positive support under the logged uniform policy. Deterministic-prefix probabilities are not misused to evaluate a different slate.
 
-Rules remove seen and unavailable items and cap each author. MMR selects a diverse slate; an observed diversity safeguard keeps the original list if the objective would reduce measured diversity. Calibration accepts only swaps that improve genre-distribution divergence and a relevance-aware objective. The final exploration draw may change the final slate's diversity and calibration, so the trace names the stage whose metrics it reports. Cold sessions use popularity plus exploration. A clicked or saved item enters ordered session history; positive ratings also enter it. There is no recurrent model.
+The reward is a click received within the immutable horizon recorded with the impression. Clicks before maturity do not make other impressions mature. Late clicks persist but are excluded from that reward definition. Saves and ratings affect history when appropriate; they are not click rewards. The reward model is an explicit fixed probability baseline, not a fitted click model.
 
-Shadow scoring logs the alternate arithmetic model's candidates and scores but returns only the selected arm. The feature-schema, accuracy, coverage, long-tail, calibration, and latency gates reject absent or nonfinite evidence. Their persisted result is promotion **eligibility** only. Deployment and activation require a separately implemented model adapter and an operational review.
+IPS, SNIPS, DM and DR point estimates are returned once mature randomized feedback exists. IPS and DR use conservative bounded concentration intervals with a predetermined importance-weight bound, so adaptive session contexts do not require an independent-row bootstrap assumption. SNIPS uses simultaneous bounds on numerator and denominator. DM's point interval conditions on its fixed prediction and does not certify that model's accuracy. These are fixed-snapshot diagnostics, not an optional-stopping decision rule. They identify the random position under its logged prefix and context, not an altered full slate or the traffic it would induce.
 
-## Operational limits
+## Verification traffic and measurement
 
-The API has bounded shelf size, per-client process-local request windows, a durable session cap, a durable per-session impression cap, and validation on event ownership and rating fields. For Internet deployment place a global rate limiter before the service; process-local limits do not coordinate across workers. SQLAlchemy revision checks prevent silently overwriting concurrent session updates. SSE is a latest-state stream with replay of the last committed revision, not an event archive; intermediate revisions can be skipped for slow clients. Streaming connections read the current snapshot periodically and heartbeat while idle.
+`traffic_kind: "load_test"` explicitly marks synthetic operational requests. They persist for auditing but are excluded from OPE, position CTR, coverage and shadow monitoring. The frontend's default is `interactive`. Automated browser and load checks should use the test marker.
 
-The checked-in Fly configuration is a deployment template and does not establish a free entitlement. Provision an app, choose the host's available plan, and inject database and session secrets explicitly before deployment. PostgreSQL migration history, retention jobs, a globally coordinated limiter, authenticated end-user accounts, and a provisioned production backend are outside this release.
+`scripts/load_test.py --url URL --reader-id ID` measures completed HTTP requests that recompute and persist shelves. It records sample size, backend, artifact version, concurrency, raw measurements, percentile estimates, and bootstrap ranges. The shelf's internal `latency_ms` remains a computation diagnostic; it is not the end-to-end latency figure.
 
-What a product manager would push back on: a popularity shelf may be sufficient, and diversity can lower immediate relevance. This service exposes the alternative shelf, the component scores, and the conditional exploration probabilities. It does not turn a small demonstration log into an effectiveness claim.
+SQL constraints enforce position, propensity and feedback linkage. Session writes use optimistic revision checks. The edge transaction guards its exposure and feedback inserts with the winning operation ID, preventing concurrent stale updates from leaving orphaned impressions. SSE replays the latest committed state and may skip intermediate revisions for slow clients; edge streams periodically close and EventSource reconnects using its last revision.
+
+Both backends bound request bodies, shelf sizes and session storage. D1 writes also use a hashed-client rate bucket. Session tokens and administrative credentials must be kept out of proxy request logs. Production retention and account authentication remain outside this public demonstration.
+
+What a product manager would push back on: an offline winner may not improve reader outcomes. The live trace records which evaluated scorer served, and randomized-slot estimates expose their support and uncertainty. No online lift or automatic promotion follows from this demonstration.
