@@ -335,6 +335,7 @@ def test_owned_matured_exploration_logs_use_fixed_click_horizon(service):
 
 def test_registry_check_uses_local_evidence_and_measured_latency(service, bundle):
     client, _ = service
+    artifact_version = client.post("/v1/session", json={}).json()["artifact_version"]
     metrics = {
         "model": "als",
         "recall200": {"mean": 0.8},
@@ -358,11 +359,30 @@ def test_registry_check_uses_local_evidence_and_measured_latency(service, bundle
         ),
         encoding="utf-8",
     )
-    (bundle / "artifacts" / "latency.json").write_text(json.dumps({"p99_ms": 100}), encoding="utf-8")
+    (bundle / "artifacts" / "latency.json").write_text(
+        json.dumps(
+            {"p99_ms": 100, "artifact_version": artifact_version, "model_version": f"als:{artifact_version}"}
+        ),
+        encoding="utf-8",
+    )
     response = client.post("/v1/registry/check/als", headers={"X-Admin-Token": "test-administrator"})
     assert response.status_code == 201, response.text
     assert response.json()["eligible"] is True and response.json()["activated"] is False
     assert len(client.get("/v1/registry").json()["decisions"]) == 1
+    (bundle / "artifacts" / "latency.json").write_text(
+        json.dumps(
+            {
+                "p99_ms": 100,
+                "artifact_version": artifact_version,
+                "model_version": f"blend:{artifact_version}",
+            }
+        ),
+        encoding="utf-8",
+    )
+    mismatch = client.post("/v1/registry/check/als", headers={"X-Admin-Token": "test-administrator"}).json()
+    assert mismatch["eligible"] is False
+    assert mismatch["evidence"]["latency_matches_candidate"] is False
+    assert next(gate for gate in mismatch["gates"] if gate["name"] == "p99_latency_ms")["observed"] is None
 
 
 def test_out_of_process_api_session_stream_and_database_read(bundle, tmp_path):

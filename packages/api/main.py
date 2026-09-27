@@ -742,6 +742,10 @@ def create_app(
         )
         latency_path = Path(os.environ.get("STACKS_LATENCY_REPORT") or str(source.artifacts / "latency.json"))
         latency = json.loads(latency_path.read_text(encoding="utf-8")) if latency_path.exists() else {}
+        latency_matches = (
+            latency.get("artifact_version") == source.artifact_version
+            and latency.get("model_version") == f"{candidate}:{source.artifact_version}"
+        )
         metrics = {
             "ndcg_lift_ci_low": lift,
             "ndcg_q_value": pair.get("q"),
@@ -749,7 +753,7 @@ def create_app(
             "coverage": row.get("observed_coverage", row["coverage"]["mean"]),
             "long_tail_share": row["long_tail_share"]["mean"],
             "calibration_divergence": row["calibration"]["mean"],
-            "p99_latency_ms": latency.get("p99_ms"),
+            "p99_latency_ms": latency.get("p99_ms") if latency_matches else None,
             "feature_schema": "catalog-v1",
         }
         result = registry_evaluate(
@@ -763,6 +767,7 @@ def create_app(
             "latency_backend": latency.get("backend"),
             "latency_url": latency.get("url"),
             "latency_report": str(latency_path),
+            "latency_matches_candidate": latency_matches,
             "baseline": "popularity",
         }
         return result

@@ -1,11 +1,11 @@
 {
   "status": "measured",
-  "evaluated_at": "2026-09-27T03:57:49.173184+00:00",
+  "evaluated_at": "2026-09-27T04:02:23.200642+00:00",
   "latency_report": "results/latency-python-local.json",
   "deployment_activation": false,
   "decisions": [
     {
-      "id": "53084981-5480-4fec-b631-1eab37f46ea6",
+      "id": "6e8d77ef-e569-4405-ab5e-15c63cb3d179",
       "candidate_version": "als-goodbooks-full-36eeb55d1ddd0268",
       "gates": [
         {
@@ -68,16 +68,18 @@
           "confidence": 0.95,
           "seed": 20260926,
           "positive_threshold": 4,
-          "description": "All unseen catalog items ranked. Training ratings excluded. Paired user bootstrap and Benjamini-Hochberg correction. Source order is a proxy, not a date-validated temporal split."
+          "description": "All unseen catalog items ranked. Training ratings excluded. Paired user bootstrap and Benjamini-Hochberg correction. Source order is a proxy, not a date-validated temporal split.",
+          "evaluation_users": 5000
         },
         "latency_backend": "live-api",
         "latency_url": "http://127.0.0.1:8027",
-        "latency_report": "results\\latency-local.json",
+        "latency_report": "results\\latency-python-local.json",
+        "latency_matches_candidate": true,
         "baseline": "popularity"
       }
     },
     {
-      "id": "bd271817-8052-4cd4-81cd-1ab6fa27fc14",
+      "id": "a0582186-5a0b-44c4-9dde-4bf472ac1019",
       "candidate_version": "blend-goodbooks-full-36eeb55d1ddd0268",
       "gates": [
         {
@@ -115,8 +117,8 @@
         },
         {
           "name": "p99_latency_ms",
-          "passed": true,
-          "observed": 230.7575910142623,
+          "passed": false,
+          "observed": null,
           "requirement": ">= 0 and <= 500.0"
         },
         {
@@ -140,16 +142,18 @@
           "confidence": 0.95,
           "seed": 20260926,
           "positive_threshold": 4,
-          "description": "All unseen catalog items ranked. Training ratings excluded. Paired user bootstrap and Benjamini-Hochberg correction. Source order is a proxy, not a date-validated temporal split."
+          "description": "All unseen catalog items ranked. Training ratings excluded. Paired user bootstrap and Benjamini-Hochberg correction. Source order is a proxy, not a date-validated temporal split.",
+          "evaluation_users": 5000
         },
         "latency_backend": "live-api",
         "latency_url": "http://127.0.0.1:8027",
-        "latency_report": "results\\latency-local.json",
+        "latency_report": "results\\latency-python-local.json",
+        "latency_matches_candidate": false,
         "baseline": "popularity"
       }
     },
     {
-      "id": "f065e5b6-f82f-4594-8ea7-807d0d456487",
+      "id": "58e35fdb-83e1-4bb8-969c-e3f4b3a1aedd",
       "candidate_version": "lambdamart-goodbooks-full-36eeb55d1ddd0268",
       "gates": [
         {
@@ -187,8 +191,8 @@
         },
         {
           "name": "p99_latency_ms",
-          "passed": true,
-          "observed": 230.7575910142623,
+          "passed": false,
+          "observed": null,
           "requirement": ">= 0 and <= 500.0"
         },
         {
@@ -212,11 +216,13 @@
           "confidence": 0.95,
           "seed": 20260926,
           "positive_threshold": 4,
-          "description": "All unseen catalog items ranked. Training ratings excluded. Paired user bootstrap and Benjamini-Hochberg correction. Source order is a proxy, not a date-validated temporal split."
+          "description": "All unseen catalog items ranked. Training ratings excluded. Paired user bootstrap and Benjamini-Hochberg correction. Source order is a proxy, not a date-validated temporal split.",
+          "evaluation_users": 5000
         },
         "latency_backend": "live-api",
         "latency_url": "http://127.0.0.1:8027",
-        "latency_report": "results\\latency-local.json",
+        "latency_report": "results\\latency-python-local.json",
+        "latency_matches_candidate": false,
         "baseline": "popularity"
       }
     }
