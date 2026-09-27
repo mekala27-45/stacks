@@ -1,18 +1,17 @@
 """Notebook publication must reject stale, absent and failed execution."""
 
-import hashlib
 import json
 from pathlib import Path
 
 import pytest
 
-from scripts.check_notebooks import check
+from scripts.check_notebooks import check, manifest_digest
 
 
 def fixture(root: Path) -> list[Path]:
     (root / "results").mkdir()
     (root / "results/manifest.json").write_text('{"evidence": true}', encoding="utf-8")
-    digest = hashlib.sha256((root / "results/manifest.json").read_bytes()).hexdigest()
+    digest = manifest_digest(root / "results/manifest.json")
     (root / "notebooks").mkdir()
     paths = []
     for i in range(4):
@@ -54,6 +53,32 @@ def test_changed_manifest_rejects_old_execution(tmp_path):
     (tmp_path / "results/manifest.json").write_text('{"evidence": false}', encoding="utf-8")
     with pytest.raises(ValueError, match="digest is stale"):
         check(tmp_path)
+
+
+def test_git_line_endings_and_json_formatting_preserve_execution_digest(tmp_path):
+    fixture(tmp_path)
+    manifest = tmp_path / "results/manifest.json"
+    original = manifest_digest(manifest)
+    manifest.write_bytes(b'{\r\n  "evidence": true\r\n}\r\n')
+    assert manifest_digest(manifest) == original
+    assert check(tmp_path) == 4
+    manifest.write_bytes(b'{\n  "evidence": true\n}\n')
+    assert manifest_digest(manifest) == original
+    assert check(tmp_path) == 4
+    manifest.write_bytes(b'{\n  "evidence": false\n}\n')
+    assert manifest_digest(manifest) != original
+    with pytest.raises(ValueError, match="digest is stale"):
+        check(tmp_path)
+
+
+def test_canonical_digest_preserves_changed_string_values(tmp_path):
+    manifest = tmp_path / "manifest.json"
+    manifest.write_text(json.dumps({"caption": "Line one\nLine two", "metric": 0.2}), encoding="utf-8")
+    original = manifest_digest(manifest)
+    manifest.write_text(json.dumps({"metric": 0.2, "caption": "Line one\nLine two"}), encoding="utf-8")
+    assert manifest_digest(manifest) == original
+    manifest.write_text(json.dumps({"metric": 0.2, "caption": "Line one\r\nLine two"}), encoding="utf-8")
+    assert manifest_digest(manifest) != original
 
 
 @pytest.mark.parametrize("mutation", ["unexecuted", "error", "no_output", "no_code"])

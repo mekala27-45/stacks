@@ -7,8 +7,15 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def manifest_digest(path: Path) -> str:
+    """Hash JSON values consistently across Git newline and formatting changes."""
+    content = json.loads(path.read_text(encoding="utf-8-sig"))
+    canonical = json.dumps(content, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False)
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+
 def check(root: Path = ROOT) -> int:
-    expected = hashlib.sha256((root / "results/manifest.json").read_bytes()).hexdigest()
+    expected = manifest_digest(root / "results/manifest.json")
     notebooks = sorted((root / "notebooks").glob("*.ipynb"))
     if len(notebooks) != 4:
         raise ValueError("Exactly four executed evidence notebooks are required")

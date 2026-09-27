@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import hashlib
 import os
 import sys
 from collections.abc import Callable
@@ -13,6 +12,9 @@ import nbformat
 from nbclient import NotebookClient
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+from scripts.check_notebooks import manifest_digest
+
 INTRO = "These are demonstration recommendations on a public dataset; no real reader's identity is present and no recommendation is personalized to a real person."
 LOAD = """from pathlib import Path
 import json
@@ -192,9 +194,7 @@ def build(root: Path = ROOT) -> None:
         cells = [code_cell(value) if kind == "code" else markdown_cell(value) for kind, value in content]
         notebook: Any = new_notebook(cells=cells)
         notebook.metadata.kernelspec = {"display_name": "Python 3", "language": "python", "name": "python3"}
-        notebook.metadata.stacks_manifest_sha256 = hashlib.sha256(
-            (root / "results/manifest.json").read_bytes()
-        ).hexdigest()
+        notebook.metadata.stacks_manifest_sha256 = manifest_digest(root / "results/manifest.json")
         NotebookClient(
             notebook, timeout=180, kernel_name="python3", resources={"metadata": {"path": str(root)}}
         ).execute()
