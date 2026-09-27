@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stacks evaluation report</title>
+  <style>
+    body { margin: 0; background: #fbf7ef; color: #302d29; font: 16px/1.6 system-ui, sans-serif; }
+    main { max-width: 1100px; margin: auto; padding: 48px 24px; }
+    h1, h2 { font-family: Georgia, serif; }
+    h1 { font-size: 3rem; }
+    a { color: #7b3042; }
+    .notice { border-left: 4px solid #7b3042; padding: 12px 18px; background: #f0e7d9; }
+    .table { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; font-size: .92rem; }
+    th, td { text-align: left; padding: 14px; border-bottom: 1px solid #d5cbbb; }
+    th { background: #f0e7d9; }
+    code { overflow-wrap: anywhere; }
+  </style>
+</head>
+<body><main>
+  <p>STACKS / MEASUREMENT</p>
+  <h1>What the evidence supports.</h1>
+  <p class="notice">{{ e.statement }}</p>
+  <p>Backend: <strong>{{ e.dataset.backend }}</strong>. Generated {{ e.generated_at }}.</p>
+  <p>{{ e.dataset.catalog_size | number(0) }} books and {{ e.dataset.evaluated_users | number(0) }} readers;
+    {{ e.protocol.name }}. The source supplies no rating timestamps, so row ordering is a proxy.</p>
+  <h2>Model comparison</h2>
+  <div class="table"><table>
+    <thead><tr><th>Model</th><th>NDCG with interval</th><th>Retrieval recall with interval</th><th>Coverage with interval</th></tr></thead>
+    <tbody>{% for row in e.metrics %}<tr><td>{{ row.label }}</td><td>{{ row.ndcg | estimate }}</td><td>{{ row.recall200 | estimate }}</td><td>{{ row.coverage | estimate }}</td></tr>{% endfor %}</tbody>
+  </table></div>
+  <p>Observed leader: <strong>{{ e.winner.observed }}</strong>.
+    Corrected selection: <strong>{{ e.winner.corrected if e.winner.corrected else "not established" }}</strong>.</p>
+  <h2>Off-policy evidence</h2>
+  <ul>{% for name in ["simulator", "crosscheck", "open_bandit", "demo_logs"] %}
+    <li><strong>{{ name }}: {{ e.ope[name].status }}</strong>. {{ e.ope[name].get("detail", "See the complete results for measured estimates.") }}</li>
+  {% endfor %}</ul>
+  <h2>Limits</h2>
+  <ul>{% for limitation in e.limitations %}<li>{{ limitation }}</li>{% endfor %}</ul>
+  <p>The public application uses GitHub Pages. The local API is independently runnable;
+    public API and managed PostgreSQL hosting are unprovisioned.</p>
+  <p><a href="https://mekala27-45.github.io/stacks/">Open the bookstore</a> ·
+    <a href="https://github.com/mekala27-45/stacks/blob/main/RESULTS.md">Complete results and protocol diagnostics</a></p>
+</main></body>
+</html>

@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stacks evaluation report</title>
+  <style>
+    body { margin: 0; background: #fbf7ef; color: #302d29; font: 16px/1.6 system-ui, sans-serif; }
+    main { max-width: 1100px; margin: auto; padding: 48px 24px; }
+    h1, h2 { font-family: Georgia, serif; }
+    h1 { font-size: 3rem; }
+    a { color: #7b3042; }
+    .notice { border-left: 4px solid #7b3042; padding: 12px 18px; background: #f0e7d9; }
+    .table { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; font-size: .92rem; }
+    th, td { text-align: left; padding: 14px; border-bottom: 1px solid #d5cbbb; }
+    th { background: #f0e7d9; }
+    code { overflow-wrap: anywhere; }
+  </style>
+</head>
+<body><main>
+  <p>STACKS / MEASUREMENT</p>
+  <h1>What the evidence supports.</h1>
+  <p class="notice">These are demonstration recommendations on a public dataset; no real reader&#39;s identity is present and no recommendation is personalized to a real person.</p>
+  <p>Backend: <strong>pinned public CSV -&gt; parquet -&gt; NumPy/SciPy exact scoring</strong>. Generated 2026-09-27T02:34:43.912426+00:00.</p>
+  <p>1,000 books and 500 readers;
+    Global source-order holdout, full catalog. The source supplies no rating timestamps, so row ordering is a proxy.</p>
+  <h2>Model comparison</h2>
+  <div class="table"><table>
+    <thead><tr><th>Model</th><th>NDCG with interval</th><th>Retrieval recall with interval</th><th>Coverage with interval</th></tr></thead>
+    <tbody><tr><td>Popularity</td><td>0.0469 [0.0340, 0.0593]</td><td>0.5427 [0.5073, 0.5746]</td><td>0.0420 [0.0360, 0.0420]</td></tr><tr><td>Item cosine</td><td>0.0664 [0.0521, 0.0809]</td><td>0.6230 [0.5878, 0.6545]</td><td>0.1750 [0.1330, 0.1610]</td></tr><tr><td>Implicit ALS</td><td>0.0736 [0.0596, 0.0882]</td><td>0.6744 [0.6436, 0.7059]</td><td>0.4250 [0.3790, 0.4040]</td></tr><tr><td>Fixed blend</td><td>0.0735 [0.0586, 0.0885]</td><td>0.6574 [0.6236, 0.6891]</td><td>0.2090 [0.1660, 0.1930]</td></tr></tbody>
+  </table></div>
+  <p>Observed leader: <strong>als</strong>.
+    Corrected selection: <strong>not established</strong>.</p>
+  <h2>Off-policy evidence</h2>
+  <ul>    <li><strong>simulator: measured</strong>. See the complete results for measured estimates.</li>
+    <li><strong>crosscheck: passed_source_reference</strong>. Local IPS, SNIPS, DM and DR point estimates agree with unmodified arithmetic methods extracted from pinned Open Bandit Pipeline source on the same seeded simulator fixtures. This is a source-level crosscheck, not an installed OBP package or confidence-interval crosscheck.</li>
+    <li><strong>open_bandit: measured_alternative_target</strong>. Real random-policy logs, held-out chronological second half. Target and smoothed action reward model fit only the first half. BTS observed reward is descriptive, not target-policy ground truth. Row bootstrap does not model repeated-reader dependence or model-fit uncertainty; action-only DM therefore has a conditional zero-width interval. The learned target has low effective sample size, so no improvement is established. Per-position propensities must not be multiplied into a claimed joint-slate propensity.</li>
+    <li><strong>demo_logs: not_estimated</strong>. No meaningful online feedback sample is available at build time; no causal or online benefit claim is made.</li>
+</ul>
+  <h2>Limits</h2>
+  <ul><li>goodbooks has no interaction timestamps; source-order holdout is not verified temporal evaluation.</li><li>The first 300,000 source records and 1,000 popular catalog items form a bounded, biased demonstration subset.</li><li>Only readers with at least five positive training items enter headline evaluation; cold readers are separate.</li><li>Snapshot genres and average ratings are descriptive metadata. Their historical availability cannot be verified.</li><li>The fixed blend is evaluated directly over the full catalog; a trained two-stage LambdaMART pipeline is not implemented.</li><li>Coverage.mean is observed distinct catalog coverage; low/high show a separate conditional user-resampling range, not a confidence interval. The observed point can exceed this range because resampling cannot invent unseen items. expected_resampled_coverage records the average resampled value.</li><li>The random-split comparison uses a different eligible cohort, so it is not an isolated estimate of temporal leakage.</li><li>Simulator reward models are oracle or deliberately misspecified. This is estimator validation, not reward-model learning.</li><li>Contextual BTS target-policy truth, online impact, neural models, approximate indexing, and historical point-in-time metadata remain unmeasured.</li></ul>
+  <p>The public application uses GitHub Pages. The local API is independently runnable;
+    public API and managed PostgreSQL hosting are unprovisioned.</p>
+  <p><a href="https://mekala27-45.github.io/stacks/">Open the bookstore</a> ·
+    <a href="https://github.com/mekala27-45/stacks/blob/main/RESULTS.md">Complete results and protocol diagnostics</a></p>
+</main></body>
+</html>
