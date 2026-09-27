@@ -14,7 +14,7 @@ for (const filename of [".openai/hosting.json", "packages/edge/worker.ts", "pack
 }
 await cp(path.join(root, "drizzle"), path.join(destination, "drizzle"), { recursive: true });
 for (const filename of await readdir(path.join(root, "web/public/data"))) {
-  if (["catalog.json", "readers.json"].includes(filename) || filename.startsWith("edge-") || /\.(f32|u32)$/.test(filename)) {
+  if (["catalog.json", "readers.json", "LICENSE-goodbooks.txt"].includes(filename) || filename.startsWith("edge-") || /\.(f32|u32)$/.test(filename)) {
     await cp(path.join(root, "web/public/data", filename), path.join(destination, "web/public/data", filename));
   }
 }

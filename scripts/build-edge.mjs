@@ -9,11 +9,11 @@ await mkdir(path.join(assets, "data"), { recursive: true });
 await build({ entryPoints: [path.join(root, "packages", "edge", "worker.ts")], bundle: true,
   outfile: path.join(server, "index.js"), platform: "browser", format: "esm", target: "es2022", sourcemap: true });
 for (const name of await readdir(path.join(root, "web", "public", "data"))) {
-  if (name === "catalog.json" || name === "readers.json" || name.startsWith("edge-") || /\.(f32|u32)$/.test(name)) {
+  if (name === "catalog.json" || name === "readers.json" || name === "LICENSE-goodbooks.txt" || name.startsWith("edge-") || /\.(f32|u32)$/.test(name)) {
     await copyFile(path.join(root, "web", "public", "data", name), path.join(assets, "data", name));
   }
 }
-await writeFile(path.join(assets, "index.html"), '<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>stacks model service</title><body><h1>stacks model service</h1><p>Evaluated recommendation artifacts, persistent demonstration sessions, and server-sent shelf updates.</p><p><a href="https://mekala27-45.github.io/stacks/">Open the bookstore</a> · <a href="/health">Service health</a> · <a href="https://github.com/mekala27-45/stacks">Source and methods</a></p></body></html>');
+await writeFile(path.join(assets, "index.html"), '<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>stacks model service</title><body><h1>stacks model service</h1><p>Evaluated recommendation artifacts, persistent demonstration sessions, and server-sent shelf updates.</p><p><a href="https://mekala27-45.github.io/stacks/">Open the bookstore</a> · <a href="/health">Service health</a> · <a href="https://github.com/mekala27-45/stacks">Source and methods</a></p><p>These are demonstration recommendations on a public dataset; no real reader\u0027s behaviour or commercial outcome is claimed.</p><p>Book data derived from Zygmunt Zajac and contributors, goodbooks-10k. <a href="/data/LICENSE-goodbooks.txt">Attribution and CC BY-SA 4.0 license</a>.</p></body></html>');
 await writeFile(path.join(server, "wrangler.json"), JSON.stringify({ name: "stacks-recommender-api", main: "index.js",
   compatibility_date: "2026-09-26", no_bundle: true,
   assets: { directory: "../client", binding: "ASSETS", run_worker_first: ["/v1/*", "/health"] },
