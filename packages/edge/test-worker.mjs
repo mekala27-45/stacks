@@ -95,7 +95,7 @@ test('SSE closes and resumes within the D1 Free invocation query budget', async 
   const stream = await request(`/v1/session/${shelf.session_id}/stream`);
   const payload = await stream.text();
   assert.match(payload, /event: shelf/);
-  assert.ok(firstQueries - before <= 50, 'The initial lookup plus every poll must fit one Free D1 invocation');
+  assert.ok(firstQueries - before <= 3, 'The initial lookup and two bounded polls must fit one Free D1 invocation');
   const resumed = await handleRequest(new Request(`https://stacks.test/v1/session/${shelf.session_id}/stream?once=true`, { headers: { 'Last-Event-ID': String(shelf.revision) } }), env);
   assert.doesNotMatch(await resumed.text(), /event: shelf/, 'Reconnect must not emit the same revision twice');
 });

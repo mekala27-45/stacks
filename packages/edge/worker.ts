@@ -34,9 +34,9 @@ const STATEMENT = "These are demonstration recommendations on a public dataset; 
 const EXPERIMENT = 'evaluated-als-blend-v2';
 const TARGET = 'final-slot-80-best-20-uniform-v1';
 const HORIZON = 60;
-// D1 Free allows 50 queries per invocation. The session lookup adds one;
-// close early so EventSource reconnects before its query budget is exhausted.
-const STREAM_POLLS = 40;
+// The managed proxy buffers SSE until closure. Two-second windows plus
+// Last-Event-ID reconnect deliver revisions promptly using three D1 reads.
+const STREAM_POLLS = 2;
 const encoder = new TextEncoder();
 let cached: Promise<Data> | undefined;
 

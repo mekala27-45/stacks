@@ -4,6 +4,7 @@ import argparse
 import json
 import math
 import re
+import time
 from collections.abc import Iterator
 from datetime import UTC, datetime
 from pathlib import Path
@@ -144,22 +145,37 @@ def verify(url: str, report: Record, checks: dict[str, bool]) -> None:
         check(checks, "impression_identifier", re.fullmatch(r"[a-f0-9-]{36}", impression) is not None)
         report["selected_impression_id"] = impression
         report["model_version"] = text(shelf.get("model_version"))
+        started = time.perf_counter()
         with stream_client.stream("GET", f"{session_path}/stream", headers={"Accept": "text/event-stream"}) as stream:
             check(checks, "real_sse_response", stream.status_code == 200
                   and stream.headers.get("Content-Type", "").startswith("text/event-stream")
                   and stream.headers.get("Access-Control-Allow-Origin") == ORIGIN)
             lines = stream.iter_lines()
             event_id, first = next_shelf(lines)
+            first_event_ms = (time.perf_counter() - started) * 1000
+            check(checks, "sse_initial_delivery_under_five_seconds", first_event_ms <= 5000)
+            report["initial_event_ms"] = first_event_ms
             check(checks, "sse_initial_revision", event_id == "1" and first.get("revision") == 1
                   and first.get("items") == shelf.get("items"))
-            updated = decoded(observer.post(f"{session_path}/event",
-                                            json={"impression_id": impression, "event": "click"}))
-            verify_shelf(updated, checks, "updated", artifact)
-            check(checks, "event_revision_and_foldin", updated.get("revision") == 2
-                  and updated.get("scoring_mode") == "frozen-item-factor-session-fold-in")
-            event_id, pushed = next_shelf(lines)
-            check(checks, "sse_independent_click_push", event_id == "2" and pushed.get("revision") == 2
+        updated = decoded(observer.post(f"{session_path}/event",
+                                        json={"impression_id": impression, "event": "click"}))
+        verify_shelf(updated, checks, "updated", artifact)
+        check(checks, "event_revision_and_foldin", updated.get("revision") == 2
+              and updated.get("scoring_mode") == "frozen-item-factor-session-fold-in")
+        with stream_client.stream("GET", f"{session_path}/stream",
+                                  headers={"Accept": "text/event-stream", "Last-Event-ID": event_id}) as stream:
+            check(checks, "sse_reconnect_response", stream.status_code == 200
+                  and stream.headers.get("Content-Type", "").startswith("text/event-stream"))
+            event_id, pushed = next_shelf(stream.iter_lines())
+            check(checks, "sse_reconnected_revision", event_id == "2" and pushed.get("revision") == 2
                   and pushed.get("items") == updated.get("items"))
+        report["transport"] = "bounded_sse_reconnect"
+        report["transport_detail"] = (
+            "The managed proxy buffers event-stream chunks until response closure. The Worker uses two-second "
+            "connections and a one-second EventSource retry with Last-Event-ID. This verification receives "
+            "the initial event, clicks through an independent client, then receives the new revision on a "
+            "resumed SSE connection; it does not claim continuously flushed chunks on one connection."
+        )
         resumed = decoded(observer.get(session_path))
         check(checks, "independent_resume", resumed.get("revision") == 2
               and resumed.get("items") == updated.get("items"))
@@ -184,7 +200,7 @@ def verify(url: str, report: Record, checks: dict[str, bool]) -> None:
         ope = decoded(observer.get(f"{session_path}/ope"))
         check(checks, "scripted_traffic_excluded_from_ope", ope.get("load_test_excluded") == 2
               and ope.get("matured") == 0 and ope.get("pending") == 0)
-        report["counters"] = {"sse_events": 2, "revision": 2, "impressions": len(impressions),
+        report["counters"] = {"sse_events": 2, "sse_connections": 2, "revision": 2, "impressions": len(impressions),
                               "feedback": len(feedback), "ope_test_rows_excluded": 2}
 
 

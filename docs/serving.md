@@ -35,7 +35,7 @@ Shelf responses have `schema_version: "1.1"`, `session_id`, `revision`, `model_v
 | GET | /v1/session/{token} | Resume the stored shelf without generating impressions. |
 | POST | /v1/session/{token}/preferences | Body `{ "genre": "All books" }`; returns the next logged revision. |
 | POST | /v1/session/{token}/event | Owning impression ID plus `click`, `save`, or `rating`; ratings require an integer value. Feedback and the next shelf persist atomically. |
-| GET | /v1/session/{token}/stream | SSE `shelf` events with revision IDs. Supports Last-Event-ID and bounded `once=true`. |
+| GET | /v1/session/{token}/stream | SSE `shelf` events with revision IDs. Two-second connections resume with Last-Event-ID after a one-second retry; `once=true` returns one snapshot. |
 | GET | /v1/session/{token}/logs | Persisted exposure and feedback export without raw tokens or session hashes. |
 | GET | /v1/session/{token}/ope | Conditional randomized-slot estimates on this session's mature logs. |
 | GET | /v1/ope | Same estimates over the bounded global log window. |
@@ -61,7 +61,11 @@ IPS, SNIPS, DM and DR point estimates are returned once mature randomized feedba
 
 `scripts/load_test.py --url URL --reader-id ID` measures completed HTTP requests that recompute and persist shelves. It records sample size, backend, artifact version, concurrency, raw measurements, percentile estimates, and bootstrap ranges. The shelf's internal `latency_ms` remains a computation diagnostic; it is not the end-to-end latency figure.
 
-SQL constraints enforce position, propensity and feedback linkage. Session writes use optimistic revision checks. The edge transaction guards its exposure and feedback inserts with the winning operation ID, preventing concurrent stale updates from leaving orphaned impressions. SSE replays the latest committed state and may skip intermediate revisions for slow clients; edge streams periodically close and EventSource reconnects using its last revision.
+SQL constraints enforce position, propensity and feedback linkage. Session writes use optimistic revision checks. The edge transaction guards its exposure and feedback inserts with the winning operation ID, preventing concurrent stale updates from leaving orphaned impressions. SSE replays the latest committed state and may skip intermediate revisions for slow clients.
+
+The managed hosting proxy buffers event-stream bytes until the response closes, even with identity encoding and `Cache-Control: no-transform`. The edge service therefore closes each SSE connection after two seconds and advertises a one-second retry. Browser EventSource reconnects with `Last-Event-ID`, which suppresses duplicate revisions. This is bounded SSE reconnection, not continuously flushed chunks on one long connection. Each connection performs at most three D1 reads and creates no new impressions. The Python reference stream is independent of this hosting adaptation.
+
+`scripts/smoke_deployed.py --url URL` verifies public health and exact-origin CORS, creates a `load_test` session, receives its initial event within five seconds, clicks through an independent client, and receives the changed revision through a resumed SSE connection. It checks a separate client's resume and persisted exposure/feedback export. The sanitized deployment report records checks, counts, version identifiers and an impression ID for an independent database read; it excludes session tokens and hashes.
 
 Both backends bound request bodies, shelf sizes and session storage. D1 writes also use a hashed-client rate bucket. Session tokens and administrative credentials must be kept out of proxy request logs. Production retention and account authentication remain outside this public demonstration.
 

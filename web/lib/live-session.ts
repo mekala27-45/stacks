@@ -68,6 +68,7 @@ export function useLiveSession(
     let active = true;
     let stream: EventSource | null = null;
     let disconnectTimer: ReturnType<typeof setTimeout> | undefined;
+    let reconnectNotice: ReturnType<typeof setTimeout> | undefined;
     let lastRevision = -1;
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 12000);
@@ -146,10 +147,13 @@ export function useLiveSession(
         }
       });
       stream.onerror = () => {
-        if (active)
-          setReason(
-            "Reconnecting to the recommendation stream. Your last shelf is retained.",
-          );
+        // Short completed SSE responses reconnect normally on the free host.
+        // Announce a disruption only if reconnection takes longer than usual.
+        if (!reconnectNotice)
+          reconnectNotice = setTimeout(() => {
+            if (active)
+              setReason("Reconnecting to the recommendation stream. Your last shelf is retained.");
+          }, 4000);
         if (!disconnectTimer)
           disconnectTimer = setTimeout(() => {
             if (!active) return;
@@ -162,6 +166,8 @@ export function useLiveSession(
           }, 15000);
       };
       stream.onopen = () => {
+        clearTimeout(reconnectNotice);
+        reconnectNotice = undefined;
         clearTimeout(disconnectTimer);
         disconnectTimer = undefined;
         if (active) setReason("");
@@ -183,6 +189,7 @@ export function useLiveSession(
       active = false;
       clearTimeout(timeout);
       clearTimeout(disconnectTimer);
+      clearTimeout(reconnectNotice);
       controller.abort();
       stream?.close();
       connection.current = null;
