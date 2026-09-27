@@ -246,5 +246,33 @@ policy can change the final displayed list; these are not a live outcome test.
 - {{ limitation }}
 {% endfor %}
 
-Public deployment scope: GitHub Pages static application. The API is runnable
-locally; public API hosting and managed PostgreSQL are unprovisioned.
+{% if latency %}
+## Measured public request latency
+
+Backend: **{{ latency.backend }}**, measured at {{ latency.measured_at }}.
+Operation: {{ latency.operation }}.
+Population: {{ latency.requests | number(0) }} recorded requests after
+{{ latency.warmup_requests | number(0) }} warmups, concurrency {{ latency.concurrency }}.
+Model: `{{ latency.model_version }}`; scoring mode: `{{ latency.scoring_mode }}`.
+
+| Statistic | Milliseconds with finite-sample bootstrap range |
+| --- | --- |
+| p50 | {{ latency.p50 | estimate(2) }} |
+| p99 | {{ latency.p99 | estimate(2) }} |
+
+{{ latency.detail }}
+This is a small sequential request experiment, not an SLO, a throughput test or
+evidence about concurrent load. [Raw operational evidence](results/latency.json).
+{% endif %}
+
+Public frontend deployment uses GitHub Pages. Operational hosting verification
+is recorded separately from offline model evidence.
+{% if hosting.get("verified_for_publication") %}
+The [public Worker/D1 API]({{ hosting.url }}/health) passed its request checks and
+an independent D1 read. Verification finished {{ hosting.finished_at }};
+artifact version: `{{ hosting.artifact_version }}`.
+The free host buffers long streaming responses, so updates use bounded SSE
+connections with EventSource reconnection and Last-Event-ID replay. This is not
+continuous flushing on a single long-lived response. See the
+[sanitized verification artifact](results/deployment-verification.json).
+{% endif %}

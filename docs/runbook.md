@@ -90,7 +90,7 @@ The default local session key is for development only. Configure service keys
 before exposing a service beyond the local machine. A database connection
 string selects an existing destination; it does not provision a managed service.
 
-## GitHub Pages release
+## Public deployment and release
 
 The GitHub Pages application is
 [mekala27-45.github.io/stacks](https://mekala27-45.github.io/stacks/).
@@ -109,13 +109,41 @@ API mode are accurate. Fetch the deployed evidence JSON independently and
 compare it with the committed artifact. A successful workflow alone does not
 prove that every browser interaction works.
 
-The portable `packages/edge` Worker supports the selected free Sites hosting
-and durable D1 storage. The FastAPI reference remains independently runnable.
-Publication status must be verified with live health, a new session, feedback,
-resume and a separate database read. The parent deployment record supplies the
-actual public URL after those checks. Managed PostgreSQL is optional and is
-not required for the free deployment. Do not describe static browser state as
-a durable server exposure log.
+The [public API](https://stacks-recommender-api.mekalaa1.chatgpt.site/health)
+runs `packages/edge` on the selected free Sites host with durable D1 storage.
+The [sanitized verification](../results/deployment-verification.json) records
+passing public health, exact-origin CORS, versioned recommendation, feedback,
+session resume and SSE checks. A separate Sites D1 connector query observed the
+same selected impression's click feedback after the HTTP request completed.
+The artifact records that independent check explicitly.
+
+The host buffers long event-stream responses. The Worker therefore uses
+two-second SSE connections, a one-second EventSource retry and Last-Event-ID
+replay of persisted events. A new revision is verified on a resumed connection.
+This transport does not continuously flush chunks on one long-lived connection.
+
+The Worker/D1 substitution meets the user's strict free-hosting requirement.
+The FastAPI reference still runs locally with SQLite or PostgreSQL, and the
+pgvector experiment uses an isolated local database. Managed PostgreSQL is not
+required by the deployed service. Static browser-only state does not count as a
+server exposure log.
+
+Sites receives a portable serving package because the complete research checkout
+exceeds its source-upload limit. Run `node scripts/prepare-site-source.mjs`
+after committing the intended source revision, then publish the generated
+`.cache/site-source` directory through Sites. That package contains the Worker,
+schema, frozen serving inputs and `SOURCE.json` identifying the GitHub revision.
+GitHub retains the complete data exports, training code, tests, notebooks and
+reports; the portable package does not replace that repository. After changing
+the Worker or artifacts, repeat live verification and the independent D1 check.
+
+[Public latency evidence](../results/latency.json) records a small sequential
+warm-service sample, including transport, shelf recomputation and database
+writes. Its percentile bootstrap ranges describe that finite sample, not a
+capacity limit or production SLO. Test traffic is labeled and excluded from
+own-log OPE. Use `uv run python scripts/load_test.py --url <public-api-url>` to
+repeat the documented request experiment. Preserve the measurement date and
+model/artifact identifiers when comparing runs.
 
 ## Failure and recovery
 

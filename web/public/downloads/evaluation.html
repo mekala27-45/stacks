@@ -40,8 +40,13 @@
 </ul>
   <h2>Limits</h2>
   <ul><li>goodbooks has no interaction timestamps; source-order holdout is not verified temporal evaluation.</li><li>All source ratings and all10000 catalog items are ingested; headline metrics use a seeded sample of at most5000 eligible readers, not every reader.</li><li>Only readers with at least five positive training items enter headline evaluation; cold readers are separate.</li><li>Snapshot titles, authors and tags power the content baseline; their historical availability cannot be verified. Average ratings are descriptive metadata only.</li><li>LambdaMART trains on a candidate union from an earlier source-order window and scores the full unseen catalog; training negatives have a different distribution from full-catalog inference.</li><li>Coverage.mean is observed distinct catalog coverage; low/high show a separate conditional user-resampling range, not a confidence interval. The observed point can exceed this range because resampling cannot invent unseen items. expected_resampled_coverage records the average resampled value.</li><li>The random-split comparison uses a different eligible cohort, so it is not an isolated estimate of temporal leakage.</li><li>Simulator reward models are oracle or deliberately misspecified. This is estimator validation, not reward-model learning.</li><li>Contextual BTS target-policy truth, online impact, and historical point-in-time metadata remain unmeasured.</li><li>Two-tower and recurrent models use explicit NumPy training and finite sampled training pairs/sequences. Their losses are optimization diagnostics; held-out results and both shortcuts are reported even when these neural models lose.</li></ul>
-  <p>The public application uses GitHub Pages. The local API is independently runnable;
-    public API and managed PostgreSQL hosting are unprovisioned.</p>
+  <p>The public frontend uses GitHub Pages. The local Python API is independently runnable.</p>
+  <p>The <a href="https://stacks-recommender-api.mekalaa1.chatgpt.site/health">live Worker/D1 API</a> passed public checks
+    and an independent database read. The free host buffers long streams, so updates
+    use bounded SSE connections with EventSource reconnection and Last-Event-ID replay.</p>
+  <p>Measured request latency: p50 128.59 [127.30, 130.62] ms;
+    p99 178.40 [139.00, 190.40] ms. 30 requests,
+    concurrency 1. This small sequential sample is not a capacity or SLO claim.</p>
   <p><a href="https://mekala27-45.github.io/stacks/">Open the bookstore</a> ·
     <a href="https://github.com/mekala27-45/stacks/blob/main/RESULTS.md">Complete results and protocol diagnostics</a></p>
 </main></body>

@@ -54,7 +54,13 @@ different questions.
 - {{ limitation }}
 {% endfor %}
 
-Before a commercial experiment, provision and verify the API/database, confirm
-the actual action probabilities and outcome windows, and fix experiment and
-promotion criteria before observing results. The public static page alone does
-not provide that evidence.
+{% if hosting.get("verified_for_publication") %}
+The [public Worker/D1 service]({{ hosting.url }}/health) has passed live request
+verification and an independent database read. Bounded SSE connections replay
+persisted updates after EventSource reconnection; the free host buffers long
+responses. Operational verification is separate from model superiority.
+{% endif %}
+Before a commercial experiment, fix supported target probabilities, completed
+outcome windows and promotion criteria before observing results. Successful
+deployment and a small latency sample do not establish commercial uplift or a
+production SLO.

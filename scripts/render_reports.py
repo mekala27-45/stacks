@@ -93,6 +93,42 @@ def number(value: float, digits: int = 4) -> str:
     return f"{value:,.{digits}f}"
 
 
+def publication_context(root: Path) -> dict[str, dict[str, Any]]:
+    """Load separately verified operational evidence without changing model evidence."""
+    context: dict[str, dict[str, Any]] = {"hosting": {}, "latency": {}}
+    for key, name in (("hosting", "deployment-verification.json"), ("latency", "latency.json")):
+        path = root / "results" / name
+        if not path.exists():
+            continue
+        try:
+            artifact = json.loads(path.read_text(encoding="utf-8-sig"))
+        except (ValueError, OSError) as error:
+            raise EvidenceError(f"Invalid operational evidence: {name}") from error
+        if not isinstance(artifact, dict) or not artifact.get("status"):
+            raise EvidenceError(f"Missing operational evidence status: {name}")
+        context[key] = artifact
+    hosting = context["hosting"]
+    if hosting:
+        hosting["verified_for_publication"] = (
+            hosting.get("status") == "passed" and hosting.get("independent_d1_read_verified") is True
+        )
+        if hosting["verified_for_publication"]:
+            checks = hosting.get("checks")
+            if not isinstance(checks, dict) or not checks or not all(value is True for value in checks.values()):
+                raise EvidenceError("Verified deployment requires a nonempty set of passing checks")
+            if not isinstance(hosting.get("url"), str) or not hosting["url"].startswith("https://"):
+                raise EvidenceError("Verified deployment requires its public HTTPS URL")
+    latency = context["latency"]
+    if latency:
+        for key in ("requests", "warmup_requests", "concurrency", "p50_ms", "p99_ms"):
+            _number(latency.get(key), f"latency.{key}")
+        if latency["requests"] <= 0 or latency["concurrency"] <= 0:
+            raise EvidenceError("Latency evidence requires a nonempty request population")
+        for key in ("p50", "p99"):
+            _interval(latency.get(key), f"latency.{key}")
+    return context
+
+
 def build_outputs(manifest: dict[str, Any], root: Path = ROOT) -> dict[Path, str]:
     validate_manifest(manifest)
     environment = Environment(
@@ -104,7 +140,11 @@ def build_outputs(manifest: dict[str, Any], root: Path = ROOT) -> dict[Path, str
         lstrip_blocks=True,
     )
     environment.filters.update(estimate=interval, number=number)
-    common = {"e": manifest, "baseline": next(row for row in manifest["metrics"] if row["model"] == "popularity")}
+    common = {
+        "e": manifest,
+        "baseline": next(row for row in manifest["metrics"] if row["model"] == "popularity"),
+        **publication_context(root),
+    }
     outputs: dict[Path, str] = {}
     specs = (
         ("README.md.j2", "README.md"),

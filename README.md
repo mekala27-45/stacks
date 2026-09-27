@@ -57,9 +57,15 @@ The default database is local SQLite. Configure `DATABASE_URL`, a persistent
 `SESSION_HASH_KEY`, `ADMIN_TOKEN`, and `CORS_ORIGINS` for the intended environment.
 Administrative writes are unavailable until their token is set. See
 [serving](docs/serving.md) and [logging](docs/logging.md) for endpoint and security
-behavior. GitHub Pages is the public static application; a public API and
-managed PostgreSQL instance are **unprovisioned**. Browser state does not count
-as a server exposure log.
+behavior. GitHub Pages hosts the frontend.
+The [live API](https://stacks-recommender-api.mekalaa1.chatgpt.site/health) uses a Worker and durable D1 storage on
+the selected free Sites host. Public request checks and a separate D1 read
+verified persisted interactions. It serves bounded SSE responses with
+EventSource reconnection and Last-Event-ID replay because the host buffers long
+streaming responses. See [deployment verification](results/deployment-verification.json).
+The Worker/D1 deployment replaces a paid managed-service dependency. PostgreSQL
+remains optional for the Python reference and local ANN benchmark. Browser-only
+state does not count as a server exposure log.
 
 ## Implemented scope
 

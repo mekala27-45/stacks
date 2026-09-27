@@ -38,8 +38,17 @@
   {% endfor %}</ul>
   <h2>Limits</h2>
   <ul>{% for limitation in e.limitations %}<li>{{ limitation }}</li>{% endfor %}</ul>
-  <p>The public application uses GitHub Pages. The local API is independently runnable;
-    public API and managed PostgreSQL hosting are unprovisioned.</p>
+  <p>The public frontend uses GitHub Pages. The local Python API is independently runnable.</p>
+  {% if hosting.get("verified_for_publication") %}
+  <p>The <a href="{{ hosting.url }}/health">live Worker/D1 API</a> passed public checks
+    and an independent database read. The free host buffers long streams, so updates
+    use bounded SSE connections with EventSource reconnection and Last-Event-ID replay.</p>
+  {% else %}<p>Public API verification is pending.</p>{% endif %}
+  {% if latency %}
+  <p>Measured request latency: p50 {{ latency.p50 | estimate(2) }} ms;
+    p99 {{ latency.p99 | estimate(2) }} ms. {{ latency.requests }} requests,
+    concurrency {{ latency.concurrency }}. This small sequential sample is not a capacity or SLO claim.</p>
+  {% endif %}
   <p><a href="https://mekala27-45.github.io/stacks/">Open the bookstore</a> ·
     <a href="https://github.com/mekala27-45/stacks/blob/main/RESULTS.md">Complete results and protocol diagnostics</a></p>
 </main></body>

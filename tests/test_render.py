@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from scripts.render_reports import METRICS, ROOT, EvidenceError, render
+from scripts.render_reports import METRICS, ROOT, EvidenceError, publication_context, render
 
 
 @pytest.fixture
@@ -89,3 +89,58 @@ def test_nonfinite_metrics_and_missing_baseline_are_refused(publication):
     manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
     with pytest.raises(EvidenceError, match="popularity baseline"):
         render(manifest_path, root)
+
+
+def test_absent_operational_evidence_has_no_deployment_claim(tmp_path):
+    assert publication_context(tmp_path) == {"hosting": {}, "latency": {}}
+
+
+def test_empty_operational_evidence_is_rejected(publication):
+    root, manifest_path, _ = publication
+    (root / "results").mkdir()
+    (root / "results/latency.json").write_text("{}", encoding="utf-8")
+    with pytest.raises(EvidenceError, match="operational evidence status"):
+        render(manifest_path, root)
+
+
+def test_latency_measurement_and_drift_are_bound_to_operational_artifact(publication):
+    root, manifest_path, _ = publication
+    (root / "results").mkdir()
+    path = root / "results/latency.json"
+    latency = {
+        "status": "measured", "backend": "fixture-api", "measured_at": "fixture",
+        "operation": "fixture request", "requests": 30, "warmup_requests": 3,
+        "concurrency": 1, "model_version": "fixture", "scoring_mode": "fixture",
+        "p50_ms": 100, "p99_ms": 200, "detail": "Fixture only, not an SLO.",
+        "p50": {"mean": 100, "low": 90, "high": 110},
+        "p99": {"mean": 200, "low": 180, "high": 220},
+    }
+    path.write_text(json.dumps(latency), encoding="utf-8")
+    assert not render(manifest_path, root)
+    assert "100.00 [90.00, 110.00]" in (root / "RESULTS.md").read_text(encoding="utf-8")
+    latency["p50"] = {"mean": 120, "low": 110, "high": 130}
+    path.write_text(json.dumps(latency), encoding="utf-8")
+    assert render(manifest_path, root, check=True)
+
+
+def test_public_deployment_claim_requires_independent_database_evidence(tmp_path):
+    (tmp_path / "results").mkdir()
+    path = tmp_path / "results/deployment-verification.json"
+    hosting = {"status": "passed", "url": "https://example.test", "checks": {"http": True}}
+    path.write_text(json.dumps(hosting), encoding="utf-8")
+    assert not publication_context(tmp_path)["hosting"]["verified_for_publication"]
+    hosting["independent_d1_read_verified"] = True
+    path.write_text(json.dumps(hosting), encoding="utf-8")
+    assert publication_context(tmp_path)["hosting"]["verified_for_publication"]
+
+
+@pytest.mark.parametrize("checks", [{}, {"http": False}])
+def test_empty_or_failed_checks_cannot_support_verified_deployment(tmp_path, checks):
+    (tmp_path / "results").mkdir()
+    path = tmp_path / "results/deployment-verification.json"
+    path.write_text(json.dumps({
+        "status": "passed", "url": "https://example.test", "checks": checks,
+        "independent_d1_read_verified": True,
+    }), encoding="utf-8")
+    with pytest.raises(EvidenceError, match="nonempty set of passing checks"):
+        publication_context(tmp_path)

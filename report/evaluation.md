@@ -63,7 +63,11 @@ different questions.
 - Contextual BTS target-policy truth, online impact, and historical point-in-time metadata remain unmeasured.
 - Two-tower and recurrent models use explicit NumPy training and finite sampled training pairs/sequences. Their losses are optimization diagnostics; held-out results and both shortcuts are reported even when these neural models lose.
 
-Before a commercial experiment, provision and verify the API/database, confirm
-the actual action probabilities and outcome windows, and fix experiment and
-promotion criteria before observing results. The public static page alone does
-not provide that evidence.
+The [public Worker/D1 service](https://stacks-recommender-api.mekalaa1.chatgpt.site/health) has passed live request
+verification and an independent database read. Bounded SSE connections replay
+persisted updates after EventSource reconnection; the free host buffers long
+responses. Operational verification is separate from model superiority.
+Before a commercial experiment, fix supported target probabilities, completed
+outcome windows and promotion criteria before observing results. Successful
+deployment and a small latency sample do not establish commercial uplift or a
+production SLO.

@@ -407,5 +407,29 @@ policy can change the final displayed list; these are not a live outcome test.
 - Contextual BTS target-policy truth, online impact, and historical point-in-time metadata remain unmeasured.
 - Two-tower and recurrent models use explicit NumPy training and finite sampled training pairs/sequences. Their losses are optimization diagnostics; held-out results and both shortcuts are reported even when these neural models lose.
 
-Public deployment scope: GitHub Pages static application. The API is runnable
-locally; public API hosting and managed PostgreSQL are unprovisioned.
+## Measured public request latency
+
+Backend: **live-edge-d1**, measured at 2026-09-27T04:15:13.387917+00:00.
+Operation: Persist a recomputed full shelf via session preferences; includes client transport, server scoring and database writes.
+Population: 30 recorded requests after
+3 warmups, concurrency 1.
+Model: `blend:goodbooks-full-36eeb55d1ddd0268`; scoring mode: `evaluated-reader-exact`.
+
+| Statistic | Milliseconds with finite-sample bootstrap range |
+| --- | --- |
+| p50 | 128.59 [127.30, 130.62] |
+| p99 | 178.40 [139.00, 190.40] |
+
+A small sequential warm-service test, not a capacity or production SLO claim. Percentile bootstrap ranges describe this finite latency sample. Test exposures remain labeled and are excluded from own-log OPE.
+This is a small sequential request experiment, not an SLO, a throughput test or
+evidence about concurrent load. [Raw operational evidence](results/latency.json).
+
+Public frontend deployment uses GitHub Pages. Operational hosting verification
+is recorded separately from offline model evidence.
+The [public Worker/D1 API](https://stacks-recommender-api.mekalaa1.chatgpt.site/health) passed its request checks and
+an independent D1 read. Verification finished 2026-09-27T00:26:57.906451-04:00;
+artifact version: `goodbooks-full-36eeb55d1ddd0268`.
+The free host buffers long streaming responses, so updates use bounded SSE
+connections with EventSource reconnection and Last-Event-ID replay. This is not
+continuous flushing on a single long-lived response. See the
+[sanitized verification artifact](results/deployment-verification.json).
