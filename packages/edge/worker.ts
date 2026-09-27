@@ -34,6 +34,9 @@ const STATEMENT = "These are demonstration recommendations on a public dataset; 
 const EXPERIMENT = 'evaluated-als-blend-v2';
 const TARGET = 'final-slot-80-best-20-uniform-v1';
 const HORIZON = 60;
+// D1 Free allows 50 queries per invocation. The session lookup adds one;
+// close early so EventSource reconnects before its query budget is exhausted.
+const STREAM_POLLS = 40;
 const encoder = new TextEncoder();
 let cached: Promise<Data> | undefined;
 
@@ -288,7 +291,7 @@ async function route(request: Request, env: Env): Promise<Response> {
     if (action === 'stream' && request.method === 'GET') {
       const initial = Number(request.headers.get('Last-Event-ID') ?? -1); if (!Number.isInteger(initial)) fail(400, 'Last-Event-ID must be a revision');
       const once = url.searchParams.get('once') === 'true'; let revision = initial, cancelled = false;
-      const stream = new ReadableStream<Uint8Array>({ async start(controller) { try { for (let turn = 0; !cancelled && !request.signal.aborted && turn < 110; turn++) { const latest = await getSession(env, raw); if (latest.revision > revision) { revision = latest.revision; controller.enqueue(encoder.encode(`id: ${revision}\nevent: shelf\ndata: ${JSON.stringify({ session_id: raw, ...JSON.parse(latest.latest_shelf) as Shelf })}\n\n`)); } if (once) break; if (turn % 15 === 0) controller.enqueue(encoder.encode(': keepalive\n\n')); await new Promise(resolve => setTimeout(resolve, 1000)); } if (!cancelled) controller.close(); } catch (error) { if (!cancelled) controller.error(error); } }, cancel() { cancelled = true; } });
+      const stream = new ReadableStream<Uint8Array>({ async start(controller) { try { for (let turn = 0; !cancelled && !request.signal.aborted && turn < STREAM_POLLS; turn++) { const latest = await getSession(env, raw); if (latest.revision > revision) { revision = latest.revision; controller.enqueue(encoder.encode(`id: ${revision}\nevent: shelf\ndata: ${JSON.stringify({ session_id: raw, ...JSON.parse(latest.latest_shelf) as Shelf })}\n\n`)); } if (once) break; if (turn % 15 === 0) controller.enqueue(encoder.encode(': keepalive\n\n')); await new Promise(resolve => setTimeout(resolve, 1000)); } if (!cancelled) controller.close(); } catch (error) { if (!cancelled) controller.error(error); } }, cancel() { cancelled = true; } });
       return new Response(stream, { headers: { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache', 'X-Accel-Buffering': 'no' } });
     }
     if ((action === 'event' || action === 'preferences') && request.method === 'POST') {

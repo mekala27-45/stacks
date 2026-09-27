@@ -13,10 +13,11 @@ await build({ entryPoints: [new URL('./worker.ts', import.meta.url).pathname.rep
 const { handleRequest, evaluateLoggedRows, scoreArtifacts } = await import(pathToFileURL(output).href);
 const database = new DatabaseSync(':memory:');
 database.exec(await readFile(new URL('./schema.sql', import.meta.url), 'utf8'));
+let firstQueries = 0;
 class Statement {
   constructor(sql, values = []) { this.sql = sql; this.values = values; }
   bind(...values) { return new Statement(this.sql, values); }
-  async first() { return database.prepare(this.sql).get(...this.values) || null; }
+  async first() { firstQueries++; return database.prepare(this.sql).get(...this.values) || null; }
   async all() { return { results: database.prepare(this.sql).all(...this.values), meta: {} }; }
   async run() { const result = database.prepare(this.sql).run(...this.values); return { results: [], meta: { changes: Number(result.changes) } }; }
 }
@@ -77,6 +78,19 @@ test('D1 session, persisted propensities, SSE resume and owned events round trip
   const logs = await (await request(`/v1/session/${raw}/logs`)).json();
   assert.ok(logs.impressions.every(row => !Object.hasOwn(row, 'session_hash')));
   assert.equal((await (await request(`/v1/session/${raw}/ope`)).json()).status, 'awaiting_mature_feedback');
+});
+
+test('SSE closes and resumes within the D1 Free invocation query budget', async context => {
+  const shelf = await (await request('/v1/session', {})).json();
+  const originalTimeout = globalThis.setTimeout;
+  context.mock.method(globalThis, 'setTimeout', (callback, _delay, ...args) => originalTimeout(callback, 0, ...args));
+  const before = firstQueries;
+  const stream = await request(`/v1/session/${shelf.session_id}/stream`);
+  const payload = await stream.text();
+  assert.match(payload, /event: shelf/);
+  assert.ok(firstQueries - before <= 50, 'The initial lookup plus every poll must fit one Free D1 invocation');
+  const resumed = await handleRequest(new Request(`https://stacks.test/v1/session/${shelf.session_id}/stream?once=true`, { headers: { 'Last-Event-ID': String(shelf.revision) } }), env);
+  assert.doesNotMatch(await resumed.text(), /event: shelf/, 'Reconnect must not emit the same revision twice');
 });
 
 test('own-log OPE enforces immutable horizon and support with conservative intervals', () => {
