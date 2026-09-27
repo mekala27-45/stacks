@@ -1,19 +1,25 @@
 import type { Metadata } from "next";
-import { Literata, Work_Sans, Spline_Sans_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
-const literata = Literata({
-  subsets: ["latin"],
+const literata = localFont({
+  src: "./fonts/literata-latin.woff2",
+  weight: "200 900",
+  style: "normal",
+  adjustFontFallback: "Times New Roman",
   variable: "--font-literata",
   display: "swap",
 });
-const work = Work_Sans({
-  subsets: ["latin"],
+const work = localFont({
+  src: "./fonts/work-sans-latin.woff2",
+  weight: "100 900",
+  style: "normal",
   variable: "--font-work",
   display: "swap",
 });
-const mono = Spline_Sans_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500"],
+const mono = localFont({
+  src: "./fonts/spline-sans-mono-latin.woff2",
+  weight: "400 500",
+  style: "normal",
   variable: "--font-mono",
   display: "swap",
 });

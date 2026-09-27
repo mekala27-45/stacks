@@ -1,0 +1,40 @@
+{
+  "fonts": [
+    {
+      "family": "Literata",
+      "file": "literata-latin.woff2",
+      "css_weight": "200 900",
+      "subset": "latin",
+      "sha256": "0636e63f70c9a3c644bf6579c445339df38015a2e2b21c6a898813f4c8581e0e",
+      "bytes": 52720,
+      "source": "Exact Google Fonts WOFF2 emitted by the previously successful Next.js build",
+      "cached_filename": "bf0b6634f251496a-s.p.woff2",
+      "license_source": "https://raw.githubusercontent.com/google/fonts/main/ofl/literata/OFL.txt",
+      "upstream": "https://github.com/google/fonts/tree/main/ofl/literata"
+    },
+    {
+      "family": "Work Sans",
+      "file": "work-sans-latin.woff2",
+      "css_weight": "100 900",
+      "subset": "latin",
+      "sha256": "72cd8f67849cc714f3364eeeb378df9a49f4aff00e6a3640fad36c9c93a9b197",
+      "bytes": 50524,
+      "source": "Exact Google Fonts WOFF2 emitted by the previously successful Next.js build",
+      "cached_filename": "c9e6921c7fc300d8-s.p.woff2",
+      "license_source": "https://raw.githubusercontent.com/google/fonts/main/ofl/worksans/OFL.txt",
+      "upstream": "https://github.com/google/fonts/tree/main/ofl/worksans"
+    },
+    {
+      "family": "Spline Sans Mono",
+      "file": "spline-sans-mono-latin.woff2",
+      "css_weight": "400 500",
+      "subset": "latin",
+      "sha256": "2b193a4f0fef3fc4c6a3fa756bb5dab6c10b489acd5e0718736847755077e9ec",
+      "bytes": 36528,
+      "source": "Exact Google Fonts WOFF2 emitted by the previously successful Next.js build",
+      "cached_filename": "e02f7a71372872a3-s.p.woff2",
+      "license_source": "https://raw.githubusercontent.com/google/fonts/main/ofl/splinesansmono/OFL.txt",
+      "upstream": "https://github.com/google/fonts/tree/main/ofl/splinesansmono"
+    }
+  ]
+}
